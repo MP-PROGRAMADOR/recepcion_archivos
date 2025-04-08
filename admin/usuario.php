@@ -1,4 +1,15 @@
 <?php
+// Incluir el archivo de conexión a la base de datos
+include '../config/conexion.php';  // Asegúrate de tener la conexión configurada correctamente
+
+// Consulta para obtener todos los usuarios
+$stmt = $pdo->query("SELECT * FROM usuarios");
+
+// Verificar si hay usuarios en la base de datos
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<?php
 
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
@@ -27,14 +38,26 @@ include_once("../componentes/sidebar.php");
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
-                            <th>Nombre de Usuario</th>
-                            <th>Correo Electrónico</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
                             <th>Fecha de Creación</th>
-                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="contenidoTabla">
-                        <!-- Aquí se carga dinámicamente el contenido -->
+                        <?php if (!empty($usuarios)): ?>
+                            <?php foreach ($usuarios as $usuario): ?>
+                                <tr>
+                                    <td><?php echo $usuario['id']; ?></td>
+                                    <td><?php echo $usuario['nombre']; ?></td>
+                                    <td><?php echo $usuario['email']; ?></td>
+                                    <td><?php echo $usuario['creado_en']; ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="text-center">No hay usuarios registrados</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -47,13 +70,15 @@ include_once("../componentes/sidebar.php");
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         function cargarUsuarios(query = '') {
             $.ajax({
                 url: 'buscar_usuarios.php',
                 method: 'POST',
-                data: { busqueda: query },
-                success: function (data) {
+                data: {
+                    busqueda: query
+                },
+                success: function(data) {
                     $('#contenidoTabla').html(data);
                 }
             });
@@ -63,7 +88,7 @@ include_once("../componentes/sidebar.php");
         cargarUsuarios();
 
         // Búsqueda en tiempo real
-        $('#busqueda').on('keyup', function () {
+        $('#busqueda').on('keyup', function() {
             let texto = $(this).val();
             cargarUsuarios(texto);
         });
