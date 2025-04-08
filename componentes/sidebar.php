@@ -10,6 +10,7 @@
       </li>
       <li class="section-title">Administración</li>
       <li><a href="../admin/usuario.php" class="nav-link "><i class="bi bi-people-fill me-2"></i> Usuarios</a></li>
+      <li><a href="../admin/pais.php" class="nav-link "><i class="bi bi- me-2"></i> Pais</a></li>
        
       <li class="section-title">Académico</li>
       <li><a href="../admin/estudiantes.php" class="nav-link "><i class="bi bi-person-lines-fill me-2"></i> Estudiantes</a></li>

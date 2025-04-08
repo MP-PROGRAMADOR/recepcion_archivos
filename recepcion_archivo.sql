@@ -1,189 +1,66 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 08-04-2025 a las 09:27:50
--- Versión del servidor: 10.4.25-MariaDB
--- Versión de PHP: 8.1.10
+DROP DATABASE IF EXISTS recepcion_archivo;
+CREATE DATABASE recepcion_archivo CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE recepcion_archivo;
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+CREATE TABLE paises (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE
+) ENGINE = InnoDB;
 
+CREATE TABLE anios_academicos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(20) UNIQUE
+) ENGINE = InnoDB;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+CREATE TABLE estudiantes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(100),
+    codigo_acceso VARCHAR(20) UNIQUE,
+    fecha_nacimiento DATE,
+    pais_id INT NOT NULL,
+    foto_url VARCHAR(255),
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_estudiantes_pais FOREIGN KEY (pais_id)
+        REFERENCES paises(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+) ENGINE = InnoDB;
 
---
--- Base de datos: `recepcion_archivo`
---
+CREATE TABLE notas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    estudiante_id INT,
+    anio_academico_id INT,
+    observaciones TEXT,
+    archivo_url VARCHAR(255),
+    fecha_subida TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_notas_estudiante FOREIGN KEY (estudiante_id)
+        REFERENCES estudiantes(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_notas_anio FOREIGN KEY (anio_academico_id)
+        REFERENCES anios_academicos(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+) ENGINE = InnoDB;
 
--- --------------------------------------------------------
+CREATE TABLE pasaportes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    estudiante_id INT,
+    numero_pasaporte VARCHAR(50),
+    fecha_emision DATE,
+    fecha_expiracion DATE,
+    archivo_url VARCHAR(255),
+    fecha_subida TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_pasaporte_estudiante FOREIGN KEY (estudiante_id)
+        REFERENCES estudiantes(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE = InnoDB;
 
---
--- Estructura de tabla para la tabla `anios_academicos`
---
-
-CREATE TABLE `anios_academicos` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `estudiantes`
---
-
-CREATE TABLE `estudiantes` (
-  `id` int(11) NOT NULL,
-  `nombre_completo` varchar(100) DEFAULT NULL,
-  `codigo_acceso` varchar(20) DEFAULT NULL,
-  `fecha_nacimiento` date DEFAULT NULL,
-  `foto_url` varchar(255) DEFAULT NULL,
-  `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `notas`
---
-
-CREATE TABLE `notas` (
-  `id` int(11) NOT NULL,
-  `estudiante_id` int(11) DEFAULT NULL,
-  `anio_academico_id` int(11) DEFAULT NULL,
-  `observaciones` text DEFAULT NULL,
-  `archivo_url` varchar(255) DEFAULT NULL,
-  `fecha_subida` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `pasaportes`
---
-
-CREATE TABLE `pasaportes` (
-  `id` int(11) NOT NULL,
-  `estudiante_id` int(11) DEFAULT NULL,
-  `numero_pasaporte` varchar(50) DEFAULT NULL,
-  `fecha_emision` date DEFAULT NULL,
-  `fecha_expiracion` date DEFAULT NULL,
-  `archivo_url` varchar(255) DEFAULT NULL,
-  `fecha_subida` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuarios`
---
-
-CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(100) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `contrasena` varchar(255) DEFAULT NULL,
-  `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `anios_academicos`
---
-ALTER TABLE `anios_academicos`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `nombre` (`nombre`);
-
---
--- Indices de la tabla `estudiantes`
---
-ALTER TABLE `estudiantes`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `codigo_acceso` (`codigo_acceso`);
-
---
--- Indices de la tabla `notas`
---
-ALTER TABLE `notas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `estudiante_id` (`estudiante_id`),
-  ADD KEY `anio_academico_id` (`anio_academico_id`);
-
---
--- Indices de la tabla `pasaportes`
---
-ALTER TABLE `pasaportes`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `estudiante_id` (`estudiante_id`);
-
---
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `anios_academicos`
---
-ALTER TABLE `anios_academicos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `estudiantes`
---
-ALTER TABLE `estudiantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `notas`
---
-ALTER TABLE `notas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `pasaportes`
---
-ALTER TABLE `pasaportes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `notas`
---
-ALTER TABLE `notas`
-  ADD CONSTRAINT `notas_ibfk_1` FOREIGN KEY (`estudiante_id`) REFERENCES `estudiantes` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `notas_ibfk_2` FOREIGN KEY (`anio_academico_id`) REFERENCES `anios_academicos` (`id`) ON DELETE CASCADE;
-
---
--- Filtros para la tabla `pasaportes`
---
-ALTER TABLE `pasaportes`
-  ADD CONSTRAINT `pasaportes_ibfk_1` FOREIGN KEY (`estudiante_id`) REFERENCES `estudiantes` (`id`) ON DELETE CASCADE;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    contrasena VARCHAR(255),
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE = InnoDB;

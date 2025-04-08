@@ -1,82 +1,113 @@
 <?php
-// Incluir el archivo de conexión a la base de datos
-include '../config/conexion.php'; // Asegúrate de tener la conexión configurada correctamente
+// Conexión a la base de datos
+require_once '../config/conexion.php';
 
-// Consulta para obtener todos los estudiantes
-$stmt = $pdo->query("SELECT * FROM estudiantes");
+try {
+    // Consulta para obtener estudiantes y su país
+    $stmt = $pdo->prepare("
+        SELECT e.id, e.nombre_completo, e.codigo_acceso, e.fecha_nacimiento, e.creado_en, 
+               p.nombre AS pais, e.ruta_foto
+        FROM estudiantes e
+        INNER JOIN paises p ON e.pais_id = p.id
+        ORDER BY e.creado_en DESC
+    ");
+    $stmt->execute();
+    $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error al obtener estudiantes: " . $e->getMessage());
+}
+?>
 
-// Obtener todos los estudiantes
-$estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
-<?php
-include_once("../componentes/header.php");
-include_once("../componentes/sidebar.php");
-?>
+<?php include_once("../componentes/header.php"); ?>
+<?php include_once("../componentes/sidebar.php"); ?>
 
 <main class="content" id="mainContent">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3><i class="bi bi-mortarboard-fill me-2"></i>Listado de Estudiantes</h3>
-        <a href="registrar_estudiante.php" class="btn btn-primary">
-            <i class="bi bi-person-plus-fill me-1"></i> Nuevo Estudiante
-        </a>
-    </div>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="bi bi-mortarboard-fill me-2"></i>Listado de Estudiantes</h3>
+            <a href="registrar_estudiantes.php" class="btn btn-primary rounded-3">
+                <i class="bi bi-person-plus-fill me-1"></i> Nuevo Estudiante
+            </a>
+        </div>
 
-    <div class="card shadow rounded-4">
-        <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="busqueda" class="form-label fw-bold">Buscar estudiante</label>
-                    <input type="text" class="form-control" id="busqueda"
-                        placeholder="Buscar por ID, nombre o código de acceso...">
+        <div class="card shadow rounded-4">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="busqueda" class="form-label fw-bold">Buscar estudiante</label>
+                        <input type="text" class="form-control" id="busqueda" placeholder="Buscar por nombre o país...">
+                    </div>
                 </div>
-            </div>
 
-            <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle text-center" id="tablaEstudiantes">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre Completo</th>
-                            <th>Código de Acceso</th>
-                            <th>Fecha de Nacimiento</th>
-                            <th>Registrado</th>
-                            <th>Pais</th>
-                            <th>Foto</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="contenidoTabla">
-                        <?php if (!empty($estudiantes)): ?>
-                            <?php foreach ($estudiantes as $estudiante): ?>
-                                <tr>
-                                    <td><?php echo $estudiante['id']; ?></td>
-                                    <td><?php echo $estudiante['nombre_completo']; ?></td>
-                                    <td><?php echo $estudiante['codigo_acceso']; ?></td>
-                                    <td><?php echo $estudiante['fecha_nacimiento']; ?></td>
-                                    <td><?php echo $estudiante['creado_en']; ?></td>
-                                    <td><?php echo $estudiante['pais']; ?></td>
-                                    <td><img src="../php/uploads/<?php echo $estudiante['foto_url']; ?>" alt="Foto Estudiante" style="width: 50px; height: 50px;"></td>
-                                
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle text-center" id="tablaEstudiantes">
+                        <thead class="table-dark">
                             <tr>
-                                <td colspan="7" class="text-center">No hay estudiantes registrados</td>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Código de Acceso</th>
+                                <th>Fecha de Nacimiento</th>
+                                <th>Registro</th>
+                                <th>País</th>
+                                <th>Foto</th>
+                                <th>Acciones</th>
                             </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody id="contenidoTabla">
+                            <?php if (!empty($estudiantes)): ?>
+                                <?php foreach ($estudiantes as $est): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($est['id']) ?></td>
+                                        <td><?= htmlspecialchars($est['nombre_completo']) ?></td>
+                                        <td><?= htmlspecialchars($est['codigo_acceso']) ?></td>
+                                        <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
+                                        <td><?= date('d/m/Y H:i', strtotime($est['creado_en'])) ?></td>
+                                        <td><?= htmlspecialchars($est['pais']) ?></td>
+                                        <td>
+                                            <?php if (!empty($est['ruta_foto']) && file_exists("../" . $est['ruta_foto'])): ?>
+                                                <img src="../<?= htmlspecialchars($est['ruta_foto']) ?>" class="rounded-circle shadow" alt="Foto" width="50" height="50">
+                                            <?php else: ?>
+                                                <span class="text-muted">Sin foto</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <a href="editar_estudiante.php?id=<?= $est['id'] ?>" class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <a href="eliminar_estudiante.php?id=<?= $est['id'] ?>" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este estudiante?');">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">No hay estudiantes registrados</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
         </div>
     </div>
 </main>
 
-<!-- Bootstrap Icons y Script -->
+<!-- Bootstrap Icons y jQuery -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- Búsqueda simple por JS -->
+<script>
+    $(document).ready(function () {
+        $("#busqueda").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#contenidoTabla tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
 
-
-<?php
-include_once("../componentes/footer.php");
-?>
+<?php include_once("../componentes/footer.php"); ?>

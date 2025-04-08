@@ -16,7 +16,7 @@ try {
     // Crear la conexión PDO
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password, $options);
     // Si la conexión es exitosa, se ejecutará este bloque
-    echo "Conexión exitosa a la base de datos.";
+    // echo "Conexión exitosa a la base de datos.";
 } catch (PDOException $e) {
     // En caso de error, mostrar mensaje de error
     echo "Error al conectar: " . $e->getMessage();

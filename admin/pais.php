@@ -18,9 +18,9 @@ include_once("../componentes/sidebar.php");
 
 <main class="content" id="mainContent">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3><i class="bi bi-people-fill me-2"></i>Listado de Usuarios</h3>
-        <a href="registrar_usuario.php" class="btn btn-primary">
-            <i class="bi bi-person-plus-fill me-1"></i> Nuevo Usuario
+        <h3><i class="bi bi-people-fill me-2"></i>Listado de País</h3>
+        <a href="registrar_pais.php" class="btn btn-primary">
+            <i class="bi bi-person-plus-fill me-1"></i> Nuevo País
         </a>
     </div>
 
@@ -28,20 +28,18 @@ include_once("../componentes/sidebar.php");
         <div class="card-body">
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <label for="busqueda" class="form-label fw-bold">Buscar usuario</label>
+                    <label for="busqueda" class="form-label fw-bold">Buscar Pais</label>
                     <input type="text" class="form-control" id="busqueda"
                         placeholder="Buscar por ID, nombre o correo...">
                 </div>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle text-center" id="tablaUsuarios">
+                <table class="table table-striped table-hover align-middle text-center" id="tablaPais">
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Fecha de Creación</th>
+                            <th>Nombre</th> 
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -50,9 +48,7 @@ include_once("../componentes/sidebar.php");
                             <?php foreach ($usuarios as $usuario): ?>
                                 <tr>
                                     <td><?= htmlspecialchars($usuario['id']) ?></td>
-                                    <td><?= htmlspecialchars($usuario['nombre']) ?></td>
-                                    <td><?= htmlspecialchars($usuario['email']) ?></td>
-                                    <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($usuario['creado_en']))) ?></td>
+                                    <td><?= htmlspecialchars($usuario['nombre']) ?></td> 
                                     <td>
                                         <a href="editar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-warning me-1" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
@@ -65,7 +61,7 @@ include_once("../componentes/sidebar.php");
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="5" class="text-center">No hay usuarios registrados</td>
+                                <td colspan="5" class="text-center">No hay País registrados</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
