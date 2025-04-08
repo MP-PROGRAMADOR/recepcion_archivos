@@ -90,6 +90,15 @@
       display: none;
     }
 
+     /* Estilo para la vista previa de la imagen */
+     #foto_preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 2px solid #ddd;
+            margin-top: 10px;
+        }
+
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
@@ -107,18 +116,6 @@
         display: block;
       }
     }
-
-
-  
-        /* Estilo para la vista previa de la imagen */
-        #foto_preview {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border: 2px solid #ddd;
-            margin-top: 10px;
-        }
-    
   </style>
 </head>
 <body>
