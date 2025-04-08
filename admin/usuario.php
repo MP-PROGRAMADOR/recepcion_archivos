@@ -1,16 +1,17 @@
 <?php
-// Incluir el archivo de conexión a la base de datos
-include '../config/conexion.php';  // Asegúrate de tener la conexión configurada correctamente
+// Incluir la conexión
+require_once '../config/conexion.php';
 
-// Consulta para obtener todos los usuarios
-$stmt = $pdo->query("SELECT * FROM usuarios");
+// Consulta segura de usuarios
+try {
+    $stmt = $pdo->prepare("SELECT id, nombre, email, creado_en FROM usuarios ORDER BY id DESC");
+    $stmt->execute();
+    $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error al obtener los usuarios: " . $e->getMessage());
+}
 
-// Verificar si hay usuarios en la base de datos
-$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
-
-<?php
-
+// Componentes del layout
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 ?>
@@ -41,21 +42,30 @@ include_once("../componentes/sidebar.php");
                             <th>Nombre</th>
                             <th>Email</th>
                             <th>Fecha de Creación</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="contenidoTabla">
                         <?php if (!empty($usuarios)): ?>
                             <?php foreach ($usuarios as $usuario): ?>
                                 <tr>
-                                    <td><?php echo $usuario['id']; ?></td>
-                                    <td><?php echo $usuario['nombre']; ?></td>
-                                    <td><?php echo $usuario['email']; ?></td>
-                                    <td><?php echo $usuario['creado_en']; ?></td>
+                                    <td><?= htmlspecialchars($usuario['id']) ?></td>
+                                    <td><?= htmlspecialchars($usuario['nombre']) ?></td>
+                                    <td><?= htmlspecialchars($usuario['email']) ?></td>
+                                    <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($usuario['creado_en']))) ?></td>
+                                    <td>
+                                        <a href="editar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-warning me-1" title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a href="eliminar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este usuario?');">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="4" class="text-center">No hay usuarios registrados</td>
+                                <td colspan="5" class="text-center">No hay usuarios registrados</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
@@ -70,31 +80,30 @@ include_once("../componentes/sidebar.php");
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         function cargarUsuarios(query = '') {
             $.ajax({
                 url: 'buscar_usuarios.php',
                 method: 'POST',
-                data: {
-                    busqueda: query
-                },
-                success: function(data) {
+                data: { busqueda: query },
+                success: function (data) {
                     $('#contenidoTabla').html(data);
+                },
+                error: function () {
+                    alert("Ocurrió un error al cargar los usuarios.");
                 }
             });
         }
 
-        // Cargar usuarios al inicio
+        // Cargar al inicio
         cargarUsuarios();
 
         // Búsqueda en tiempo real
-        $('#busqueda').on('keyup', function() {
-            let texto = $(this).val();
+        $('#busqueda').on('keyup', function () {
+            const texto = $(this).val();
             cargarUsuarios(texto);
         });
     });
 </script>
-<?php
 
-include_once("../componentes/footer.php");
-?>
+<?php include_once("../componentes/footer.php"); ?>
