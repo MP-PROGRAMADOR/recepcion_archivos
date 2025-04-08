@@ -1,4 +1,14 @@
 <?php
+// Incluir el archivo de conexión a la base de datos
+include '../config/conexion.php'; // Asegúrate de tener la conexión configurada correctamente
+
+// Consulta para obtener todos los estudiantes
+$stmt = $pdo->query("SELECT * FROM estudiantes");
+
+// Obtener todos los estudiantes
+$estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+<?php
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 ?>
@@ -36,7 +46,24 @@ include_once("../componentes/sidebar.php");
                         </tr>
                     </thead>
                     <tbody id="contenidoTabla">
-                        <!-- Contenido dinámico AJAX -->
+                        <?php if (!empty($estudiantes)): ?>
+                            <?php foreach ($estudiantes as $estudiante): ?>
+                                <tr>
+                                    <td><?php echo $estudiante['id']; ?></td>
+                                    <td><?php echo $estudiante['nombre_completo']; ?></td>
+                                    <td><?php echo $estudiante['codigo_acceso']; ?></td>
+                                    <td><?php echo $estudiante['fecha_nacimiento']; ?></td>
+                                    <td><?php echo $estudiante['creado_en']; ?></td>
+                                    <td><?php echo $estudiante['pais']; ?></td>
+                                    <td><img src="../php/uploads/<?php echo $estudiante['foto_url']; ?>" alt="Foto Estudiante" style="width: 50px; height: 50px;"></td>
+                                
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="7" class="text-center">No hay estudiantes registrados</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -48,29 +75,7 @@ include_once("../componentes/sidebar.php");
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
-    $(document).ready(function () {
-        function cargarEstudiantes(query = '') {
-            $.ajax({
-                url: 'buscar_estudiantes.php',
-                method: 'POST',
-                data: { busqueda: query },
-                success: function (data) {
-                    $('#contenidoTabla').html(data);
-                }
-            });
-        }
 
-        // Cargar estudiantes al inicio
-        cargarEstudiantes();
-
-        // Búsqueda en tiempo real
-        $('#busqueda').on('keyup', function () {
-            let texto = $(this).val();
-            cargarEstudiantes(texto);
-        });
-    });
-</script>
 
 <?php
 include_once("../componentes/footer.php");
