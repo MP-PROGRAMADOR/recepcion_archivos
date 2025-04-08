@@ -64,8 +64,8 @@ try {
                                         <td><?= date('d/m/Y H:i', strtotime($est['creado_en'])) ?></td>
                                         <td><?= htmlspecialchars($est['pais']) ?></td>
                                         <td>
-                                            <?php if (!empty($est['ruta_foto']) && file_exists("../" . $est['ruta_foto'])): ?>
-                                                <img src="../<?= htmlspecialchars($est['ruta_foto']) ?>" class="rounded-circle shadow" alt="Foto" width="50" height="50">
+                                            <?php if (!empty($est['ruta_foto']) && file_exists("../php/" . $est['ruta_foto'])): ?>
+                                                <img src="../php/<?= htmlspecialchars($est['ruta_foto']) ?>" class="rounded-circle shadow" alt="Foto" width="50" height="50">
                                             <?php else: ?>
                                                 <span class="text-muted">Sin foto</span>
                                             <?php endif; ?>
