@@ -7,7 +7,7 @@ include_once("../componentes/sidebar.php");
 
 
 <!-- Contenido principal -->
-<div class="main-content" id="main-content">
+<main class="content" id="mainContent">
     
     <div class="card mt-4">
         <h2>Registrar Usuario</h2>
@@ -36,7 +36,7 @@ include_once("../componentes/sidebar.php");
         <a href="usuarios.php" class="btn btn-secondary">Cancelar</a>
       </form>
     </div>
-</div>
+</main>
 <?php
 include_once("../componentes/sidebar.php");
 ?>

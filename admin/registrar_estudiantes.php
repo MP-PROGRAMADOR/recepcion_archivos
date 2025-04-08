@@ -7,7 +7,7 @@ include_once("../componentes/sidebar.php");
 
 
 <!-- Contenido principal -->
-<div class="main-content" id="main-content">
+<main class="content" id="mainContent">
 
     <div class="card mt-4">
         <h2>Formulario de Registro de Estudiante</h2>
@@ -39,7 +39,7 @@ include_once("../componentes/sidebar.php");
             <button type="submit">Registrar Estudiante</button>
         </form>
     </div>
-</div>
+</main>
 <?php
 include_once("../componentes/sidebar.php");
 ?>
