@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard | Recepción de Archivos</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
@@ -94,7 +95,7 @@
       transition: left 0.3s ease;
     }
 
-    .collapsed + .navbar-top {
+    .collapsed+.navbar-top {
       left: 0;
     }
 
@@ -116,35 +117,10 @@
       transition: margin-left 0.3s ease;
     }
 
-    .collapsed ~ .content {
+    .collapsed~.content {
       margin-left: 0;
     }
 
-<<<<<<< HEAD
-    .menu-toggle {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 1100;
-      background: #0d6efd;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      padding: 8px 12px;
-      display: none;
-    }
-
-     /* Estilo para la vista previa de la imagen */
-     #foto_preview {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border: 2px solid #ddd;
-            margin-top: 10px;
-        }
-
-=======
->>>>>>> 8e4f530 (mejorando la vista listar usuario)
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
@@ -162,6 +138,49 @@
         margin-left: 0;
       }
     }
+
+    .cv-container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 40px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .cv-header {
+      border-bottom: 2px solid #0d6efd;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+    }
+
+    .cv-section {
+      margin-bottom: 30px;
+    }
+
+    .cv-section h5 {
+      border-left: 5px solid #0d6efd;
+      padding-left: 10px;
+      margin-bottom: 20px;
+      color: #0d6efd;
+    }
+
+    .cv-photo {
+      max-width: 150px;
+      border-radius: 10px;
+      border: 2px solid #dee2e6;
+    }
+
+    .cv-label {
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .cv-value {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
+
 <body>
