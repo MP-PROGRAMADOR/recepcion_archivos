@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Carpeta uploads
-        $carpeta = '../uploads/';
+        $carpeta = 'uploads/';
         if (!is_dir($carpeta)) {
             if (!mkdir($carpeta, 0755, true)) {
                 exit("❌ Error al crear la carpeta /uploads.");
