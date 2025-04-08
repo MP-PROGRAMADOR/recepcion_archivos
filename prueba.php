@@ -1,289 +1,224 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard | Recepción de Archivos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <!-- SweetAlert2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.9/dist/sweetalert2.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | Recepción de Archivos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-        }
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
 
-        .sidebar {
-            background-color: #1e293b;
-            color: #fff;
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1050;
-            overflow-y: auto;
-            transition: transform 0.3s ease-in-out;
-        }
+    /* Sidebar fijo */
+    .sidebar {
+      width: 250px;
+      background-color: #1e293b;
+      color: #fff;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 0.5rem;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transition: transform 0.3s ease;
+      z-index: 1050;
+      overflow-y: auto;
+    }
 
-        .sidebar.hide {
-            transform: translateX(-100%);
-        }
+    .sidebar.collapsed {
+      transform: translateX(-100%);
+    }
 
-        .sidebar .logo {
-            padding: 20px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            background-color: #111827;
-            text-align: center;
-        }
+    .sidebar h4 {
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #fff;
+    }
 
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            text-decoration: none;
-            color: #cbd5e1;
-            transition: background 0.3s;
-        }
+    .sidebar .nav-link {
+      color: #cbd5e1;
+      padding: 10px 15px;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
 
-        .sidebar a:hover {
-            background-color: #334155;
-            color: #fff;
-        }
+    .sidebar .nav-link:hover {
+      background-color: #334155;
+      color: #fff;
+    }
 
-        .sidebar a.active {
-            background-color: #0d6efd;
-            color: #fff;
-        }
+    .sidebar .nav-link.active {
+      background-color: #0d6efd;
+      color: #fff !important;
+    }
 
-        .sidebar svg {
-            margin-right: 10px;
-        }
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: #94a3b8;
+      padding: 0.5rem 1rem 0.2rem;
+    }
 
-        .main-content {
-            margin-left: 250px;
-            height: 100vh;
-            overflow-y: auto;
-            padding: 20px;
-            transition: margin-left 0.3s;
-        }
+    /* Navbar superior fija */
+    .navbar-top {
+      height: 60px;
+      background-color: #fff;
+      border-bottom: 1px solid #dee2e6;
+      position: fixed;
+      top: 0;
+      left: 250px;
+      right: 0;
+      z-index: 1040;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      transition: left 0.3s ease;
+    }
 
-        .main-content.full {
-            margin-left: 0;
-        }
+    .collapsed + .navbar-top {
+      left: 0;
+    }
 
-        .menu-toggle {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 1100;
-            background: #0d6efd;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 12px;
-            display: none;
-        }
+    /* Botón toggle sidebar */
+    .menu-toggle {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #0d6efd;
+    }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
+    /* Contenido principal */
+    .content {
+      flex-grow: 1;
+      margin-left: 250px;
+      padding: 80px 20px 20px;
+      height: 100vh;
+      overflow-y: auto;
+      transition: margin-left 0.3s ease;
+    }
 
-            .sidebar.show {
-                transform: translateX(0);
-            }
+    .collapsed ~ .content {
+      margin-left: 0;
+    }
 
-            .main-content {
-                margin-left: 0;
-            }
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
 
-            .menu-toggle {
-                display: block;
-            }
-        }
-    </style>
+      .sidebar.show {
+        transform: translateX(0);
+      }
+
+      .navbar-top {
+        left: 0;
+      }
+
+      .content {
+        margin-left: 0;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-
-    <!-- Botón para mostrar el menú en móviles -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        ☰
-    </button>
-
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <div class="logo">📂 Recepción</div>
-        <a href="../admin/index.php" class="active">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house"
-                viewBox="0 0 16 16">
-                <path
-                    d="M8.354 1.146a.5.5 0 0 0-.708 0L1 7.793V14.5a.5.5 0 0 0 .5.5H6v-5h4v5h4.5a.5.5 0 0 0 .5-.5V7.793l-6.646-6.647z" />
-            </svg>
-            Panel Principal
+<!-- Sidebar -->
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <h4>📘 Gestión Académica</h4>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a href="dashboard.php" class="nav-link">
+          <i class="bi bi-speedometer2 me-2"></i> Dashboard
         </a>
-        <a href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-passport"
-                viewBox="0 0 16 16">
-                <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4V1H2z" />
-                <path d="M9 1v14h5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9z" />
-            </svg>
-            Módulo Pasaportes
-        </a>
-        <a href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-text"
-                viewBox="0 0 16 16">
-                <path
-                    d="M5 4a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 5 4zm0 2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 5 6zm0 2a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 5 8z" />
-                <path
-                    d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2A2 2 0 0 1 4 0h6.5L14 4.5zM10 0v4a1 1 0 0 0 1 1h4l-5-5z" />
-            </svg>
-            Módulo Notas Académicas
-        </a>
-        <a href="../admin/usuario.php">👨‍🎓 usuarios</a>
-        <a href="#">👨‍🎓 Estudiantes</a>
-        <a href="#">👤 Administradores</a>
-        <a href="#">⚙️ Configuración</a>
-        <a href="#">🚪 Cerrar Sesión</a>
-    </nav>
-    <!-- Main -->
-    <div class="flex-grow-1 d-flex flex-column overflow-hidden">
-        <nav class="navbar navbar-expand-lg border-bottom shadow-sm sticky-top">
-            <div class="container-fluid">
-                <button class="btn btn-outline-light d-lg-none" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#sidebar">
-                    <i class="bi bi-list"></i>
-                </button>
-                <span class="navbar-brand fw-bold"><?= $titulo ?? 'Panel de Administración' ?></span>
-                <div class="ms-auto d-flex gap-2 align-items-center">
-                    <span class="fw-semibold">Admin</span>
-                    <a href="#" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> Cerrar
-                        sesión</a>
-                </div>
-            </div>
-        </nav>
+      </li>
+      <li class="section-title">Administración</li>
+      <li><a href="usuarios.php" class="nav-link "><i class="bi bi-people-fill me-2"></i> Usuarios</a></li>
+      <li><a href="roles.php" class="nav-link "><i class="bi bi-person-badge-fill me-2"></i> Roles</a></li>
 
+      <li class="section-title">Académico</li>
+      <li><a href="estudiantes.php" class="nav-link "><i class="bi bi-person-lines-fill me-2"></i> Estudiantes</a></li>
+      <li><a href="docentes.php" class="nav-link "><i class="bi bi-person-video3 me-2"></i> Docentes</a></li>
+      <li><a href="asignaturas.php" class="nav-link "><i class="bi bi-journal-text me-2"></i> Asignaturas</a></li>
 
+      <li class="section-title">Evaluaciones</li>
+      <li><a href="examenes.php" class="nav-link "><i class="bi bi-journal-check me-2"></i> Exámenes</a></li>
+      <li><a href="preguntas.php" class="nav-link "><i class="bi bi-patch-question-fill me-2"></i> Preguntas</a></li>
 
-        <!-- Contenido principal -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4"></main>
+      <li class="section-title">Reportes</li>
+      <li><a href="reportes_general.php" class="nav-link "><i class="bi bi-graph-up me-2"></i> General</a></li>
 
+      <li class="section-title">Configuración</li>
+      <li><a href="configuracion.php" class="nav-link "><i class="bi bi-gear-fill me-2"></i> Ajustes</a></li>
 
+      <li class="mt-3"><a href="logout.php" class="nav-link text-danger"><i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión</a></li>
+    </ul>
+  </nav>
 
+  <!-- Navbar superior -->
+  <div class="navbar-top">
+    <button class="menu-toggle d-md-none" onclick="toggleSidebar()">☰</button>
+    <span class="fw-semibold">Bienvenido al panel</span>
+  </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Resumen</h4>
-            <button id="collapseSidebar" class="btn btn-outline-secondary d-none d-lg-inline"><i
-                    class="bi bi-layout-sidebar-inset"></i></button>
+  <!-- Contenido principal -->
+  <main class="content" id="mainContent">
+    <h2 class="mb-4">Resumen</h2>
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm border-start border-primary border-4">
+          <div class="card-body">
+            <h6>Total de Exámenes</h6>
+            <h3><i class="bi bi-journal-text me-2"></i>245</h3>
+          </div>
         </div>
-
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="card shadow-sm border-start border-primary border-4">
-                    <div class="card-body">
-                        <h6 class="card-title">Total de Exámenes</h6>
-                        <h3><i class="bi bi-journal-text me-2"></i>245</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm border-start border-success border-4">
-                    <div class="card-body">
-                        <h6 class="card-title">Estudiantes Activos</h6>
-                        <h3><i class="bi bi-people me-2"></i>132</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm border-start border-warning border-4">
-                    <div class="card-body">
-                        <h6 class="card-title">Escuelas Registradas</h6>
-                        <h3><i class="bi bi-building me-2"></i>12</h3>
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-start border-success border-4">
+          <div class="card-body">
+            <h6>Estudiantes Activos</h6>
+            <h3><i class="bi bi-people me-2"></i>132</h3>
+          </div>
         </div>
-
-        <div class="row g-3">
-            <div class="col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-header"><i class="bi bi-calendar-event"></i> Calendario</div>
-                    <div class="card-body">
-                        <input type="date" class="form-control">
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-header"><i class="bi bi-table"></i> Últimos Exámenes</div>
-                    <div class="card-body table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Estudiante</th>
-                                    <th>Fecha</th>
-                                    <th>Resultado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Juan Pérez</td>
-                                    <td>2025-04-06</td>
-                                    <td>Aprobado</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>María López</td>
-                                    <td>2025-04-05</td>
-                                    <td>Reprobado</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Carlos Ruiz</td>
-                                    <td>2025-04-04</td>
-                                    <td>Aprobado</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-start border-warning border-4">
+          <div class="card-body">
+            <h6>Escuelas</h6>
+            <h3><i class="bi bi-house-door-fill me-2"></i>15</h3>
+          </div>
         </div>
-
-        </main>
-
-
+      </div>
     </div>
+  </main>
+</div>
 
-
-    <script>
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("show");
-        }
-
-        // Activar clase 'active' en el sidebar (mejorable con JS dinámico si usas múltiples páginas)
-        const links = document.querySelectorAll(".sidebar a");
-        links.forEach(link => {
-            link.addEventListener("click", function () {
-                links.forEach(l => l.classList.remove("active"));
-                this.classList.add("active");
-                document.getElementById("sidebar").classList.remove("show"); // cerrar en móviles
-            });
-        });
-    </script>
-    <!-- SweetAlert2 JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.9/dist/sweetalert2.all.min.js"></script>
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("show");
+  }
+</script>
 
 </body>
-
 </html>
