@@ -18,7 +18,7 @@ CREATE TABLE estudiantes (
     codigo_acceso VARCHAR(20) UNIQUE,
     fecha_nacimiento DATE,
     pais_id INT NOT NULL,
-    foto_url VARCHAR(255),
+    ruta_foto VARCHAR(255),
     creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_estudiantes_pais FOREIGN KEY (pais_id)
         REFERENCES paises(id)
