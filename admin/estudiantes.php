@@ -29,8 +29,9 @@ include_once("../componentes/sidebar.php");
                             <th>Nombre Completo</th>
                             <th>Código de Acceso</th>
                             <th>Fecha de Nacimiento</th>
-                            <th>Foto</th>
                             <th>Registrado</th>
+                            <th>Pais</th>
+                            <th>Foto</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
