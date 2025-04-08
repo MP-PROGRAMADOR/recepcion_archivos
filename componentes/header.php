@@ -4,79 +4,123 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard | Recepción de Archivos</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <!-- SweetAlert2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.9/dist/sweetalert2.min.css" rel="stylesheet">
-
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      margin: 0;
       font-family: 'Inter', sans-serif;
+      margin: 0;
+      height: 100vh;
       overflow: hidden;
     }
 
-    .sidebar {
-      background-color: #1e293b;
-      color: #fff;
-      width: 250px;
+    .layout {
+      display: flex;
       height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1050;
-      overflow-y: auto;
-      transition: transform 0.3s ease-in-out;
     }
 
-    .sidebar.hide {
+    /* Sidebar fijo */
+    .sidebar {
+      width: 250px;
+      background-color: #1e293b;
+      color: #fff;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 0.5rem;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transition: transform 0.3s ease;
+      z-index: 1050;
+      overflow-y: auto;
+    }
+
+    .sidebar.collapsed {
       transform: translateX(-100%);
     }
 
-    .sidebar .logo {
-      padding: 20px;
-      font-size: 1.4rem;
+    .sidebar h4 {
       font-weight: bold;
-      background-color: #111827;
       text-align: center;
+      margin-bottom: 2rem;
+      color: #fff;
     }
 
-    .sidebar a {
-      display: flex;
-      align-items: center;
-      padding: 12px 20px;
-      text-decoration: none;
+    .sidebar .nav-link {
       color: #cbd5e1;
-      transition: background 0.3s;
+      padding: 10px 15px;
+      border-radius: 6px;
+      transition: 0.2s;
     }
 
-    .sidebar a:hover {
+    .sidebar .nav-link:hover {
       background-color: #334155;
       color: #fff;
     }
 
-    .sidebar a.active {
+    .sidebar .nav-link.active {
       background-color: #0d6efd;
-      color: #fff;
+      color: #fff !important;
     }
 
-    .sidebar svg {
-      margin-right: 10px;
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: #94a3b8;
+      padding: 0.5rem 1rem 0.2rem;
     }
 
-    .main-content {
+    /* Navbar superior fija */
+    .navbar-top {
+      height: 60px;
+      background-color: #fff;
+      border-bottom: 1px solid #dee2e6;
+      position: fixed;
+      top: 0;
+      left: 250px;
+      right: 0;
+      z-index: 1040;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      transition: left 0.3s ease;
+    }
+
+    .collapsed + .navbar-top {
+      left: 0;
+    }
+
+    /* Botón toggle sidebar */
+    .menu-toggle {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #0d6efd;
+    }
+
+    /* Contenido principal */
+    .content {
+      flex-grow: 1;
       margin-left: 250px;
+      padding: 80px 20px 20px;
       height: 100vh;
       overflow-y: auto;
-      padding: 20px;
-      transition: margin-left 0.3s;
+      transition: margin-left 0.3s ease;
     }
 
-    .main-content.full {
+    .collapsed ~ .content {
       margin-left: 0;
     }
 
+<<<<<<< HEAD
     .menu-toggle {
       position: fixed;
       top: 15px;
@@ -99,6 +143,8 @@
             margin-top: 10px;
         }
 
+=======
+>>>>>>> 8e4f530 (mejorando la vista listar usuario)
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
@@ -108,15 +154,14 @@
         transform: translateX(0);
       }
 
-      .main-content {
-        margin-left: 0;
+      .navbar-top {
+        left: 0;
       }
 
-      .menu-toggle {
-        display: block;
+      .content {
+        margin-left: 0;
       }
     }
   </style>
 </head>
 <body>
-

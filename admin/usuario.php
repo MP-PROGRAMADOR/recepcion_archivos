@@ -4,7 +4,7 @@ include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 ?>
 
-<div class="container-fluid mt-4">
+<main class="content" id="mainContent">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3><i class="bi bi-people-fill me-2"></i>Listado de Usuarios</h3>
         <a href="registrar_usuario.php" class="btn btn-primary">
@@ -17,7 +17,8 @@ include_once("../componentes/sidebar.php");
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="busqueda" class="form-label fw-bold">Buscar usuario</label>
-                    <input type="text" class="form-control" id="busqueda" placeholder="Buscar por ID, nombre o correo...">
+                    <input type="text" class="form-control" id="busqueda"
+                        placeholder="Buscar por ID, nombre o correo...">
                 </div>
             </div>
 
@@ -39,36 +40,36 @@ include_once("../componentes/sidebar.php");
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <!-- Bootstrap Icons y Script -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-$(document).ready(function () {
-    function cargarUsuarios(query = '') {
-        $.ajax({
-            url: 'buscar_usuarios.php',
-            method: 'POST',
-            data: { busqueda: query },
-            success: function (data) {
-                $('#contenidoTabla').html(data);
-            }
+    $(document).ready(function () {
+        function cargarUsuarios(query = '') {
+            $.ajax({
+                url: 'buscar_usuarios.php',
+                method: 'POST',
+                data: { busqueda: query },
+                success: function (data) {
+                    $('#contenidoTabla').html(data);
+                }
+            });
+        }
+
+        // Cargar usuarios al inicio
+        cargarUsuarios();
+
+        // Búsqueda en tiempo real
+        $('#busqueda').on('keyup', function () {
+            let texto = $(this).val();
+            cargarUsuarios(texto);
         });
-    }
-
-    // Cargar usuarios al inicio
-    cargarUsuarios();
-
-    // Búsqueda en tiempo real
-    $('#busqueda').on('keyup', function () {
-        let texto = $(this).val();
-        cargarUsuarios(texto);
     });
-});
 </script>
 <?php
- 
+
 include_once("../componentes/footer.php");
 ?>
