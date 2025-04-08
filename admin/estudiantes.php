@@ -66,7 +66,7 @@ try {
                                             $rutaFoto = "../php/uploads" . $est['ruta_foto'];
                                             if (!empty($est['ruta_foto']) && file_exists($rutaFoto)):
                                             ?>
-                                                <img src="../php/uploads<?= $rutaFoto ?>" class="rounded-circle shadow" alt="Foto de <?= htmlspecialchars($est['nombre_completo']) ?>" width="50" height="50">
+                                                <img src="../php/uploads<?= $rutaFoto ?>" class="rounded-circle shadow" alt="Foto de <?= htmlspecialchars($est['ruta_foto']) ?>" width="50" height="50">
                                             <?php else: ?>
                                                 <span class="text-muted">Sin foto</span>
                                             <?php endif; ?>

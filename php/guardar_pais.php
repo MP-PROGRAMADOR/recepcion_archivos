@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
 
         // Redirigir con éxito
-        header("Location: paises.php?mensaje=registro_exitoso");
+        header("Location: ../admin/pais.php");
         exit;
 
     } catch (PDOException $e) {
