@@ -4,7 +4,7 @@ require_once '../config/conexion.php';
 
 // Consulta segura de usuarios
 try {
-    $stmt = $pdo->prepare("SELECT id, nombre, email, creado_en FROM usuarios ORDER BY id DESC");
+    $stmt = $pdo->prepare("SELECT id, nombre FROM pais ORDER BY id DESC");
     $stmt->execute();
     $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
