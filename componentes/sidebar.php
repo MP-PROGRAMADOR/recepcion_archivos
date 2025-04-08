@@ -12,7 +12,7 @@
       <li><a href="../admin/usuario.php" class="nav-link "><i class="bi bi-people-fill me-2"></i> Usuarios</a></li>
        
       <li class="section-title">Académico</li>
-      <li><a href="estudiantes.php" class="nav-link "><i class="bi bi-person-lines-fill me-2"></i> Estudiantes</a></li>
+      <li><a href="../admin/estudiantes.php" class="nav-link "><i class="bi bi-person-lines-fill me-2"></i> Estudiantes</a></li>
        
      
 
