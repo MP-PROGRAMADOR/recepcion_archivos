@@ -13,5 +13,8 @@
       });
     });
   </script>
+  <!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.9/dist/sweetalert2.all.min.js"></script>
+
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 
-include_once("componentes/header.php");
-include_once("componentes/sidebar.php");
+include_once("../componentes/header.php");
+include_once("../componentes/sidebar.php");
 ?>
 
 
@@ -115,5 +115,5 @@ include_once("componentes/sidebar.php");
 
 </div>
 <?=
-  include_once("componentes/footer.php");
+  include_once("../componentes/footer.php");
 ?>
