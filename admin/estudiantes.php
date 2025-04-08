@@ -75,7 +75,7 @@ try {
                                             <a href="editar_estudiante.php?id=<?= $est['id'] ?>" class="btn btn-warning btn-sm" title="Editar">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
-                                            <a href="detalles_estudiante.php?id=<?= $est['id'] ?>" class="btn btn-success btn-sm" title="Detalles">
+                                            <a href="detalles_estudiantes.php?id=<?= $est['id'] ?>" class="btn btn-success btn-sm" title="Detalles">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                         </td>
