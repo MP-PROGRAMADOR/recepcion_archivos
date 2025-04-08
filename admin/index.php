@@ -5,27 +5,7 @@ include_once("../componentes/sidebar.php");
 ?>
 
 
-<!-- Main -->
-<div class="flex-grow-1 d-flex flex-column overflow-hidden">
-  <nav class="navbar navbar-expand-lg border-bottom shadow-sm sticky-top">
-    <div class="container-fluid">
-      <button class="btn btn-outline-light d-lg-none" type="button" data-bs-toggle="offcanvas"
-        data-bs-target="#sidebar">
-        <i class="bi bi-list"></i>
-      </button>
-      <span class="navbar-brand fw-bold"><?= $titulo ?? 'Panel de Administración' ?></span>
-      <div class="ms-auto d-flex gap-2 align-items-center">
-        <span class="fw-semibold">Admin</span>
-        <a href="#" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> Cerrar
-          sesión</a>
-      </div>
-    </div>
-  </nav>
 
-
-
-  <!-- Contenido principal -->
-  <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h4 class="mb-0">Resumen</h4>
