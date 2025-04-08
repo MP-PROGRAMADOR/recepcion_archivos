@@ -1,9 +1,7 @@
 <?php
-// Conexión a la base de datos
 require_once '../config/conexion.php';
 
 try {
-    // Consulta para obtener estudiantes y su país
     $stmt = $pdo->prepare("
         SELECT e.id, e.nombre_completo, e.codigo_acceso, e.fecha_nacimiento, e.creado_en, 
                p.nombre AS pais, e.ruta_foto
@@ -64,8 +62,11 @@ try {
                                         <td><?= date('d/m/Y H:i', strtotime($est['creado_en'])) ?></td>
                                         <td><?= htmlspecialchars($est['pais']) ?></td>
                                         <td>
-                                            <?php if (!empty($est['ruta_foto']) && file_exists("../php/" . $est['ruta_foto'])): ?>
-                                                <img src="../php/<?= htmlspecialchars($est['ruta_foto']) ?>" class="rounded-circle shadow" alt="Foto" width="50" height="50">
+                                            <?php
+                                            $rutaFoto = "../php/" . $est['ruta_foto'];
+                                            if (!empty($est['ruta_foto']) && file_exists($rutaFoto)):
+                                            ?>
+                                                <img src="<?= $rutaFoto ?>" class="rounded-circle shadow" alt="Foto de <?= htmlspecialchars($est['nombre_completo']) ?>" width="50" height="50">
                                             <?php else: ?>
                                                 <span class="text-muted">Sin foto</span>
                                             <?php endif; ?>
@@ -74,8 +75,8 @@ try {
                                             <a href="editar_estudiante.php?id=<?= $est['id'] ?>" class="btn btn-warning btn-sm" title="Editar">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
-                                            <a href="eliminar_estudiante.php?id=<?= $est['id'] ?>" class="btn btn-danger btn-sm" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este estudiante?');">
-                                                <i class="bi bi-trash-fill"></i>
+                                            <a href="detalles_estudiante.php?id=<?= $est['id'] ?>" class="btn btn-success btn-sm" title="Detalles">
+                                                <i class="bi bi-eye"></i>
                                             </a>
                                         </td>
                                     </tr>
@@ -94,17 +95,15 @@ try {
     </div>
 </main>
 
-<!-- Bootstrap Icons y jQuery -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Búsqueda simple por JS -->
 <script>
     $(document).ready(function () {
         $("#busqueda").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
+            let value = $(this).val().toLowerCase();
             $("#contenidoTabla tr").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                $(this).toggle($(this).text().toLowerCase().includes(value));
             });
         });
     });
