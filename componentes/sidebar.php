@@ -18,7 +18,7 @@
      
 
       <li class="section-title">Evaluaciones</li>
-      <li><a href="examenes.php" class="nav-link "><i class="bi bi-journal-check me-2"></i> Exámenes</a></li>
+      <li><a href="academico.php" class="nav-link "><i class="bi bi-journal-check me-2"></i> Año Académico</a></li>
       <li><a href="preguntas.php" class="nav-link "><i class="bi bi-patch-question-fill me-2"></i> Preguntas</a></li>
 
       <li class="section-title">Reportes</li>
