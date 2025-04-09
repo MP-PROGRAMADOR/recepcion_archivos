@@ -111,11 +111,12 @@ usort($archivos, function ($a, $b) {
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a id="btnSubirPasaporte" class="nav-link" href="#"><i class="bi bi-upload me-1"></i>Subir
+                        <a id="btnSubirPasaporte" class="nav-link text-white" href="#"><i class="bi bi-upload me-1"></i>Subir
                             Pasaporte</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-upload me-1"></i>Subir Notas</a>
+                        <a class="nav-link text-white" href="#"><i class="bi bi-upload me-1"></i>Subir Notas</a>
+                        
                     </li>
 
                 </ul>
