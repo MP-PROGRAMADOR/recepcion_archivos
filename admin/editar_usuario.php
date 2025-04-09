@@ -1,13 +1,35 @@
 <?php
+session_start(); // <-- Asegura que las sesiones funcionen
+require_once '../config/conexion.php';
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
+
+// Validar ID
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    die("ID de usuario no válido.");
+}
+
+$id = (int)$_GET['id'];
+
+// Obtener datos del usuario
+try {
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = :id LIMIT 1");
+    $stmt->execute([':id' => $id]);
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$usuario) {
+        die("Usuario no encontrado.");
+    }
+} catch (PDOException $e) {
+    die("Error al obtener datos del usuario: " . $e->getMessage());
+}
 ?>
 
 <main class="content" id="mainContent">
     <div class="container mt-4">
 
-     <!-- INICIO DE LA ALERTA DE ERRORRES -->
-     <?php
+         <!-- INICIO DE LA ALERTA DE ERRORRES -->
+         <?php
 
 
 if (isset($_SESSION['errores']) && is_array($_SESSION['errores'])):
@@ -59,31 +81,43 @@ endif;
 
 
 <!-- FIN DE LA ALERTA -->
-        <div class="card shadow rounded-4">
-            <!-- Encabezado con ícono alineado -->
-            <div class="card-header bg-primary text-white">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-geo-alt-fill fs-4 me-2"></i>
-                    <h5 class="mb-0">Registrar Nuevo País</h5>
-                </div>
-            </div>
 
+        <div class="card shadow rounded-4">
+            <div class="card-header bg-warning text-dark d-flex align-items-center">
+                <i class="bi bi-pencil-square fs-4 me-2"></i>
+                <h5 class="mb-0">Editar Usuario</h5>
+            </div>
             <div class="card-body">
-                <form action="../php/guardar_pais.php" method="POST" novalidate>
+                <form action="../php/actualizar_usuario.php" method="POST" novalidate>
+                    <input type="hidden" name="id" value="<?= htmlspecialchars($usuario['id']) ?>">
+
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="nombre_usuario" class="form-label fw-bold">
-                                <i class="bi bi-flag-fill me-1 text-secondary"></i>Nombre del país
-                            </label>
-                            <input type="text" name="nombre" class="form-control" placeholder="Ej: Guinea Ecuatorial" required>
-                        </div> 
+                            <label class="form-label fw-bold">Nombre completo</label>
+                            <input type="text" name="nombre" class="form-control" value="<?= htmlspecialchars($usuario['nombre']) ?>" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Correo electrónico</label>
+                            <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($usuario['email']) ?>" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nueva Contraseña (opcional)</label>
+                            <input type="password" name="password" class="form-control" placeholder="Solo si deseas cambiarla">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Confirmar nueva contraseña</label>
+                            <input type="password" name="contrasena_confirmada" class="form-control" placeholder="Repetir contraseña">
+                        </div>
                     </div>
 
                     <div class="d-flex justify-content-end mt-4">
                         <button type="submit" class="btn btn-success me-2">
-                            <i class="bi bi-save-fill me-1"></i> Guardar
+                            <i class="bi bi-save-fill me-1"></i> Actualizar
                         </button>
-                        <a href="pais.php" class="btn btn-secondary">
+                        <a href="usuarios.php" class="btn btn-secondary">
                             <i class="bi bi-x-circle-fill me-1"></i> Cancelar
                         </a>
                     </div>
@@ -93,7 +127,5 @@ endif;
     </div>
 </main>
 
-<!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
 <?php include_once("../componentes/footer.php"); ?>

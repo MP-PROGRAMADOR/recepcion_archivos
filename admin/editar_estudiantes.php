@@ -1,22 +1,48 @@
 <?php
-session_start(); // Necesario para acceder a $_SESSION
+session_start();
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 include_once("../config/conexion.php");
 
-// Consulta para obtener los países
+// Obtener ID
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+if ($id <= 0) {
+    $_SESSION['errores'] = ['ID de estudiante inválido.'];
+    header("Location: estudiantes.php");
+    exit;
+}
+
+// Obtener estudiante
+try {
+    $stmt = $pdo->prepare("SELECT * FROM estudiantes WHERE id = ?");
+    $stmt->execute([$id]);
+    $estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$estudiante) {
+        $_SESSION['errores'] = ['Estudiante no encontrado.'];
+        header("Location: estudiantes.php");
+        exit;
+    }
+} catch (PDOException $e) {
+    $_SESSION['errores'] = ['Error al consultar el estudiante: ' . $e->getMessage()];
+    header("Location: estudiantes.php");
+    exit;
+}
+
+// Obtener países
 try {
     $stmt = $pdo->prepare("SELECT id, nombre FROM paises ORDER BY nombre ASC");
     $stmt->execute();
     $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "<script>Swal.fire('Error', 'Error al cargar los países: " . $e->getMessage() . "', 'error');</script>";
+    $_SESSION['errores'] = ['Error al cargar los países: ' . $e->getMessage()];
     $paises = [];
 }
 ?>
 
 <main class="content" id="mainContentGuin">
     <div class="container mt-4">
+
         <!-- INICIO DE LA ALERTA DE ERRORRES -->
         <?php
 
@@ -70,33 +96,37 @@ try {
 
 
         <!-- FIN DE LA ALERTA -->
+
+        <!-- Card -->
         <div class="card shadow rounded-4">
-            <div class="card-header bg-success text-white d-flex align-items-center">
-                <i class="bi bi-person-lines-fill fs-4 me-2"></i>
-                <h5 class="mb-0">Formulario de Registro de Estudiante</h5>
+            <div class="card-header bg-warning text-dark d-flex align-items-center">
+                <i class="bi bi-pencil-square fs-4 me-2"></i>
+                <h5 class="mb-0">Editar Estudiante</h5>
             </div>
 
             <div class="card-body">
-                <form action="../php/guardar_estudiantes.php" method="POST" enctype="multipart/form-data">
+                <form action="../php/actualizar_estudiante.php" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="id" value="<?= htmlspecialchars($estudiante['id']) ?>">
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="nombre_completo" class="form-label fw-bold">Nombre Completo</label>
                             <input type="text" id="nombre_completo" name="nombre_completo" class="form-control" required
-                                placeholder="Ej: María López">
+                                value="<?= htmlspecialchars($estudiante['nombre_completo']) ?>">
                         </div>
 
                         <div class="col-md-6">
                             <label for="fecha_nacimiento" class="form-label fw-bold">Fecha de Nacimiento</label>
-                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control"
-                                required>
+                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" required
+                                value="<?= htmlspecialchars($estudiante['fecha_nacimiento']) ?>">
                         </div>
 
                         <div class="col-md-6">
                             <label for="pais" class="form-label fw-bold">País</label>
                             <select id="pais" name="pais" class="form-select" required>
-                                <option value="" disabled selected>Selecciona tu país</option>
+                                <option value="" disabled>Selecciona tu país</option>
                                 <?php foreach ($paises as $pais): ?>
-                                    <option value="<?= htmlspecialchars($pais['id']) ?>">
+                                    <option value="<?= $pais['id'] ?>" <?= $pais['id'] == $estudiante['pais_id'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($pais['nombre']) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -105,8 +135,12 @@ try {
 
                         <div class="col-md-6">
                             <label for="foto" class="form-label fw-bold">Foto del Estudiante</label>
-                            <input type="file" id="foto" name="foto" class="form-control" accept="image/*" required
-                                onchange="previewImage(event)">
+                            <input type="file" id="foto" name="foto" class="form-control" accept="image/*" onchange="previewImage(event)">
+                            <?php if (!empty($estudiante['ruta_foto'])): ?>
+                                <small class="d-block mt-1">Foto actual:</small>
+                                
+                                <img src="../php/<?= $estudiante['ruta_foto'] ?>" alt="Foto actual" class="img-thumbnail mt-1" width="100">
+                            <?php endif; ?>
                         </div>
 
                         <div class="col-md-12 text-center">
@@ -117,8 +151,8 @@ try {
                     </div>
 
                     <div class="d-flex justify-content-end mt-4">
-                        <button type="submit" class="btn btn-success me-2">
-                            <i class="bi bi-check-circle-fill me-1"></i> Registrar
+                        <button type="submit" class="btn btn-warning me-2">
+                            <i class="bi bi-pencil-fill me-1"></i> Actualizar
                         </button>
                         <a href="estudiantes.php" class="btn btn-secondary">
                             <i class="bi bi-x-circle-fill me-1"></i> Cancelar
@@ -130,10 +164,11 @@ try {
     </div>
 </main>
 
-<!-- Bootstrap Icons -->
+<!-- Bootstrap Icons + SweetAlert -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- JS Vista previa imagen -->
+
+<!-- Preview JS -->
 <script>
     function previewImage(event) {
         const input = event.target;
@@ -151,5 +186,13 @@ try {
         }
     }
 </script>
+
+<!-- Animación para alerta -->
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 
 <?php include_once("../componentes/footer.php"); ?>

@@ -1,34 +1,63 @@
 <!-- Sidebar -->
 <div class="layout">
-  <nav class="sidebar" id="sidebar">
-    <h4>📘 Gestión Académica</h4>
+<aside class="sidebar bg-dark text-white vh-100 p-3" id="sidebar">
+    <h5 class="mb-4">
+      <i class="bi bi-mortarboard-fill me-2"></i> Gestión Académica
+    </h5>
+
     <ul class="nav flex-column">
-      <li class="nav-item">
-        <a href="../admin/index.php" class="nav-link">
-          <i class="bi bi-speedometer2 me-2"></i> Dashboard
+
+      <!-- Dashboard -->
+      <li class="nav-item mb-2">
+        <a href="../admin/index.php" class="nav-link text-white">
+          <i class="bi bi-speedometer me-2"></i> Dashboard
         </a>
       </li>
-      <li class="section-title">Administración</li>
-      <li><a href="../admin/usuario.php" class="nav-link "><i class="bi bi-people-fill me-2"></i> Usuarios</a></li>
-      <li><a href="../admin/pais.php" class="nav-link "><i class="bi bi- me-2"></i> Pais</a></li>
-       
-      <li class="section-title">Académico</li>
-      <li><a href="../admin/estudiantes.php" class="nav-link "><i class="bi bi-person-lines-fill me-2"></i> Estudiantes</a></li>
-       
-     
 
-      <li class="section-title">Evaluaciones</li>
-      <li><a href="academico.php" class="nav-link "><i class="bi bi-journal-check me-2"></i> Año Académico</a></li>
-      <li><a href="preguntas.php" class="nav-link "><i class="bi bi-patch-question-fill me-2"></i> Preguntas</a></li>
+      <!-- Sección Administración -->
+      <li class="text-uppercase text-secondary small fw-bold mt-4 mb-2">Administración</li>
 
-      <li class="section-title">Reportes</li>
-      <li><a href="reportes_general.php" class="nav-link "><i class="bi bi-graph-up me-2"></i> General</a></li>
+      <li class="nav-item mb-2">
+        <a href="../admin/usuario.php" class="nav-link text-white">
+          <i class="bi bi-person-badge-fill me-2"></i> Usuarios
+        </a>
+      </li>
 
-      <li class="section-title">Configuración</li>
-      <li><a href="configuracion.php" class="nav-link "><i class="bi bi-gear-fill me-2"></i> Ajustes</a></li>
+      <li class="nav-item mb-2">
+        <a href="../admin/pais.php" class="nav-link text-white">
+          <i class="bi bi-geo-alt-fill me-2"></i> País
+        </a>
+      </li>
 
-      <li class="mt-3"><a href="logout.php" class="nav-link text-danger"><i class="bi bi-box-arrow-left me-2"></i> Cerrar sesión</a></li>
+      <li class="nav-item mb-2">
+        <a href="../admin/estudiantes.php" class="nav-link text-white">
+          <i class="bi bi-people-fill me-2"></i> Estudiantes
+        </a>
+      </li>
+
+      <li class="nav-item mb-2">
+        <a href="academico.php" class="nav-link text-white">
+          <i class="bi bi-calendar2-week-fill me-2"></i> Año Académico
+        </a>
+      </li>
+
+      <!-- Sección Configuración -->
+      <li class="text-uppercase text-secondary small fw-bold mt-4 mb-2">Configuración</li>
+
+      <li class="nav-item mb-2">
+        <a href="configuracion.php" class="nav-link text-white">
+          <i class="bi bi-gear-fill me-2"></i> Ajustes
+        </a>
+      </li>
+
+      <!-- Cierre de sesión -->
+      <li class="nav-item mt-4">
+        <a href="logout.php" class="nav-link text-danger">
+          <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+        </a>
+      </li>
     </ul>
+  </aside>
   </nav>
 
   <!-- Navbar superior -->
