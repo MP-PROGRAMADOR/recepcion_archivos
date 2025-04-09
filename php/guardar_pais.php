@@ -1,5 +1,9 @@
 <?php
-session_start(); // Iniciar sesión
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../index.php');
+    exit;
+}
 require_once '../config/conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -1,4 +1,9 @@
 <?php
+
+
+
+
+
 // Configuración de la base de datos
 $host = 'localhost'; // o la IP del servidor
 $dbname = 'recepcion_archivo'; // nombre de la base de datos

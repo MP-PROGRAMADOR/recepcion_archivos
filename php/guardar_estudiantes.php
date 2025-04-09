@@ -1,6 +1,10 @@
 <?php
 ob_start();
-session_start(); // Obligatorio al usar sesiones
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../index.php');
+    exit;
+}
 require_once '../config/conexion.php';
 
 $directorio = __DIR__ . '/upload/';

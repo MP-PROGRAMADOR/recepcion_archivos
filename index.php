@@ -84,7 +84,7 @@
     <!-- Panel izquierdo -->
     <div class="col-md-5 d-flex flex-column justify-content-center align-items-start px-5 py-4"
       style="background-color: var(--color-principal); border-right: 1px solid #dee2e6;">
-     <!--  <img src="../public/logo_academico.png" alt="Logo académico" class="mb-4" style="width: 70px;"> -->
+      <!--  <img src="../public/logo_academico.png" alt="Logo académico" class="mb-4" style="width: 70px;"> -->
       <h1 class="h4 fw-semibold text-white">Bienvenido/a</h1>
       <p class="text-white mt-2">
         Plataforma oficial para la gestión y recepción de archivos académicos. Accede con tus credenciales institucionales.
@@ -98,7 +98,57 @@
           <i class="bi bi-person-circle me-2"></i>Iniciar sesión
         </h2>
 
-        <form action="controller_login.php" method="POST" class="fade-in">
+
+
+        <?php
+
+
+        if (isset($_SESSION['error']) && !empty($_SESSION['error'])):
+        ?>
+          <div id="alerta-exito"
+            class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
+            role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+            <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
+            <div>
+              <strong>¡Éxito!</strong>
+              <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
+            </div>
+            <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+          </div>
+
+          <script>
+            // Ocultar automáticamente luego de 6 segundos
+            setTimeout(() => {
+              const alerta = document.getElementById('alerta-exito');
+              if (alerta) {
+                alerta.classList.remove('show');
+                alerta.classList.add('fade');
+                setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
+              }
+            }, 6000);
+          </script>
+
+          <style>
+            @keyframes fadeIn {
+              from {
+                opacity: 0;
+                transform: translateY(-10px);
+              }
+
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+          </style>
+        <?php
+          unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
+        endif;
+        ?>
+
+
+
+        <form action="php/login.php" method="POST" class="fade-in" autocomplete="off">
 
           <!-- Email -->
           <div class="mb-3">
@@ -114,7 +164,7 @@
             <label for="password" class="form-label">Contraseña</label>
             <div class="input-group">
               <span class="input-group-text bg-white"><i class="bi bi-lock-fill"></i></span>
-              <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa tu contraseña institucional" required>
+              <input type="password" class="form-control" id="contrasena" name="contrasena" placeholder="Ingresa tu contraseña institucional" required>
             </div>
           </div>
 

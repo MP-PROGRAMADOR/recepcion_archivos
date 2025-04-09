@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../index.php');
+    exit;
+}
 require_once("../config/conexion.php");
 
 // Verificamos si el ID del estudiante está presente y es válido

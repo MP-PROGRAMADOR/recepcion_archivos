@@ -52,7 +52,7 @@
 
       <!-- Cierre de sesión -->
       <li class="nav-item mt-4">
-        <a href="logout.php" class="nav-link text-danger">
+        <a href="../php/logout.php" class="nav-link text-danger">
           <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
         </a>
       </li>

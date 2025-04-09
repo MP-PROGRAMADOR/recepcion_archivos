@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../index.php');
+    exit;
+}
 include '../config/conexion.php'; // Archivo de conexión
 
 function sanitize_input($data) {
