@@ -101,7 +101,7 @@ usort($archivos, function ($a, $b) {
 </head>
 
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="bi bi-mortarboard-fill me-2"></i> Usuario:
                 <?= htmlspecialchars($estudiante['nombre_completo']) ?></a>
