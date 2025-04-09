@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($estudiante) {
       session_start();
       $_SESSION['estudiante'] = $estudiante;
+      $_SESSION['id'] = $estudiante['id'];
       header("Location: ../estudiante/panel_estudiante.php");
       exit();
     } else {
