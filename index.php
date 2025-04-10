@@ -176,7 +176,7 @@
 
         <!-- Link volver -->
         <div class="text-center mt-4">
-          <a href="index.php" class="link-volver">
+          <a href="register.php" class="link-volver">
             <i class="bi bi-arrow-left me-1"></i> Volver a la página principal
           </a>
         </div>
