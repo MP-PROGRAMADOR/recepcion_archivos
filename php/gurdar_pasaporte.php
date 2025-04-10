@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Insertar en base de datos
+    // Insertar en base de datos (almacenar solo el nombre del archivo)
     try {
         $stmt = $pdo->prepare("INSERT INTO pasaportes 
             (estudiante_id, numero_pasaporte, fecha_emision, fecha_expiracion, archivo_url) 
@@ -80,7 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':numero_pasaporte', $numero_pasaporte);
         $stmt->bindParam(':fecha_emision', $fecha_emision);
         $stmt->bindParam(':fecha_expiracion', $fecha_expiracion);
-        $stmt->bindParam(':archivo_url', $ruta_archivo);
+        
+        // Guardamos solo el nombre del archivo
+        $stmt->bindParam(':archivo_url', $nombre_archivo_final);
         $stmt->execute();
 
         header("Location: ../estudiante/panel_estudiante.php");
@@ -91,5 +93,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
-

@@ -207,12 +207,10 @@ usort($archivos, function ($a, $b) {
                                                 $esPDF = strtolower($ext) === 'pdf';
                                             ?>
                                                 <tr>
-                                                    <td><span
-                                                            class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span>
-                                                    </td>
+                                                    <td><span class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span></td>
                                                     <td>
                                                         <?php if ($esImagen): ?>
-                                                            <img src="../php/<?= $archivo['archivo_url'] ?>"
+                                                            <img src="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= $archivo['archivo_url'] ?>"
                                                                 class="file-preview rounded border">
                                                         <?php else: ?>
                                                             <?= basename($archivo['archivo_url']) ?>
@@ -220,8 +218,7 @@ usort($archivos, function ($a, $b) {
                                                     </td>
                                                     <td><?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></td>
                                                     <td>
-                                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
-                                                            data-bs-target="#modalArchivo<?= $archivo['id'] ?>">
+                                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalArchivo<?= $archivo['id'] ?>">
                                                             <i class="bi bi-eye"></i> Ver
                                                         </button>
                                                     </td>
@@ -233,58 +230,45 @@ usort($archivos, function ($a, $b) {
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title">Detalles del Archivo</h5>
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="modal"></button>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                             </div>
                                                             <div class="modal-body">
                                                                 <div class="accordion" id="accordion<?= $archivo['id'] ?>">
                                                                     <div class="accordion-item">
                                                                         <h2 class="accordion-header">
-                                                                            <button class="accordion-button collapsed"
-                                                                                type="button" data-bs-toggle="collapse"
-                                                                                data-bs-target="#collapse<?= $archivo['id'] ?>">
+                                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $archivo['id'] ?>">
                                                                                 Información del archivo
                                                                             </button>
                                                                         </h2>
-                                                                        <div id="collapse<?= $archivo['id'] ?>"
-                                                                            class="accordion-collapse collapse">
+                                                                        <div id="collapse<?= $archivo['id'] ?>" class="accordion-collapse collapse">
                                                                             <div class="accordion-body">
                                                                                 <div class="row">
                                                                                     <!-- Columna 1: Información del Estudiante -->
                                                                                     <div class="col-md-6">
-                                                                                        <p><strong>ID Estudiante:</strong>
-                                                                                            <?= $estudiantes['codigo_acceso'] ?></p>
-                                                                                        <p><strong>Nombre:</strong>
-                                                                                            <?= $estudiante['nombre_completo'] ?>
-                                                                                        </p>
-                                                                                        <p><strong>Tipo:</strong>
-                                                                                            <?= htmlspecialchars($archivo['tipo']) ?>
-                                                                                        </p>
-                                                                                        <p><strong>Fecha:</strong>
-                                                                                            <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
-                                                                                        </p>
-                                                                                        <p><strong>Archivo:</strong>
-                                                                                            <?= basename($archivo['archivo_url']) ?>
-                                                                                        </p>
+                                                                                        <p><strong>ID Estudiante:</strong> <?= $estudiantes['codigo_acceso'] ?></p>
+                                                                                        <p><strong>Nombre:</strong> <?= $estudiante['nombre_completo'] ?></p>
+                                                                                        <p><strong>Tipo:</strong> <?= htmlspecialchars($archivo['tipo']) ?></p>
+                                                                                        <p><strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></p>
+                                                                                        <p><strong>Archivo:</strong> <?= basename($archivo['archivo_url']) ?></p>
                                                                                     </div>
-
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer d-flex justify-content-center">
-                                                                <a href="../php/upload/notas<?= htmlspecialchars($archivo['archivo_url']) ?>" class="btn btn-success" target="_blank">
+                                                                <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>" class="btn btn-success" target="_blank">
                                                                     <i class="bi bi-eye"></i> Ver PDF
                                                                 </a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             <?php endforeach; ?>
                                         </tbody>
+
                                     </table>
                                 </div>
                             </div>
