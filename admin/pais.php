@@ -1,9 +1,14 @@
 <?php
-session_start(); // Iniciar sesión
+
+
+
+include_once("../componentes/header.php");
+include_once("../componentes/sidebar.php");
+
 require_once '../config/conexion.php';
 
 // Configuración de paginación
-$por_pagina = 5;
+$por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
 
@@ -22,9 +27,6 @@ try {
 } catch (PDOException $e) {
     die("Error al obtener los países: " . $e->getMessage());
 }
-
-include_once("../componentes/header.php");
-include_once("../componentes/sidebar.php");
 ?>
 
 <main class="content" id="mainContent">
