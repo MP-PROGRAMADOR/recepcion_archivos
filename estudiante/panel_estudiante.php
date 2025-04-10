@@ -249,9 +249,6 @@ usort($archivos, function ($a, $b) {
                                                                         <div id="collapse<?= $archivo['id'] ?>"
                                                                             class="accordion-collapse collapse">
                                                                             <div class="accordion-body">
-
-
-
                                                                                 <div class="row">
                                                                                     <!-- Columna 1: Información del Estudiante -->
                                                                                     <div class="col-md-6">
@@ -271,62 +268,18 @@ usort($archivos, function ($a, $b) {
                                                                                         </p>
                                                                                     </div>
 
-                                                                                    <!-- Columna 2: Información del archivo -->
-                                                                                    <div class="col-md-6">
-                                                                                        <?php if ($pasaporte) { ?>
-
-                                                                                            <p><strong>Numero de Pasaporte:</strong>
-                                                                                                <?= strtotime($pasaporte['numero_pasaporte']) ?>
-                                                                                            </p>
-                                                                                            <p><strong>Fecha de Emision:</strong>
-                                                                                                <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
-                                                                                            </p>
-                                                                                            <p><strong>Fecha de Expiracion:</strong>
-                                                                                                <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
-                                                                                            </p>
-                                                                                            <p><strong>Fecha de Subida:</strong>
-                                                                                                <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
-                                                                                            </p>
-                                                                                        </div>
-
-                                                                                        <?php
-                                                                                        } else {
-                                                                                            echo "<p>No se encontró el pasaporte para este estudiante.</p>";
-                                                                                        }
-                                                                                        ?>
                                                                                 </div>
-
-
-
-
-
                                                                             </div>
                                                                         </div>
                                                                     </div>
+
                                                                 </div>
-                                                                <hr>
-                                                                <?php if ($esImagen): ?>
-                                                                    <img src="../php/<?= $archivo['archivo_url'] ?>"
-                                                                        class="img-fluid border rounded" alt="Vista previa">
-                                                                    <a href="../php/<?= $archivo['archivo_url'] ?>"
-                                                                        class="btn btn-success mt-3" download>Descargar Imagen</a>
-                                                                <?php elseif ($esPDF): ?>
-                                                                    <iframe src="../php/<?= $archivo['archivo_url'] ?>" width="100%"
-                                                                        height="400px"></iframe>
-                                                                    <a href="../php/<?= $archivo['archivo_url'] ?>"
-                                                                        class="btn btn-danger mt-3" download>Descargar PDF</a>
-                                                                <?php else: ?>
-                                                                    <a href="../php/<?= $archivo['archivo_url'] ?>"
-                                                                        class="btn btn-secondary mt-3" download>Descargar
-                                                                        Archivo</a>
-                                                                <?php endif; ?>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
 
-                                            <?php endforeach; ?>
+                                                <?php endforeach; ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -447,7 +400,7 @@ usort($archivos, function ($a, $b) {
                 }
             });
             eliminarBtn.addEventListener("click", function () {
-                if(contenedor.hasChildNodes()){
+                if (contenedor.hasChildNodes()) {
 
                     contenedor.innerHTML = "";
                     eliminarBtn.style.display = "none";
