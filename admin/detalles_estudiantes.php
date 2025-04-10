@@ -61,12 +61,7 @@ try {
                 <a href="estudiantes.php" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Volver al Listado
                 </a>
-                <a href="generar_img.php?id=<?= $estudiante_id ?>" class="btn btn-outline-primary">
-                    <i class="bi bi-image"></i> Generar Imagen
-                </a>
-                <a href="generar_pdf.php?id=<?= $estudiante_id ?>" class="btn btn-outline-danger">
-                    <i class="bi bi-file-earmark-pdf"></i> Generar PDF
-                </a>
+                 
             </div>
         </div>
 

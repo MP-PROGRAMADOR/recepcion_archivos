@@ -1,7 +1,5 @@
 <?php
 
-
-
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
@@ -12,14 +10,21 @@ $por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
 
-// Contar total de países
-$total_stmt = $pdo->query("SELECT COUNT(*) as total FROM paises");
+// Contar el total de países con estudiantes inscritos
+$total_stmt = $pdo->query("SELECT COUNT(DISTINCT pais_id) as total 
+                           FROM estudiantes");
 $total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 $total_paginas = ceil($total_filas / $por_pagina);
 
-// Obtener países con límite y offset
+// Obtener países con estudiantes y el total de estudiantes
 try {
-    $stmt = $pdo->prepare("SELECT id, nombre FROM paises ORDER BY id DESC LIMIT :inicio, :por_pagina");
+    $stmt = $pdo->prepare("SELECT p.id, p.nombre, COUNT(e.id) as estudiantes 
+                           FROM paises p
+                           LEFT JOIN estudiantes e ON p.id = e.pais_id
+                           GROUP BY p.id
+                           HAVING estudiantes > 0
+                           ORDER BY p.id DESC
+                           LIMIT :inicio, :por_pagina");
     $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
     $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
     $stmt->execute();
@@ -33,8 +38,6 @@ try {
     <div class="container mt-4">
         <!-- INICIO DE LA ALERTA -->
         <?php
-
-
         if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
         ?>
             <div id="alerta-exito"
@@ -47,7 +50,6 @@ try {
                 </div>
                 <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
-
             <script>
                 // Ocultar automáticamente luego de 6 segundos
                 setTimeout(() => {
@@ -59,7 +61,6 @@ try {
                     }
                 }, 6000);
             </script>
-
             <style>
                 @keyframes fadeIn {
                     from {
@@ -80,10 +81,7 @@ try {
 
         <!-- FIN DE LA ALERTA -->
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3><i class="bi bi-globe-americas me-2"></i>Listado de Países</h3>
-            <a href="registrar_pais.php" class="btn btn-primary">
-                <i class="bi bi-flag-fill me-1"></i> Nuevo País
-            </a>
+            <h3><i class="bi bi-globe-americas me-2"></i>Listado de Países con Estudiantes Inscritos</h3>
         </div>
 
         <div class="card shadow rounded-4">
@@ -103,7 +101,7 @@ try {
                             <tr>
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
                                 <th><i class="bi bi-flag me-1"></i>Nombre</th>
-                                <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
+                                <th><i class="bi bi-person-fill me-1"></i>Estudiantes</th>
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
@@ -112,19 +110,12 @@ try {
                                     <tr>
                                         <td><?= htmlspecialchars($pais['id']) ?></td>
                                         <td><?= htmlspecialchars($pais['nombre']) ?></td>
-                                        <td>
-                                            <a href="editar_pais.php?id=<?= $pais['id'] ?>" class="btn btn-sm btn-outline-warning me-1" title="Editar">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </a>
-                                            <a href="eliminar_pais.php?id=<?= $pais['id'] ?>" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este país?');">
-                                                <i class="bi bi-x-circle-fill"></i>
-                                            </a>
-                                        </td>
+                                        <td><?= htmlspecialchars($pais['estudiantes']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="3" class="text-center text-muted">No hay países registrados</td>
+                                    <td colspan="3" class="text-center text-muted">No hay países con estudiantes registrados</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
