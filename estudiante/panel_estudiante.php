@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['estudiante'])) {
-    header("Location: ../estudiante/index.php");
+    header("Location: index.php");
     exit();
 }
 
@@ -353,7 +353,8 @@ usort($archivos, function ($a, $b) {
 
 
     <!-- Modal de Advertencia -->
-    <div class="modal fade" id="modalPasosFormulario" tabindex="-1" aria-labelledby="modalPasosLabel" aria-hidden="true">
+    <div class="modal fade" id="modalPasosFormulario" tabindex="-1" aria-labelledby="modalPasosLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-warning shadow">
                 <div class="modal-header bg-warning text-dark">
@@ -392,7 +393,7 @@ usort($archivos, function ($a, $b) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-   
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const contenedor = document.getElementById("formularioPasaporte");
@@ -408,36 +409,35 @@ usort($archivos, function ($a, $b) {
             agregarBtn.addEventListener("click", function () {
                 if (!contenedor.hasChildNodes()) {
                     contenedor.innerHTML = `
-                <div class="form-section border rounded p-4 shadow-sm bg-white">
-                    <h5 class="d-flex justify-content-between mb-4 text-primary">
-                        <i class="bi bi-passport me-2"></i>Formulario de Pasaporte
-                    </h5>
-                    <form action="../php/gurdar_pasaporte.php" method="POST" enctype="multipart/form-data">
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label for="numero" class="form-label fw-semibold text-dark">N° de Pasaporte</label>
-                                <input type="text" name="numero_pasaporte" id="numero" class="form-control" required placeholder="Ej: A12345678">
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <label for="archivo" class="form-label">Selecciona archivo (PDF)</label>
-                                <input type="file" name="archivo" id="archivo" class="form-control" accept="application/pdf" required>
-                                <small class="text-muted">Solo se permiten archivos PDF</small>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <label for="fecha_emision" class="form-label">Fecha de Emisión</label>
-                                <input type="date" name="fecha_emision" id="fecha_emision" class="form-control" required>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <label for="fecha_expiracion" class="form-label">Fecha de Expiración</label>
-                                <input type="date" name="fecha_expiracion" id="fecha_expiracion" class="form-control" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-success px-4">
-                            <i class="bi bi-save me-2"></i>Guardar pasaporte
-                        </button>
-                    </form>
-                </div>
-            `;
+                        <div class="form-section border rounded p-4 shadow-sm bg-white">
+                            <h5 class="d-flex justify-content-between mb-4 text-primary">
+                                <i class="bi bi-passport me-2"></i>Formulario de Pasaporte
+                            </h5>
+                            <form action="../php/gurdar_pasaporte.php" method="POST" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label for="numero" class="form-label fw-semibold text-dark">N° de Pasaporte</label>
+                                        <input type="text" name="numero_pasaporte" id="numero" class="form-control" required placeholder="Ej: A12345678">
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="archivo" class="form-label">Selecciona archivo (PDF)</label>
+                                        <input type="file" name="archivo" id="archivo" class="form-control" accept="application/pdf" required>
+                                        <small class="text-muted">Solo se permiten archivos PDF</small>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="fecha_emision" class="form-label">Fecha de Emisión</label>
+                                        <input type="date" name="fecha_emision" id="fecha_emision" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="fecha_expiracion" class="form-label">Fecha de Expiración</label>
+                                        <input type="date" name="fecha_expiracion" id="fecha_expiracion" class="form-control" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-success px-4">
+                                    <i class="bi bi-save me-2"></i>Guardar pasaporte
+                                </button>
+                            </form>
+                        </div>            `;
                 } else {
                     mostrarModalPasos();
                 }
@@ -446,23 +446,35 @@ usort($archivos, function ($a, $b) {
                     eliminarBtn.style.display = "inline-block";
                 }
             });
+            eliminarBtn.addEventListener("click", function () {
+                if(contenedor.hasChildNodes()){
+
+                    contenedor.innerHTML = "";
+                    eliminarBtn.style.display = "none";
+                }
+            });
+
 
             btnSubirNotas.addEventListener("click", function () {
                 if (!contenedor.hasChildNodes()) {
-                    contenedor.innerHTML = `
-                <div class="form-section border rounded p-4 shadow-sm bg-white">
-                    <h5 class="mb-3 text-primary"><i class="bi bi-upload me-2"></i>Subir Nota</h5>
-                    <form action="subir_archivo.php" method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="archivo" class="form-label">Selecciona archivo (PDF, JPG, PNG)</label>
-                            <input type="file" name="archivo" id="archivo" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
-                        </div>
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-cloud-arrow-up me-1"></i>Subir archivo
-                        </button>
-                    </form>
-                </div>
-            `;
+
+                    fetch('formulario_notas.php')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error al cargar el formulario');
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            document.getElementById('formularioPasaporte').innerHTML = html;
+
+                        })
+                        .catch(error => {
+                            document.getElementById('formularioPasaporte').innerHTML =
+                                `<div class="alert alert-danger">Hubo un problema al cargar el formulario: ${error.message}</div>`;
+                        });
+
+
                 } else {
                     mostrarModalPasos();
                 }
@@ -472,14 +484,16 @@ usort($archivos, function ($a, $b) {
                 }
             });
 
-            eliminarBtn.addEventListener("click", function () {
-                contenedor.innerHTML = "";
-                eliminarBtn.style.display = "none";
-            });
+
         });
+
+
+
     </script>
 
- 
+
+
+
 
 
 
