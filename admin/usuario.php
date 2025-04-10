@@ -119,7 +119,7 @@ include_once("../componentes/sidebar.php");
                                         <a href="editar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-warning me-1" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <a href="eliminar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este usuario?');">
+                                        <a href="eliminar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-danger d-none" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este usuario?');">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
                                     </td>
