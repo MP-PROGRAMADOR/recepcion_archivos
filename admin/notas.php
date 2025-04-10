@@ -45,6 +45,7 @@ LIMIT :inicio, :por_pagina;
     $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
     $stmt->execute();
     $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  
 } catch (PDOException $e) {
     die("Error al obtener los estudiantes: " . $e->getMessage());
 }
