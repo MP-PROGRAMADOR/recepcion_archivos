@@ -2,6 +2,15 @@
  
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
+require_once '../config/conexion.php';
+$stmt = $pdo->query("
+    SELECT 
+        (SELECT COUNT(*) FROM estudiantes) AS total_estudiantes,
+        (SELECT COUNT(*) FROM pasaportes) AS total_pasaportes,
+        (SELECT COUNT(*) FROM notas) AS total_notas
+");
+$totales = $stmt->fetch(PDO::FETCH_ASSOC);
+
 ?>
 
 <main class="content" id="mainContent">
@@ -17,28 +26,29 @@ include_once("../componentes/sidebar.php");
     <div class="col-md-4">
       <div class="card shadow-sm border-start border-primary border-4">
         <div class="card-body">
-          <h6 class="card-title">Total de Exámenes</h6>
-          <h3><i class="bi bi-journal-text me-2"></i>245</h3>
+          <h6 class="card-title">Total de Estudiantes</h6>
+          <h3><i class="bi bi-people me-2"></i><?php echo $totales['total_estudiantes'];  ?></h3>
         </div>
       </div>
     </div>
     <div class="col-md-4">
       <div class="card shadow-sm border-start border-success border-4">
         <div class="card-body">
-          <h6 class="card-title">Estudiantes Activos</h6>
-          <h3><i class="bi bi-people me-2"></i>132</h3>
+          <h6 class="card-title">Total de  Notas</h6>
+          <h3><i class="bi bi-journal-text me-2"></i><?php echo $totales['total_pasaportes'];?></h3>
         </div>
       </div>
     </div>
     <div class="col-md-4">
       <div class="card shadow-sm border-start border-warning border-4">
         <div class="card-body">
-          <h6 class="card-title">Escuelas Registradas</h6>
-          <h3><i class="bi bi-building me-2"></i>12</h3>
+          <h6 class="card-title">Total de  Paises</h6>
+          <h3><i class="bi bi-flag-fill me-2"></i><?php echo $totales['total_notas'];?></h3>
         </div>
       </div>
     </div>
   </div>
+
 
   <div class="row g-3">
     <div class="col-lg-6">

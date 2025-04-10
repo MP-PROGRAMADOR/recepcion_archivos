@@ -41,6 +41,18 @@
         </a>
       </li>
 
+      <li class="nav-item mb-2">
+        <a href="../admin/pasaportes.php" class="nav-link text-white">
+        <i class="bi bi-person-vcard me-2"></i> Pasaportes
+        </a>
+      </li>
+
+      <li class="nav-item mb-2">
+        <a href="../admin/notas.php" class="nav-link text-white">
+        <i class="bi bi-clipboard-data me-2"></i> Notas
+        </a>
+      </li>
+
       <!-- Sección Configuración -->
       <li class="text-uppercase text-secondary small fw-bold mt-4 mb-2">Configuración</li>
 
