@@ -117,7 +117,7 @@ endif;
                         <button type="submit" class="btn btn-success me-2">
                             <i class="bi bi-save-fill me-1"></i> Actualizar
                         </button>
-                        <a href="usuarios.php" class="btn btn-secondary">
+                        <a href="usuario.php" class="btn btn-secondary">
                             <i class="bi bi-x-circle-fill me-1"></i> Cancelar
                         </a>
                     </div>
