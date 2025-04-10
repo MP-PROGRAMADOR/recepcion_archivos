@@ -7,7 +7,7 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 require_once '../config/conexion.php';
 
-$directorio = __DIR__ . 'upload/perfil/';
+$directorio = __DIR__ . './upload/perfil/';
 if (!is_dir($directorio)) {
     mkdir($directorio, 0777, true);
 } else {
@@ -112,7 +112,7 @@ try {
     // Subir imagen
     if ($foto_subida) {
         $nombre_archivo = 'estudiante_' . $estudiante_id . '.' . $extension;
-        $ruta_guardada = 'upload/' . $nombre_archivo;
+        $ruta_guardada = './upload/perfil/' . $nombre_archivo;
         $ruta_completa = $directorio . $nombre_archivo;
 
         if (move_uploaded_file($nombre_temporal, $ruta_completa)) {

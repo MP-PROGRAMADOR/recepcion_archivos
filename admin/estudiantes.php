@@ -137,7 +137,7 @@ include_once("../componentes/sidebar.php");
                                             <?php
                                             $foto = $est['ruta_foto'];
                                             $rutaRelativa = '../php/upload/' . basename($foto);
-                                            $rutaServidor = __DIR__ . '/../php/upload/' . basename($foto);
+                                            $rutaServidor = __DIR__ . '/../php/upload/perfil/' . basename($foto);
                                             ?>
 
                                             <?php if (!empty($foto) && file_exists($rutaServidor)): ?>
