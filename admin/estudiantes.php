@@ -6,7 +6,7 @@ require_once '../config/conexion.php';
 // Consulta de estudiantes con JOIN a países
 // Configuración de paginación
 $por_pagina = 4;
-$pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$pagina_actual = isset($_GET['pagina']) ? (int) $_GET['pagina'] : 1;
 $inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
 
 // Contar total de estudiantes
@@ -132,25 +132,23 @@ include_once("../componentes/sidebar.php");
                                         <td><?= htmlspecialchars($est['codigo_acceso']) ?></td>
                                         <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
                                         <td><?= date('d/m/Y H:i', strtotime($est['creado_en'])) ?></td>
-                                        <td><?= htmlspecialchars($est['pais']) ?></td>
+                                        <td><?= htmlspecialchars($est['pais'] ?? 'No definido') ?></td>
                                         <td>
                                             <?php
-                                            $foto = $est['ruta_foto'];
-                                            $rutaRelativa = '../php/upload/' . basename($foto);
-                                            $rutaServidor = __DIR__ . '/../php/upload/perfil/' . basename($foto);
+                                            $foto = $est['ruta_foto']; // Ej: upload/perfil/perfil-12345678.png
+                                            $rutaRelativa = '../' . $foto; // Ruta visible desde el navegador
+                                            $rutaServidor = __DIR__ . '/../' . $foto; // Ruta física en disco
+                                            
                                             ?>
-
                                             <?php if (!empty($foto) && file_exists($rutaServidor)): ?>
-                                                <img src="<?= $rutaRelativa ?>" class="rounded-circle shadow"
-                                                    alt="Foto de <?= htmlspecialchars($est['nombre_completo']) ?>" width="50"
-                                                    height="50">
+                                                <img src="<?= $rutaRelativa ?>" class="rounded-circle shadow img-thumbnail"
+                                                    alt="Foto de <?= htmlspecialchars($est['nombre_completo']) ?>" width="60"
+                                                    height="60">
                                             <?php else: ?>
                                                 <span class="text-muted">Sin foto</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <p><strong>DEBUG ID:</strong> <?= $_GET['id'] ?? 'No ID' ?></p>
-
                                             <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>"
                                                 class="btn btn-warning btn-sm" title="Editar">
                                                 <i class="bi bi-pencil-fill"></i>
@@ -169,8 +167,9 @@ include_once("../componentes/sidebar.php");
                             <?php endif; ?>
                         </tbody>
                     </table>
-
                 </div>
+
+
                 <!-- PAGINACION -->
                 <!-- Paginación -->
                 <?php if ($total_paginas > 1): ?>

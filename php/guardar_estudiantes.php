@@ -109,21 +109,19 @@ try {
     $anio = date('y');
     $codigo_acceso = "{$iniciales_nombre}-{$iniciales_pais}-{$anio}-{$estudiante_id}";
 
-
-
-    $stmt = $pdo->prepare("UPDATE estudiantes SET codigo_acceso = ?, ruta_foto = ? WHERE id = ?");
-    $stmt->execute([$codigo_acceso, $ruta_foto, $estudiante_id]);
-
     // Subir imagen
     if ($foto_subida) {
-        $nombre_archivo = 'perfil-' . $codigo_acceso . '-' . $estudiante_id . '.' . $extension;
-        $ruta_guardada = './upload/perfil/' . $nombre_archivo;
+        $nombre_archivo = 'perfil-' . $codigo_acceso.'.' . $extension;
+        $ruta_guardada = 'upload/perfil/' . $nombre_archivo;
         $ruta_completa = $directorio . $nombre_archivo;
-
+        
         if (move_uploaded_file($nombre_temporal, $ruta_completa)) {
             $ruta_foto = $ruta_guardada;
         }
     }
+    
+    $stmt = $pdo->prepare("UPDATE estudiantes SET codigo_acceso = ?, ruta_foto = ? WHERE id = ?");
+    $stmt->execute([$codigo_acceso, $ruta_foto, $estudiante_id]);
 
     $_SESSION['exito'] = "El estudiante fue registrado correctamente con el código: $codigo_acceso";
 
