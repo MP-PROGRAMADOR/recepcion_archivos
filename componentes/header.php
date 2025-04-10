@@ -1,8 +1,8 @@
 <?php
 session_start();
 if (!isset($_SESSION['usuario_id'])) {
-  header('Location: ../index.php');
-  exit;
+    header('Location: ../index.php');
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -12,13 +12,9 @@ if (!isset($_SESSION['usuario_id'])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard | Recepción de Archivos</title>
-  <<!-- Agrega estos estilos y scripts en el <head> o justo antes del cierre del body -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.2.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
@@ -192,65 +188,6 @@ if (!isset($_SESSION['usuario_id'])) {
       margin-bottom: 10px;
     }
   </style>
-
-  <?php
-
-  // Conexión
-  require_once '../config/conexion.php';
-
-  // Consulta para obtener los países y la cantidad de estudiantes en cada país
-  $query = "
-    SELECT p.nombre AS pais, COUNT(e.id) AS estudiantes
-    FROM paises p
-    LEFT JOIN estudiantes e ON e.pais_id = p.id
-    GROUP BY p.id
-    ORDER BY estudiantes DESC;
-";
-
-
-  $stmt = $pdo->prepare($query);
-  $stmt->execute();
-  $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-  ?>
-
-
-
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript">
-    google.charts.load('current', {
-      'packages': ['geochart'],
-    });
-    google.charts.setOnLoadCallback(drawRegionsMap);
-
-    function drawRegionsMap() {
-      var data = google.visualization.arrayToDataTable([
-        ['Country', 'Popularity'],
-        <?php
-        // Generar el array con los países y la cantidad de estudiantes
-        foreach ($paises as $pais) {
-          echo "['" . addslashes($pais['pais']) . "', " . $pais['estudiantes'] . "],\n";
-        }
-        ?>
-      ]);
-
-      var options = {
-        region: 'world',
-        displayMode: 'regions',
-        resolution: 'countries',
-        colorAxis: {
-          colors: ['#e0f2f1', '#00695c']
-        } // Gradiente de color
-      };
-      var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
-
-      chart.draw(data, options);
-    }
-  </script>
-
-
-
 </head>
 
 <body>
