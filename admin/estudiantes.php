@@ -136,8 +136,8 @@ include_once("../componentes/sidebar.php");
                                         <td>
                                             <?php
                                             $foto = $est['ruta_foto']; // Ej: upload/perfil/perfil-12345678.png
-                                            $rutaRelativa = '../' . $foto; // Ruta visible desde el navegador
-                                            $rutaServidor = __DIR__ . '/../' . $foto; // Ruta física en disco
+                                            $rutaRelativa = '../php/' . $foto; // Ruta visible desde el navegador
+                                            $rutaServidor = __DIR__ . './php/' . $foto; // Ruta física en disco
                                             
                                             ?>
                                             <?php if (!empty($foto) && file_exists($rutaServidor)): ?>
