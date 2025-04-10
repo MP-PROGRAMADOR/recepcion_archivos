@@ -145,7 +145,7 @@ include_once("../componentes/sidebar.php");
 
                                             <?php
                                             $foto = $est['archivo_url'];
-                                            $rutaRelativa = '../php/pasaportes/' . basename($foto);
+                                            $rutaRelativa = '../php/upload/pasaportes/' . basename($foto);
                                             $rutaServidor = __DIR__ . '/../php/pasaportes/' . basename($foto);
                                             $extension = strtolower(pathinfo($foto, PATHINFO_EXTENSION));
                                             ?>
