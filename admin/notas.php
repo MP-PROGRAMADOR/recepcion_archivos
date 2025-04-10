@@ -1,6 +1,5 @@
 <?php
-session_start(); // Asegúrate de que esto esté al principio del archivo
-// Conexión
+
 require_once '../config/conexion.php';
 
 // Consulta de estudiantes con JOIN a países
@@ -21,15 +20,14 @@ try {
 // Obtener estudiantes con límite y offset (incluyendo país)
 try {
     $stmt = $pdo->prepare("
-      SELECT 
+SELECT 
     n.id,
-    n.estudiante_id,
-    e.nombre_completo,
-    n.anio_academico_id,
-    a.nombre AS anio_academico,
     n.observaciones,
     n.archivo_url,
-    n.fecha_subida
+    n.fecha_subida,
+    e.nombre_completo,
+    e.codigo_acceso,
+    a.nombre
 FROM 
     notas n
 INNER JOIN 
@@ -45,7 +43,6 @@ LIMIT :inicio, :por_pagina;
     $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
     $stmt->execute();
     $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  
 } catch (PDOException $e) {
     die("Error al obtener los estudiantes: " . $e->getMessage());
 }
@@ -147,8 +144,11 @@ include_once("../componentes/sidebar.php");
 
                                             <?php
                                             $foto = $est['archivo_url'];
-                                            $rutaRelativa = '../php/notas/' . basename($foto);
-                                            $rutaServidor = __DIR__ . '/../php/notas/' . basename($foto);
+                                            // Ruta relativa para mostrar en el navegador
+                                            $rutaRelativa = '../php/upload/notas/' . basename($foto);
+                                            // Ruta del servidor para verificar existencia del archivo
+                                            $rutaServidor = __DIR__ . '/../php/upload/notas/' . basename($foto);
+                                            // Obtener la extensión del archivo
                                             $extension = strtolower(pathinfo($foto, PATHINFO_EXTENSION));
                                             ?>
 
@@ -157,7 +157,7 @@ include_once("../componentes/sidebar.php");
                                                     <!-- Ícono PDF -->
                                                     <i class="bi bi-file-earmark-pdf-fill text-danger fs-1"></i>
                                                 <?php else: ?>
-                                                    <!-- Imagen cuadrada -->
+                                                    <!-- Imagen cuadrada (para cualquier otro tipo de archivo) -->
                                                     <img src="<?= $rutaRelativa ?>" class="img-thumbnail shadow"
                                                         alt="Archivo de <?= htmlspecialchars($est['nombre_completo']) ?>" width="60" height="60">
                                                 <?php endif; ?>
@@ -180,7 +180,7 @@ include_once("../componentes/sidebar.php");
                                                     </a>
                                                 <?php endif; ?>
                                             <?php endif; ?>
-                                    
+
 
 
                                         </td>
