@@ -93,6 +93,30 @@ try {
             </div>
         </div>
 
+
+
+        <!-- Documentación Oficial -->
+        <div class="cv-section">
+            <h5><i class="bi bi-person-vcard-fill"></i>Pasaporte</h5>
+            <?php if ($pasaporte): ?>
+                <p class="cv-label">Número de Pasaporte: <span class="cv-value"><?= htmlspecialchars($pasaporte['numero_pasaporte']) ?></span></p>
+                <p class="cv-label">Fecha de Emisión: <span class="cv-value"><?= date('d/m/Y', strtotime($pasaporte['fecha_emision'])) ?></span></p>
+                <p class="cv-label">Fecha de Expiración: <span class="cv-value"><?= date('d/m/Y', strtotime($pasaporte['fecha_expiracion'])) ?></span></p>
+                <p class="cv-label">Documento:
+                    <?php if ($pasaporte['archivo_url']): ?>
+                        <a href="../php/<?= htmlspecialchars($pasaporte['archivo_url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye-fill me-1"></i>Ver PDF
+                        </a>
+                    <?php else: ?>
+                        <span class="text-muted">No disponible</span>
+                    <?php endif; ?>
+                </p>
+            <?php else: ?>
+                <p class="text-muted">No hay información de pasaporte disponible.</p>
+            <?php endif; ?>
+        </div>
+
+
         <!-- Historial Académico -->
         <div class="cv-section">
             <h5><i class="bi bi-journal-text me-2"></i>Historial Académico</h5>
@@ -113,8 +137,8 @@ try {
                                     <td><?= htmlspecialchars($nota['anio_academico']) ?></td>
                                     <td><?= nl2br(htmlspecialchars($nota['observaciones'])) ?></td>
                                     <td>
-                                        <?php if ($nota['archivo_url']): ?>
-                                            <a href="../php/<?= htmlspecialchars($nota['archivo_url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <?php if (!empty($nota['archivo_url'])): ?>
+                                            <a href="../php/upload/notas/<?= htmlspecialchars($nota['archivo_url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-file-earmark-text"></i> Ver Documento
                                             </a>
                                         <?php else: ?>
@@ -129,27 +153,6 @@ try {
                 </div>
             <?php else: ?>
                 <p class="text-muted">No se encontraron registros académicos.</p>
-            <?php endif; ?>
-        </div>
-
-        <!-- Documentación Oficial -->
-        <div class="cv-section">
-            <h5><i class="bi bi-passport me-2"></i>Pasaporte</h5>
-            <?php if ($pasaporte): ?>
-                <p class="cv-label">Número de Pasaporte: <span class="cv-value"><?= htmlspecialchars($pasaporte['numero_pasaporte']) ?></span></p>
-                <p class="cv-label">Fecha de Emisión: <span class="cv-value"><?= date('d/m/Y', strtotime($pasaporte['fecha_emision'])) ?></span></p>
-                <p class="cv-label">Fecha de Expiración: <span class="cv-value"><?= date('d/m/Y', strtotime($pasaporte['fecha_expiracion'])) ?></span></p>
-                <p class="cv-label">Documento:
-                    <?php if ($pasaporte['archivo_url']): ?>
-                        <a href="../php/<?= htmlspecialchars($pasaporte['archivo_url']) ?>" target="_blank" class="btn btn-sm btn-outline-dark">
-                            <i class="bi bi-eye-fill me-1"></i>Ver PDF
-                        </a>
-                    <?php else: ?>
-                        <span class="text-muted">No disponible</span>
-                    <?php endif; ?>
-                </p>
-            <?php else: ?>
-                <p class="text-muted">No hay información de pasaporte disponible.</p>
             <?php endif; ?>
         </div>
 

@@ -6,8 +6,8 @@ require_once '../config/conexion.php';
 $stmt = $pdo->query("
     SELECT 
         (SELECT COUNT(*) FROM estudiantes) AS total_estudiantes,
-        (SELECT COUNT(*) FROM pasaportes) AS total_pasaportes,
-        (SELECT COUNT(*) FROM notas) AS total_notas
+        (SELECT COUNT(*) FROM notas) AS total_pasaportes,
+        (SELECT COUNT(*) FROM paises) AS total_notas
 ");
 $totales = $stmt->fetch(PDO::FETCH_ASSOC);
 
