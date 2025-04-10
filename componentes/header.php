@@ -1,8 +1,8 @@
 <?php
 session_start();
 if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ../index.php');
-    exit;
+  header('Location: ../index.php');
+  exit;
 }
 ?>
 <!DOCTYPE html>
@@ -188,6 +188,54 @@ if (!isset($_SESSION['usuario_id'])) {
       margin-bottom: 10px;
     }
   </style>
+
+  <?php
+
+  require_once '../config/conexion.php';
+
+  // Consulta para obtener los países y la cantidad de estudiantes en cada país
+  $query = "
+    SELECT p.nombre AS pais, COUNT(e.id) AS estudiantes
+    FROM paises p
+    LEFT JOIN estudiantes e ON e.pais_id = p.id
+    GROUP BY p.id
+    ORDER BY estudiantes DESC;
+";
+
+  
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
+    $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  ?>
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {
+      'packages': ['geochart'],
+    });
+    google.charts.setOnLoadCallback(drawRegionsMap);
+
+    function drawRegionsMap() {
+      var data = google.visualization.arrayToDataTable([
+        ['Ciudad', 'Alumnos'],
+        <?php
+        // Generar el array con los países y la cantidad de estudiantes
+        foreach ($paises as $pais) {
+          echo "['" . addslashes($pais['pais']) . "', " . $pais['estudiantes'] . "],\n";
+        }
+        ?>
+      ]);
+
+      var options = {};
+
+      var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+      chart.draw(data, options);
+    }
+  </script>
+
+
+
 </head>
 
 <body>

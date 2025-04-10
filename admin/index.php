@@ -53,7 +53,7 @@ $totales = $stmt->fetch(PDO::FETCH_ASSOC);
   <div class="row g-3">
     <div class="col-lg-6">
       <div class="card shadow-sm">
-        <div class="card-header"><i class="bi bi-calendar-event"></i> Calendario</div>
+        <div class="card-header"><i class="bi bi-geo-alt"></i>Estudiantes en los Diferentes paises </div>
         <div class="card-body">
         <div id="regions_div" style="width: 90%; height: 100%;"></div>
         </div>
