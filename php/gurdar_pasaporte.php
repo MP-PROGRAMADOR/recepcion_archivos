@@ -48,14 +48,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Crear carpeta si no existe
-    if (!is_dir('pasaportes')) {
-        mkdir('pasaportes', 0777, true);
+    // Crear carpetas si no existen
+    $directorio_upload = 'upload';
+    $directorio_pasaportes = $directorio_upload . '/pasaportes';
+
+    if (!is_dir($directorio_upload)) {
+        mkdir($directorio_upload, 0777, true);
+    }
+
+    if (!is_dir($directorio_pasaportes)) {
+        mkdir($directorio_pasaportes, 0777, true);
     }
 
     // Guardar archivo
     $nombre_archivo_final = 'pasaporte_' . $estudiante_id . '_' . time() . '.pdf';
-    $ruta_archivo = 'upload/pasaportes/' . $nombre_archivo_final;
+    $ruta_archivo = $directorio_pasaportes . '/' . $nombre_archivo_final;
 
     if (!move_uploaded_file($archivo_tmp, $ruta_archivo)) {
         echo "Error al subir el archivo.";
@@ -84,4 +91,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 

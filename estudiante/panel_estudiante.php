@@ -205,7 +205,7 @@ usort($archivos, function ($a, $b) {
                                                 $ext = pathinfo($archivo['archivo_url'], PATHINFO_EXTENSION);
                                                 $esImagen = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                                                 $esPDF = strtolower($ext) === 'pdf';
-                                                ?>
+                                            ?>
                                                 <tr>
                                                     <td><span
                                                             class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span>
@@ -276,7 +276,9 @@ usort($archivos, function ($a, $b) {
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer d-flex justify-content-center">
-                                                                <button class="btn btn-success"><i class="bi bi-download"></i> Descargar</button>
+                                                                <a href="../php/upload/notas<?= htmlspecialchars($archivo['archivo_url']) ?>" class="btn btn-success" target="_blank">
+                                                                    <i class="bi bi-eye"></i> Ver PDF
+                                                                </a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -350,7 +352,7 @@ usort($archivos, function ($a, $b) {
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const contenedor = document.getElementById("formularioPasaporte");
             const agregarBtn = document.getElementById("btnSubirPasaporte");
             const btnSubirNotas = document.getElementById("btnSubirNotas");
@@ -361,7 +363,7 @@ usort($archivos, function ($a, $b) {
                 modal.show();
             }
 
-            agregarBtn.addEventListener("click", function () {
+            agregarBtn.addEventListener("click", function() {
                 if (!contenedor.hasChildNodes()) {
                     contenedor.innerHTML = `
                         <div class="form-section border rounded p-4 shadow-sm bg-white">
@@ -401,7 +403,7 @@ usort($archivos, function ($a, $b) {
                     eliminarBtn.style.display = "inline-block";
                 }
             });
-            eliminarBtn.addEventListener("click", function () {
+            eliminarBtn.addEventListener("click", function() {
                 if (contenedor.hasChildNodes()) {
 
                     contenedor.innerHTML = "";
@@ -410,7 +412,7 @@ usort($archivos, function ($a, $b) {
             });
 
 
-            btnSubirNotas.addEventListener("click", function () {
+            btnSubirNotas.addEventListener("click", function() {
                 if (!contenedor.hasChildNodes()) {
 
                     fetch('formulario_notas.php')
@@ -441,9 +443,6 @@ usort($archivos, function ($a, $b) {
 
 
         });
-
-
-
     </script>
 
 
