@@ -25,13 +25,13 @@ $estudiante_id = $estudiante['id'];
 
 // Obtener los datos del pasaporte
 $stmt = $pdo->prepare("SELECT * FROM pasaportes WHERE estudiante_id = :estudiante_id");
-    $stmt->bindParam(':estudiante_id', $estudiante_id, PDO::PARAM_INT);
-    $stmt->execute();
+$stmt->bindParam(':estudiante_id', $estudiante_id, PDO::PARAM_INT);
+$stmt->execute();
 
-    // Obtener los resultados
-    $pasaporte = $stmt->fetch(PDO::FETCH_ASSOC);
+// Obtener los resultados
+$pasaporte = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    
+
 
 
 
@@ -125,11 +125,13 @@ usort($archivos, function ($a, $b) {
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a id="btnSubirPasaporte" class="nav-link text-white" href="#"><i class="bi bi-upload me-1"></i>Subir
+                        <a id="btnSubirPasaporte" class="nav-link text-white" href="#"><i
+                                class="bi bi-upload me-1"></i>Subir
                             Pasaporte</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#"><i class="bi bi-upload me-1"></i>Subir Notas</a>
+                        <a id="btnSubirNotas" class="nav-link text-white" href="#"><i
+                                class="bi bi-upload me-1"></i>Subir Notas</a>
 
                     </li>
 
@@ -137,7 +139,8 @@ usort($archivos, function ($a, $b) {
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="../php/logout_estudiante.php"><i class="bi bi-box-arrow-right"></i> Cerrar
+                        <a class="nav-link text-white" href="../php/logout_estudiante.php"><i
+                                class="bi bi-box-arrow-right"></i> Cerrar
                             sesión</a>
                     </li>
                 </ul>
@@ -202,7 +205,7 @@ usort($archivos, function ($a, $b) {
                                                 $ext = pathinfo($archivo['archivo_url'], PATHINFO_EXTENSION);
                                                 $esImagen = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                                                 $esPDF = strtolower($ext) === 'pdf';
-                                            ?>
+                                                ?>
                                                 <tr>
                                                     <td><span
                                                             class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span>
@@ -252,28 +255,45 @@ usort($archivos, function ($a, $b) {
                                                                                 <div class="row">
                                                                                     <!-- Columna 1: Información del Estudiante -->
                                                                                     <div class="col-md-6">
-                                                                                        <p><strong>ID Estudiante:</strong> <?= $estudiante['id'] ?></p>
-                                                                                        <p><strong>Nombre:</strong> <?= $estudiante['nombre_completo'] ?></p>
-                                                                                        <p><strong>Tipo:</strong> <?= htmlspecialchars($archivo['tipo']) ?></p>
-                                                                                        <p><strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></p>
-                                                                                        <p><strong>Archivo:</strong> <?= basename($archivo['archivo_url']) ?></p>
+                                                                                        <p><strong>ID Estudiante:</strong>
+                                                                                            <?= $estudiante['id'] ?></p>
+                                                                                        <p><strong>Nombre:</strong>
+                                                                                            <?= $estudiante['nombre_completo'] ?>
+                                                                                        </p>
+                                                                                        <p><strong>Tipo:</strong>
+                                                                                            <?= htmlspecialchars($archivo['tipo']) ?>
+                                                                                        </p>
+                                                                                        <p><strong>Fecha:</strong>
+                                                                                            <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
+                                                                                        </p>
+                                                                                        <p><strong>Archivo:</strong>
+                                                                                            <?= basename($archivo['archivo_url']) ?>
+                                                                                        </p>
                                                                                     </div>
 
                                                                                     <!-- Columna 2: Información del archivo -->
                                                                                     <div class="col-md-6">
-                                                                                   <?php if ($pasaporte) {   ?>
-                                                                                    
-                                                                                        <p><strong>Numero de Pasaporte:</strong> <?= strtotime($pasaporte['numero_pasaporte'])?></p>
-                                                                                        <p><strong>Fecha de  Emision:</strong> <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></p>
-                                                                                        <p><strong>Fecha de Expiracion:</strong> <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></p>
-                                                                                        <p><strong>Fecha de Subida:</strong> <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></p>
-                                                                                    </div>
+                                                                                        <?php if ($pasaporte) { ?>
 
-                                                                                    <?php
-                                                                                } else {
-                                                                                    echo "<p>No se encontró el pasaporte para este estudiante.</p>";
-                                                                                }   
-                                                                                           ?>
+                                                                                            <p><strong>Numero de Pasaporte:</strong>
+                                                                                                <?= strtotime($pasaporte['numero_pasaporte']) ?>
+                                                                                            </p>
+                                                                                            <p><strong>Fecha de Emision:</strong>
+                                                                                                <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
+                                                                                            </p>
+                                                                                            <p><strong>Fecha de Expiracion:</strong>
+                                                                                                <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
+                                                                                            </p>
+                                                                                            <p><strong>Fecha de Subida:</strong>
+                                                                                                <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
+                                                                                            </p>
+                                                                                        </div>
+
+                                                                                        <?php
+                                                                                        } else {
+                                                                                            echo "<p>No se encontró el pasaporte para este estudiante.</p>";
+                                                                                        }
+                                                                                        ?>
                                                                                 </div>
 
 
@@ -323,63 +343,103 @@ usort($archivos, function ($a, $b) {
 
         <div class="row g-4">
 
-            <button id="eliminarBtn" class="btn btn-danger m-2" style="display: none;"> <i class="bi bi-trash"></i> Eliminar Formulario</button>
+            <button id="eliminarBtn" class="btn btn-danger m-2" style="display: none;"> <i class="bi bi-trash"></i>
+                Eliminar Formulario</button>
             <div id="formularioPasaporte" class="mt-3"></div>
         </div>
     </div>
 
+    <!-- MODAL PARA ORIENTAR AL USUARIO EN CASO DE ESTAR ACTIVO UN FORMULARIO Y SOLICITA OTRO -->
+
+
+    <!-- Modal de Advertencia -->
+    <div class="modal fade" id="modalPasosFormulario" tabindex="-1" aria-labelledby="modalPasosLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-warning shadow">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="modalPasosLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> ¡Atención!
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-dark">
+                    <p><i class="bi bi-info-circle-fill me-2 text-primary"></i> Pasos para solicitar un nuevo
+                        formulario:</p>
+                    <ol class="ps-3">
+                        <li><i class="bi bi-pencil-fill text-secondary me-2"></i> Rellene el formulario que solicitaste
+                            previamente.</li>
+                        <li><i class="bi bi-send-fill text-success me-2"></i> Dale al botón <strong>Enviar</strong>.
+                        </li>
+                        <li><i class="bi bi-trash-fill text-danger me-2"></i> Da clic sobre el botón <strong>Eliminar
+                                formulario</strong>.</li>
+                        <li><i class="bi bi-plus-circle-fill text-info me-2"></i> Y finalmente llama al nuevo
+                            formulario.</li>
+                    </ol>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">
+                        <i class="bi bi-check-circle-fill me-1"></i>Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+   
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const contenedor = document.getElementById("formularioPasaporte");
             const agregarBtn = document.getElementById("btnSubirPasaporte");
+            const btnSubirNotas = document.getElementById("btnSubirNotas");
             const eliminarBtn = document.getElementById("eliminarBtn");
 
-            agregarBtn.addEventListener("click", function() {
+            function mostrarModalPasos() {
+                const modal = new bootstrap.Modal(document.getElementById('modalPasosFormulario'));
+                modal.show();
+            }
+
+            agregarBtn.addEventListener("click", function () {
                 if (!contenedor.hasChildNodes()) {
                     contenedor.innerHTML = `
-                    
-                    <!-- Formulario de pasaporte -->
-                    <div class="form-section border rounded p-4 shadow-sm bg-white">
-                        <h5 class="d-flex justify-content-between mb-4 text-primary">
-                            <i class="bi bi-passport me-2"></i>Formulario de Pasaporte
-                        </h5>
-                        <form action="../php/gurdar_pasaporte.php" method="POST" enctype="multipart/form-data">
-                            <div class="row">
-                                <!-- Número de Pasaporte -->
-                                <div class="col-md-6 mb-4">
-                                    <label for="numero" class="form-label fw-semibold text-dark">N° de Pasaporte</label>
-                                    <input type="text" name="numero_pasaporte" id="numero" class="form-control border rounded shadow-sm" required placeholder="Ej: A12345678">
-                                </div>
-
-                                <!-- Imagen del pasaporte -->
-                                <div class="col-md-6 mb-4">
-                                    <label for="archivo" class="form-label">Selecciona archivo (PDF)</label>
-                                    <input type="file" name="archivo" id="archivo" class="form-control" accept="application/pdf" required>
-                                    <small class="text-muted">Solo se permiten archivos PDF</small>
-                                </div>
-
-                                <!-- Fecha de emisión -->
-                                <div class="col-md-6 mb-4">
-                                    <label for="fecha_emision" class="form-label fw-semibold text-dark">Fecha de Emisión</label>
-                                    <input type="date" name="fecha_emision" id="fecha_emision" class="form-control border rounded shadow-sm" required>
-                                </div>
-
-                                <!-- Fecha de expiración -->
-                                <div class="col-md-6 mb-4">
-                                    <label for="fecha_expiracion" class="form-label fw-semibold text-dark">Fecha de Expiración</label>
-                                    <input type="date" name="fecha_expiracion" id="fecha_expiracion" class="form-control border rounded shadow-sm" required>
-                                </div>
+                <div class="form-section border rounded p-4 shadow-sm bg-white">
+                    <h5 class="d-flex justify-content-between mb-4 text-primary">
+                        <i class="bi bi-passport me-2"></i>Formulario de Pasaporte
+                    </h5>
+                    <form action="../php/gurdar_pasaporte.php" method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="numero" class="form-label fw-semibold text-dark">N° de Pasaporte</label>
+                                <input type="text" name="numero_pasaporte" id="numero" class="form-control" required placeholder="Ej: A12345678">
                             </div>
-
-                            <!-- Botón guardar -->
-                            <button type="submit" class="btn btn-success px-4 shadow-sm">
-                                <i class="bi bi-save me-2"></i>Guardar pasaporte
-                            </button>
-                        </form>
-                    </div>
-                `;
+                            <div class="col-md-6 mb-4">
+                                <label for="archivo" class="form-label">Selecciona archivo (PDF)</label>
+                                <input type="file" name="archivo" id="archivo" class="form-control" accept="application/pdf" required>
+                                <small class="text-muted">Solo se permiten archivos PDF</small>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="fecha_emision" class="form-label">Fecha de Emisión</label>
+                                <input type="date" name="fecha_emision" id="fecha_emision" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="fecha_expiracion" class="form-label">Fecha de Expiración</label>
+                                <input type="date" name="fecha_expiracion" id="fecha_expiracion" class="form-control" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success px-4">
+                            <i class="bi bi-save me-2"></i>Guardar pasaporte
+                        </button>
+                    </form>
+                </div>
+            `;
+                } else {
+                    mostrarModalPasos();
                 }
 
                 if (contenedor.children.length > 0) {
@@ -387,20 +447,39 @@ usort($archivos, function ($a, $b) {
                 }
             });
 
-            eliminarBtn.addEventListener("click", function() {
+            btnSubirNotas.addEventListener("click", function () {
+                if (!contenedor.hasChildNodes()) {
+                    contenedor.innerHTML = `
+                <div class="form-section border rounded p-4 shadow-sm bg-white">
+                    <h5 class="mb-3 text-primary"><i class="bi bi-upload me-2"></i>Subir Nota</h5>
+                    <form action="subir_archivo.php" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="archivo" class="form-label">Selecciona archivo (PDF, JPG, PNG)</label>
+                            <input type="file" name="archivo" id="archivo" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-cloud-arrow-up me-1"></i>Subir archivo
+                        </button>
+                    </form>
+                </div>
+            `;
+                } else {
+                    mostrarModalPasos();
+                }
+
+                if (contenedor.children.length > 0) {
+                    eliminarBtn.style.display = "inline-block";
+                }
+            });
+
+            eliminarBtn.addEventListener("click", function () {
                 contenedor.innerHTML = "";
                 eliminarBtn.style.display = "none";
             });
         });
-
-        function eliminarFormularioClase() {
-            const contenedor = document.getElementById("formularioPasaporte");
-            contenedor.innerHTML = "";
-            document.getElementById("eliminarBtn").style.display = "none";
-        }
     </script>
 
-
+ 
 
 
 
