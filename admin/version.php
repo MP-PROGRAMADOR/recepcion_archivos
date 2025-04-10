@@ -36,8 +36,6 @@ try {
     die("Error al obtener los estudiantes: " . $e->getMessage());
 }
 
-
-
 // Layout común
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
@@ -47,8 +45,6 @@ include_once("../componentes/sidebar.php");
     <div class="container-fluid">
         <!-- INICIO DE LA ALERTA -->
         <?php
-
-
         if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
             ?>
             <div id="alerta-exito"
@@ -91,8 +87,8 @@ include_once("../componentes/sidebar.php");
             unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
         endif;
         ?>
-
         <!-- FIN DE LA ALERTA -->
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3><i class="bi bi-mortarboard-fill me-2"></i>Listado de Estudiantes</h3>
             <a href="registrar_estudiantes.php" class="btn btn-primary rounded-3">
@@ -134,7 +130,7 @@ include_once("../componentes/sidebar.php");
                                         <td><?= date('d/m/Y H:i', strtotime($est['creado_en'])) ?></td>
                                         <td><?= htmlspecialchars($est['pais'] ?? 'No definido') ?></td>
                                         <td>
-                                        <?php
+                                            <?php
                                             $foto = $est['ruta_foto']; // Ej: upload/perfil/perfil-12345678.png
                                             $rutaRelativa = '/php/' . $foto; // Ruta visible desde el navegador
                                             $rutaServidor = '../php/' . $foto; // Ruta física en disco
@@ -145,7 +141,7 @@ include_once("../componentes/sidebar.php");
                                             ?>
                                             
                                             <?php if (!empty($foto) && file_exists($rutaServidor)): ?>
-                                                <img src="../<?= $rutaRelativa ?>" class="rounded "
+                                                <img src="../<?= $rutaRelativa ?>" class="rounded-circle shadow img-thumbnail"
                                                     alt="Foto de <?= htmlspecialchars($est['nombre_completo']) ?>" width="60"
                                                     height="60">
                                             <?php else: ?>
@@ -172,7 +168,6 @@ include_once("../componentes/sidebar.php");
                         </tbody>
                     </table>
                 </div>
-
 
                 <!-- PAGINACION -->
                 <!-- Paginación -->
@@ -201,7 +196,6 @@ include_once("../componentes/sidebar.php");
                 <?php endif; ?>
 
                 <!-- FIN DE LA PAGINACION -->
-
             </div>
         </div>
     </div>
