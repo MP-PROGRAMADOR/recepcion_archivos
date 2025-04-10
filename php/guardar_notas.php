@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nombreArchivo = 'Notas_'.$anios['nombre'].'_'. $codigoAcceso .'.pdf';
 
             // Ruta destino
-            $directorio = '../upload/pdf/';
+            $directorio = 'upload/notas/';
             $rutaCompleta = $directorio . $nombreArchivo;
 
             // Crear carpeta si no existe

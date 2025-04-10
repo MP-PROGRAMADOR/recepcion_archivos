@@ -7,7 +7,7 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 require_once '../config/conexion.php';
 
-$directorio = __DIR__ . '/upload/';
+$directorio = __DIR__ . 'upload/perfil/';
 if (!is_dir($directorio)) {
     mkdir($directorio, 0777, true);
 } else {

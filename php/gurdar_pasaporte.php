@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Guardar archivo
     $nombre_archivo_final = 'pasaporte_' . $estudiante_id . '_' . time() . '.pdf';
-    $ruta_archivo = 'pasaportes/' . $nombre_archivo_final;
+    $ruta_archivo = 'upload/pasaportes/' . $nombre_archivo_final;
 
     if (!move_uploaded_file($archivo_tmp, $ruta_archivo)) {
         echo "Error al subir el archivo.";

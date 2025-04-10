@@ -253,7 +253,7 @@ usort($archivos, function ($a, $b) {
                                                                                     <!-- Columna 1: Información del Estudiante -->
                                                                                     <div class="col-md-6">
                                                                                         <p><strong>ID Estudiante:</strong>
-                                                                                            <?= $estudiante['id'] ?></p>
+                                                                                            <?= $estudiantes['codigo_acceso'] ?></p>
                                                                                         <p><strong>Nombre:</strong>
                                                                                             <?= $estudiante['nombre_completo'] ?>
                                                                                         </p>
@@ -275,11 +275,13 @@ usort($archivos, function ($a, $b) {
 
                                                                 </div>
                                                             </div>
+                                                            <div class="modal-footer d-flex justify-content-center">
+                                                                <button class="btn btn-success"><i class="bi bi-download"></i> Descargar</button>
+                                                            </div>
                                                         </div>
                                                     </div>
-
-
-                                                <?php endforeach; ?>
+                                                </div>
+                                            <?php endforeach; ?>
                                         </tbody>
                                     </table>
                                 </div>
