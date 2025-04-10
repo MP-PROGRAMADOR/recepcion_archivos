@@ -29,54 +29,54 @@ include_once("../componentes/sidebar.php");
 
 <main class="content" id="mainContent">
     <div class="container mt-4">
-         <!-- INICIO DE LA ALERTA -->
-         <?php
+        <!-- INICIO DE LA ALERTA -->
+        <?php
 
 
-if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
-    ?>
-    <div id="alerta-exito"
-        class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
-        role="alert" style="animation: fadeIn 0.5s ease-in-out;">
-        <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
-        <div>
-            <strong>¡Éxito!</strong>
-            <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
-        </div>
-        <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
+        if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
+        ?>
+            <div id="alerta-exito"
+                class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
+                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+                <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
+                <div>
+                    <strong>¡Éxito!</strong>
+                    <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
+                </div>
+                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
 
-    <script>
-        // Ocultar automáticamente luego de 6 segundos
-        setTimeout(() => {
-            const alerta = document.getElementById('alerta-exito');
-            if (alerta) {
-                alerta.classList.remove('show');
-                alerta.classList.add('fade');
-                setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
-            }
-        }, 6000);
-    </script>
+            <script>
+                // Ocultar automáticamente luego de 6 segundos
+                setTimeout(() => {
+                    const alerta = document.getElementById('alerta-exito');
+                    if (alerta) {
+                        alerta.classList.remove('show');
+                        alerta.classList.add('fade');
+                        setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
+                    }
+                }, 6000);
+            </script>
 
-    <style>
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
+            <style>
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px);
+                    }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
-    <?php
-    unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
-endif;
-?>
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+        <?php
+            unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
+        endif;
+        ?>
 
-<!-- FIN DE LA ALERTA -->
+        <!-- FIN DE LA ALERTA -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3><i class="bi bi-globe-americas me-2"></i>Listado de Países</h3>
             <a href="registrar_pais.php" class="btn btn-primary">
@@ -121,7 +121,9 @@ endif;
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <tr><td colspan="3" class="text-center text-muted">No hay países registrados</td></tr>
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">No hay países registrados</td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -163,10 +165,10 @@ endif;
 
 <!-- Buscador funcional -->
 <script>
-    $(document).ready(function () {
-        $('#busqueda').on('keyup', function () {
+    $(document).ready(function() {
+        $('#busqueda').on('keyup', function() {
             let valor = $(this).val().toLowerCase();
-            $('#contenidoTabla tr').filter(function () {
+            $('#contenidoTabla tr').filter(function() {
                 $(this).toggle($(this).text().toLowerCase().includes(valor));
             });
         });
