@@ -142,18 +142,19 @@ include_once("../componentes/sidebar.php");
                                         <td><?= date('d/m/Y H:i', strtotime($est['fecha_expiracion'])) ?></td>
                                         <td><?= date('d/m/Y H:i', strtotime($est['fecha_subida'])) ?></td>
                                         <td>
-
                                             <?php
-                                            $foto = $est['archivo_url'];
+                                            $foto = $est['archivo_url']; // Ej: pasaporte_2_1744360692.pdf
                                             $rutaRelativa = '../php/upload/pasaportes/' . basename($foto);
-                                            $rutaServidor = __DIR__ . '/../php/pasaportes/' . basename($foto);
+                                            $rutaServidor = __DIR__ . '/../php/upload/pasaportes/' . basename($foto);
                                             $extension = strtolower(pathinfo($foto, PATHINFO_EXTENSION));
                                             ?>
 
                                             <?php if (!empty($foto) && file_exists($rutaServidor)): ?>
                                                 <?php if ($extension === 'pdf'): ?>
-                                                    <!-- Ícono PDF -->
-                                                    <i class="bi bi-file-earmark-pdf-fill text-danger fs-1"></i>
+                                                    <!-- Ícono PDF con enlace -->
+                                                    <a href="<?= $rutaRelativa ?>" target="_blank">
+                                                        <i class="bi bi-file-earmark-pdf-fill text-danger fs-1"></i>
+                                                    </a>
                                                 <?php else: ?>
                                                     <!-- Imagen cuadrada -->
                                                     <img src="<?= $rutaRelativa ?>" class="img-thumbnail shadow"
@@ -166,7 +167,7 @@ include_once("../componentes/sidebar.php");
 
                                         <td>
 
-                                      
+
                                             <?php if (!empty($foto) && file_exists($rutaServidor)): ?>
                                                 <?php if ($extension === 'pdf'): ?>
                                                     <a href="<?= $rutaRelativa ?>" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -179,7 +180,7 @@ include_once("../componentes/sidebar.php");
                                                     </a>
                                                 <?php endif; ?>
                                             <?php endif; ?>
-                                    
+
 
 
                                         </td>

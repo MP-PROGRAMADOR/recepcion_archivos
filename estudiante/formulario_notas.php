@@ -84,10 +84,10 @@ try {
                     <label class="form-label fw-semibold">Archivo adjunto</label>
                     <div class="input-group has-validation">
                         <span class="input-group-text bg-primary text-white"><i class="bi bi-paperclip"></i></span>
-                        <input type="file" name="archivo_url" id="archivo" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
-                        <div class="invalid-feedback">Debe adjuntar un archivo válido (PDF, JPG, PNG).</div>
+                        <input type="file" name="archivo_url" id="archivo" class="form-control" accept="application/pdf" required>
+                        <div class="invalid-feedback">Debe adjuntar un archivo válido (PDF).</div>
                     </div>
-                    <small class="text-muted">Archivos permitidos: PDF, JPG, PNG. Máx. 5MB.</small>
+                    <small class="text-muted">Archivos permitidos: PDF Máx. 5MB.</small>
 
                     <!-- Previsualización -->
                     <div id="preview" class="mt-3" style="display: none;">

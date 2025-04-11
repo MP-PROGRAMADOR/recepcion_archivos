@@ -176,8 +176,8 @@
 
         <!-- Link volver -->
         <div class="text-center mt-4">
-          <a href="register.php" class="link-volver">
-            <i class="bi bi-arrow-left me-1"></i> Volver a la página principal
+          <a href="estudiante/index.php" class="link-volver">
+            <i class="bi bi-arrow-left me-1"></i> Ver Panel de Estudiante
           </a>
         </div>
       </div>

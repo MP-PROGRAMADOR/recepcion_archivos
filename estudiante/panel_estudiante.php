@@ -266,6 +266,8 @@ usort($archivos, function ($a, $b) {
                                                     </div>
                                                 </div>
 
+
+
                                             <?php endforeach; ?>
                                         </tbody>
 
@@ -283,11 +285,13 @@ usort($archivos, function ($a, $b) {
         </div>
 
         <div class="row g-4">
-
-            <button id="eliminarBtn" class="btn btn-danger m-2" style="display: none;"> <i class="bi bi-trash"></i>
-                Eliminar Formulario</button>
+            <button id="eliminarBtn" class="btn btn-danger m-2 w-100 w-sm-80 mx-auto" style="display: none;">
+                <i class="bi bi-trash"></i> Eliminar Formulario
+            </button>
             <div id="formularioPasaporte" class="mt-3"></div>
         </div>
+
+
     </div>
 
     <!-- MODAL PARA ORIENTAR AL USUARIO EN CASO DE ESTAR ACTIVO UN FORMULARIO Y SOLICITA OTRO -->
@@ -350,35 +354,42 @@ usort($archivos, function ($a, $b) {
             agregarBtn.addEventListener("click", function() {
                 if (!contenedor.hasChildNodes()) {
                     contenedor.innerHTML = `
-                        <div class="form-section border rounded p-4 shadow-sm bg-white">
-                            <h5 class="d-flex justify-content-between mb-4 text-primary">
-                                <i class="bi bi-passport me-2"></i>Formulario de Pasaporte
-                            </h5>
-                            <form action="../php/gurdar_pasaporte.php" method="POST" enctype="multipart/form-data">
-                                <div class="row">
-                                    <div class="col-md-6 mb-4">
-                                        <label for="numero" class="form-label fw-semibold text-dark">N° de Pasaporte</label>
-                                        <input type="text" name="numero_pasaporte" id="numero" class="form-control" required placeholder="Ej: A12345678">
-                                    </div>
-                                    <div class="col-md-6 mb-4">
-                                        <label for="archivo" class="form-label">Selecciona archivo (PDF)</label>
-                                        <input type="file" name="archivo" id="archivo" class="form-control" accept="application/pdf" required>
-                                        <small class="text-muted">Solo se permiten archivos PDF</small>
-                                    </div>
-                                    <div class="col-md-6 mb-4">
-                                        <label for="fecha_emision" class="form-label">Fecha de Emisión</label>
-                                        <input type="date" name="fecha_emision" id="fecha_emision" class="form-control" required>
-                                    </div>
-                                    <div class="col-md-6 mb-4">
-                                        <label for="fecha_expiracion" class="form-label">Fecha de Expiración</label>
-                                        <input type="date" name="fecha_expiracion" id="fecha_expiracion" class="form-control" required>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-success px-4">
-                                    <i class="bi bi-save me-2"></i>Guardar pasaporte
-                                </button>
-                            </form>
-                        </div>            `;
+                       <div class="form-section border rounded p-4 shadow-sm bg-white">
+    <h5 class="d-flex justify-content-between mb-4 text-primary">
+        <i class="bi bi-passport me-2"></i>Formulario de Pasaporte
+    </h5>
+    <form id="pasaporteForm" action="../php/gurdar_pasaporte.php" method="POST" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <label for="numero" class="form-label fw-semibold text-dark">N° de Pasaporte</label>
+                <input type="text" name="numero_pasaporte" id="numero" class="form-control" required placeholder="Ej: A12345678">
+            </div>
+            <div class="col-md-6 mb-4">
+                <label for="archivo" class="form-label">Selecciona archivo (PDF)</label>
+                <input type="file" name="archivo" id="archivo" class="form-control" accept="application/pdf" required>
+                <small class="text-muted">Solo se permiten archivos PDF</small>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label for="fecha_emision" class="form-label">Fecha de Emisión</label>
+                <input type="date" name="fecha_emision" id="fecha_emision" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label for="fecha_expiracion" class="form-label">Fecha de Expiración</label>
+                <input type="date" name="fecha_expiracion" id="fecha_expiracion" class="form-control" required>
+            </div>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div id="progressContainer" class="mb-4" style="display:none;">
+            <label for="progress" class="form-label">Subiendo archivo...</label>
+            <progress id="progress" value="0" max="100" class="w-100"></progress>
+        </div>
+
+        <button type="submit" class="btn btn-success px-4">
+            <i class="bi bi-save me-2"></i>Guardar pasaporte
+        </button>
+    </form>
+</div>          `;
                 } else {
                     mostrarModalPasos();
                 }
@@ -428,6 +439,8 @@ usort($archivos, function ($a, $b) {
 
         });
     </script>
+
+
 
 
 
