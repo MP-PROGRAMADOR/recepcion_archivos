@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($ya_tiene > 0) {
         $errores[] = "Ya has subido un pasaporte. Si deseas cambiarlo, utiliza la opción de actualizar.";
-
+         
     }
 
     // Crear carpetas si no existen

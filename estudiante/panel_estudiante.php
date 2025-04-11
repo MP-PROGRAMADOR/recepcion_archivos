@@ -59,6 +59,21 @@ $archivos = array_merge($notas, $pasaportes);
 usort($archivos, function ($a, $b) {
     return strtotime($b['fecha_subida']) - strtotime($a['fecha_subida']);
 });
+
+
+/* Verificar que el usuario ya inguesó un pasaporte */
+// Comprobar si el estudiante ya ha subido un pasaporte
+$verifica = $pdo->prepare("SELECT COUNT(*) FROM pasaportes WHERE estudiante_id = :estudiante_id");
+$verifica->bindParam(':estudiante_id', $estudiante_id);
+$verifica->execute();
+$pasaporteExiste = $verifica->fetchColumn();
+
+ 
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -126,11 +141,19 @@ usort($archivos, function ($a, $b) {
 
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a id="btnSubirPasaporte" class="nav-link text-white" href="#"><i
-                                class="bi bi-upload me-1"></i>Subir
-                            Pasaporte</a>
-                    </li>
+                    <?php if ($pasaporteExiste): ?>
+                        <li class="nav-item">
+                            <a id="btnActualizarPasaporte" class="nav-link text-white" href="#">
+                                <i class="bi bi-pencil-square me-1"></i> Actualizar Pasaporte
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a id="btnSubirPasaporte" class="nav-link text-white" href="#">
+                                <i class="bi bi-upload me-1"></i> Subir Pasaporte
+                            </a>
+                        </li>
+                    <?php endif; ?>
                     <li class="nav-item">
                         <a id="btnSubirNotas" class="nav-link text-white" href="#"><i
                                 class="bi bi-upload me-1"></i>Subir Notas</a>
@@ -364,7 +387,6 @@ usort($archivos, function ($a, $b) {
         </div>
 
 
-
         <div class="row mt-5">
 
             <div class="  border-0 rounded-4">
@@ -434,6 +456,7 @@ usort($archivos, function ($a, $b) {
                 const eliminarBtn = document.getElementById("eliminarBtn");
                 const btnSubirPasaporte = document.getElementById("btnSubirPasaporte");
                 const btnSubirNotas = document.getElementById("btnSubirNotas");
+                const btnActualizarPasaporte = document.getElementById("btnActualizarPasaporte");
 
                 function mostrarModalPasos() {
                     const modal = new bootstrap.Modal(document.getElementById('modalPasosFormulario'));
@@ -482,8 +505,14 @@ usort($archivos, function ($a, $b) {
                         cargarFormulario('formulario_notas.php');
                     });
                 }
+                //boton actualizar_pasaporte
+                if (btnActualizarPasaporte) {
+                    btnActualizarPasaporte.addEventListener("click", function () {
+                        cargarFormulario('formulario_actualizar_pasaporte.php');
+                    });
+                }
 
- 
+
             });
         </script>
 
