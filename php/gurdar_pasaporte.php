@@ -96,20 +96,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-    // Si hay errores, redirigir con los errores en sesión
-    if (!empty($errores)) {
-        $_SESSION['errores'] = $errores;
-        header("Location: ../estudiante/panel_estudiante.php");
-        exit;
-    }
-
 
 
     // Validar extensión del archivo (solo PDF)
     $archivo_extension = strtolower(pathinfo($archivo_nombre, PATHINFO_EXTENSION));
     if ($archivo_extension !== 'pdf') {
-        echo "Solo se permiten archivos PDF.";
-        exit;
+        $errores[] = "Solo se permiten archivos PDF.";
+
     }
 
     // Comprobar si el estudiante ya ha subido un pasaporte
@@ -119,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ya_tiene = $verifica->fetchColumn();
 
     if ($ya_tiene > 0) {
-        echo "Ya has subido un pasaporte. Si deseas cambiarlo, utiliza la opción de actualizar.";
-        exit;
+        $errores[] = "Ya has subido un pasaporte. Si deseas cambiarlo, utiliza la opción de actualizar.";
+
     }
 
     // Crear carpetas si no existen
@@ -135,12 +128,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mkdir($directorio_pasaportes, 0777, true);
     }
 
+
     // Guardar archivo
     $nombre_archivo_final = 'pasaporte_' . $estudiante_id . '_' . time() . '.pdf';
     $ruta_archivo = $directorio_pasaportes . '/' . $nombre_archivo_final;
 
     if (!move_uploaded_file($archivo_tmp, $ruta_archivo)) {
-        echo "Error al subir el archivo.";
+        $errores[] = "Error al subir el archivo.";
+
+    }
+    
+    // Si hay errores, redirigir con los errores en sesión
+    if (!empty($errores)) {
+        $_SESSION['errores'] = $errores;
+        header("Location: ../estudiante/panel_estudiante.php");
         exit;
     }
 

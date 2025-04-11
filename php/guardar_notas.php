@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Obtener código de acceso del estudiante desde sesión
             $codigoAcceso = $_SESSION['estudiante']['codigo_acceso'];
             // Obtener años académicos
-            
+
             $stmtAnios = $pdo->prepare("SELECT nombre FROM anios_academicos WHERE id = ?");
             $stmtAnios->execute([$anio_academico_id]);
             $anios = $stmtAnios->fetch(PDO::FETCH_ASSOC);
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Generar nombre único con código de acceso
             //  $nombreArchivo = $codigoAcceso . '_' . uniqid('nota_', true) . '.pdf';
-            $nombreArchivo = 'Notas_'.$anios['nombre'].'_'. $codigoAcceso .'.pdf';
+            $nombreArchivo = 'Notas_' . $anios['nombre'] . '_' . $codigoAcceso . '.pdf';
 
             // Ruta destino
             $directorio = 'upload/notas/';
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Crear carpeta si no existe
             if (!is_dir($directorio)) {
                 if (!mkdir($directorio, 0755, true)) {
-                    throw new Exception("No se pudo crear la carpeta de destino.");
+                    $errores[] = throw new Exception("No se pudo crear la carpeta de destino.");
                 }
             }
 
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Mover archivo
             if (!move_uploaded_file($archivo['tmp_name'], $rutaCompleta)) {
                 $pdo->rollBack();
-                throw new Exception("Error al guardar el archivo PDF.");
+                $errores[] = throw new Exception("Error al guardar el archivo PDF.");
             }
 
             $pdo->commit();
@@ -101,15 +101,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Exception $e) {
             if ($pdo->inTransaction())
                 $pdo->rollBack();
-            echo "<div class='alert alert-danger'>Error: " . htmlspecialchars($e->getMessage()) . "</div>";
+            $errores[] = "Error: " . htmlspecialchars($e->getMessage()) . " ";
         }
     } else {
         // Mostrar errores
-        echo "<div class='alert alert-danger'><strong>Errores encontrados:</strong><ul>";
-        foreach ($errores as $error) {
-            echo "<li>" . htmlspecialchars($error) . "</li>";
+
+        // Si hay errores, redirigir con los errores en sesión
+        if (!empty($errores)) {
+            $_SESSION['errores'] = $errores;
+            header("Location: ../estudiante/panel_estudiante.php");
+            exit;
         }
-        echo "</ul></div>";
     }
 } else {
     echo "<div class='alert alert-warning'>Método no permitido.</div>";
