@@ -7,7 +7,8 @@ if (!isset($_SESSION['estudiante'])) {
 
 include_once('../config/conexion.php');
 
-function sanitize_input($data) {
+function sanitize_input($data)
+{
     return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
 }
 
@@ -29,6 +30,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Todos los campos son obligatorios.";
         exit;
     }
+
+
+    // Función para validar las fechas del pasaporte
+    function validarFechasPasaporte($fecha_emision, $fecha_expiracion)
+    {
+        $fecha_emision_obj = DateTime::createFromFormat('Y-m-d', $fecha_emision);
+        $fecha_expiracion_obj = DateTime::createFromFormat('Y-m-d', $fecha_expiracion);
+        $fecha_actual = new DateTime();
+
+        // Validar que las fechas sean válidas
+        if (!$fecha_emision_obj || !$fecha_expiracion_obj) {
+            return "Las fechas proporcionadas no son válidas.";
+        }
+
+        // La fecha de emisión no puede ser posterior a la fecha de expiración
+        if ($fecha_emision_obj > $fecha_expiracion_obj) {
+            return "La fecha de emisión no puede ser posterior a la fecha de expiración.";
+        }
+
+        // La fecha de expiración no puede ser más de 10 años después de la fecha de emisión
+        $fecha_maxima_expiracion = clone $fecha_emision_obj;
+        $fecha_maxima_expiracion->modify('+10 years');
+        if ($fecha_expiracion_obj > $fecha_maxima_expiracion) {
+            return "La fecha de expiración no puede ser más de 10 años después de la fecha de emisión.";
+        }
+
+        // La fecha de expiración debe ser al menos 6 meses posterior a la fecha actual
+        $fecha_minima_expiracion = clone $fecha_actual;
+        $fecha_minima_expiracion->modify('+6 months');
+        if ($fecha_expiracion_obj < $fecha_minima_expiracion) {
+            return "La fecha de expiración debe ser al menos 6 meses después de la fecha actual.";
+        }
+
+        // Si todas las validaciones son correctas
+        return null; // Sin error
+    }
+
+    // Inicializar errores
+    $errores = [];
+
+
+    // Validaciones
+    if (empty($numero_pasaporte)) {
+        $errores[] = "El número de pasaporte es obligatorio.";
+    }
+
+    if (empty($fecha_emision)) {
+        $errores[] = "La fecha de emisión es obligatoria.";
+    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_emision)) {
+        $errores[] = "El formato de la fecha de emisión no es válido. Usa YYYY-MM-DD.";
+    }
+
+    if (empty($fecha_expiracion)) {
+        $errores[] = "La fecha de expiración es obligatoria.";
+    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_expiracion)) {
+        $errores[] = "El formato de la fecha de expiración no es válido. Usa YYYY-MM-DD.";
+    }
+
+    // Validar las fechas del pasaporte
+    $validacion_fechas = validarFechasPasaporte($fecha_emision, $fecha_expiracion);
+    if ($validacion_fechas) {
+        $errores[] = $validacion_fechas;
+    }
+
+
+
+    // Si hay errores, redirigir con los errores en sesión
+    if (!empty($errores)) {
+        $_SESSION['errores'] = $errores;
+        header("Location: ../estudiante/panel_estudiante.php");
+        exit;
+    }
+
+
 
     // Validar extensión del archivo (solo PDF)
     $archivo_extension = strtolower(pathinfo($archivo_nombre, PATHINFO_EXTENSION));
@@ -75,12 +150,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             (estudiante_id, numero_pasaporte, fecha_emision, fecha_expiracion, archivo_url) 
             VALUES 
             (:estudiante_id, :numero_pasaporte, :fecha_emision, :fecha_expiracion, :archivo_url)");
-        
+
         $stmt->bindParam(':estudiante_id', $estudiante_id);
         $stmt->bindParam(':numero_pasaporte', $numero_pasaporte);
         $stmt->bindParam(':fecha_emision', $fecha_emision);
         $stmt->bindParam(':fecha_expiracion', $fecha_expiracion);
-        
+
         // Guardamos solo el nombre del archivo
         $stmt->bindParam(':archivo_url', $nombre_archivo_final);
         $stmt->execute();

@@ -1,97 +1,84 @@
+ 
+ 
 <?php
-
-include_once("../componentes/header.php");
-include_once("../componentes/sidebar.php");
 
 require_once '../config/conexion.php';
 
-// Configuración de paginación
+// Generar automáticamente años académicos desde 2000 hasta el año actual
+$anio_inicio = 2000;
+$anio_actual = (int)date('Y'); // Solo hasta el año actual
+
+try {
+    // Obtener los años ya existentes y los años con estudiantes registrados
+    $consultaExistentes = $pdo->query("SELECT nombre FROM anios_academicos");
+    $existentes = $consultaExistentes->fetchAll(PDO::FETCH_COLUMN);
+    
+    // Obtener los años académicos con estudiantes registrados
+    $consultaAniosConEstudiantes = $pdo->query("
+    SELECT DISTINCT anio_academico_id 
+    FROM notas WHERE anio_academico_id IS NOT NULL
+    ");
+    $aniosConEstudiantes = $consultaAniosConEstudiantes->fetchAll(PDO::FETCH_COLUMN);
+
+    // Insertar los años que no existen aún y solo si tienen estudiantes registrados
+    for ($anio = $anio_inicio; $anio <= $anio_actual; $anio++) {
+        $nombreAnio = "$anio - " . ($anio + 1);
+        
+        // Verifica si el año ya existe en la base de datos
+        if (!in_array($nombreAnio, $existentes)) {
+            // Verifica si ya se tiene un año académico con estudiantes registrados
+            if (in_array($anio, $aniosConEstudiantes)) {
+                $insert = $pdo->prepare("INSERT INTO anios_academicos (nombre) VALUES (:nombre)");
+                $insert->execute([':nombre' => $nombreAnio]);
+                $existentes[] = $nombreAnio;  // Añadir al array de existentes para no volver a insertar
+            }
+        }
+    }
+} catch (PDOException $e) {
+    die("Error al generar años académicos: " . $e->getMessage());
+}
+
+// Paginación
 $por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
 
-// Contar el total de años académicos con estudiantes inscritos
-$total_stmt = $pdo->query("SELECT COUNT(DISTINCT n.anio_academico_id) as total 
-                           FROM notas n");
+// Total para paginación
+$total_stmt = $pdo->query("SELECT COUNT(*) AS total FROM anios_academicos WHERE id IN (SELECT DISTINCT anio_academico_id FROM notas)");
 $total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 $total_paginas = ceil($total_filas / $por_pagina);
 
-// Obtener años académicos con estudiantes y el total de estudiantes
+// Obtener años académicos con número de estudiantes registrados
 try {
     $stmt = $pdo->prepare("
-        SELECT 
-            a.id AS anio_id, 
-            a.nombre AS anio_nombre, 
-            COUNT(DISTINCT n.estudiante_id) AS total_estudiantes 
-        FROM 
-            anios_academicos a
-        LEFT JOIN 
-            notas n ON n.anio_academico_id = a.id
-        GROUP BY 
-            a.id, a.nombre
-        HAVING 
-            total_estudiantes > 0
-        ORDER BY 
-            a.nombre DESC
-        LIMIT :inicio, :por_pagina
+    SELECT 
+    a.id AS anio_id,
+    a.nombre AS anio_nombre,
+    COUNT(DISTINCT n.estudiante_id) AS total_estudiantes
+    FROM anios_academicos a
+    LEFT JOIN notas n ON n.anio_academico_id = a.id
+    WHERE n.anio_academico_id IS NOT NULL
+    GROUP BY a.id, a.nombre
+    ORDER BY a.nombre DESC
+    LIMIT :inicio, :por_pagina
     ");
     $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
     $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
     $stmt->execute();
     $aniosAcademicos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    die("Error al obtener los años académicos: " . $e->getMessage());
+    die("Error al obtener años académicos: " . $e->getMessage());
 }
+
+
+include_once("../componentes/header.php");
+include_once("../componentes/sidebar.php");
 ?>
 
 <main class="content" id="mainContent">
     <div class="container mt-4">
-        <!-- INICIO DE LA ALERTA -->
-        <?php
-        if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
-        ?>
-            <div id="alerta-exito"
-                class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
-                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
-                <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
-                <div>
-                    <strong>¡Éxito!</strong>
-                    <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
-                </div>
-                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>
-            <script>
-                // Ocultar automáticamente luego de 6 segundos
-                setTimeout(() => {
-                    const alerta = document.getElementById('alerta-exito');
-                    if (alerta) {
-                        alerta.classList.remove('show');
-                        alerta.classList.add('fade');
-                        setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
-                    }
-                }, 6000);
-            </script>
-            <style>
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-10px);
-                    }
-
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            </style>
-        <?php
-            unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
-        endif;
-        ?>
-
-        <!-- FIN DE LA ALERTA -->
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3><i class="bi bi-calendar-check me-2"></i>Listado de Años Académicos con Estudiantes Inscritos</h3>
+            <h3><i class="bi bi-calendar-check me-2"></i>Listado de Años Académicos con Estudiantes</h3>
         </div>
 
         <div class="card shadow rounded-4">
@@ -110,8 +97,8 @@ try {
                         <thead class="table-dark">
                             <tr>
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
-                                <th><i class="bi bi-calendar-check me-1"></i>Año Académico</th>
-                                <th><i class="bi bi-person-fill me-1"></i>Total de Estudiantes</th>
+                                <th><i class="bi bi-calendar-event me-1"></i>Año Académico</th>
+                                <th><i class="bi bi-person-fill me-1"></i>Estudiantes Inscritos</th>
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
@@ -125,7 +112,7 @@ try {
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="3" class="text-center text-muted">No hay años académicos con estudiantes registrados</td>
+                                    <td colspan="3" class="text-center text-muted">No hay años académicos registrados con estudiantes</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -156,7 +143,6 @@ try {
                         </ul>
                     </nav>
                 <?php endif; ?>
-
             </div>
         </div>
     </div>
@@ -166,7 +152,7 @@ try {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Buscador funcional -->
+<!-- Buscador dinámico -->
 <script>
     $(document).ready(function() {
         $('#busqueda').on('keyup', function() {

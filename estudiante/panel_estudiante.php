@@ -122,6 +122,8 @@ usort($archivos, function ($a, $b) {
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
@@ -148,6 +150,62 @@ usort($archivos, function ($a, $b) {
         </div>
     </nav>
     <div class="container my-4 ">
+
+        <!-- INICIO DE LA ALERTA DE ERRORRES -->
+        <?php
+
+
+        if (isset($_SESSION['errores']) && is_array($_SESSION['errores'])):
+            ?>
+            <div id="alerta-errores"
+                class="alert alert-danger alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-danger-subtle rounded-3"
+                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+                <i class="bi bi-exclamation-triangle-fill fs-4 flex-shrink-0 mt-1"></i>
+                <div>
+                    <strong>Se detectaron errores:</strong>
+                    <ul class="mb-0 mt-1">
+                        <?php foreach ($_SESSION['errores'] as $error): ?>
+                            <li><?= htmlspecialchars($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+
+            <script>
+                // Ocultar automáticamente luego de 6 segundos
+                setTimeout(() => {
+                    const alerta = document.getElementById('alerta-errores');
+                    if (alerta) {
+                        alerta.classList.remove('show');
+                        alerta.classList.add('fade');
+                        setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
+                    }
+                }, 9000);
+            </script>
+
+            <style>
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+            <?php
+            unset($_SESSION['errores']); // Limpiar errores de la sesión
+        endif;
+        ?>
+
+
+        <!-- FIN DE LA ALERTA -->
+
+
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="info-box d-flex">
@@ -185,7 +243,7 @@ usort($archivos, function ($a, $b) {
             <div class="col-md-6">
                 <div class="info-box">
                     <?php if (!empty($archivos)): ?>
-                        <div class=" shadow-sm border-0">
+                        <div class="shadow-sm border-0">
                             <div class="card-header bg-white border-bottom-0">
                                 <h5 class="mb-0"><i class="bi bi-folder2-open me-2"></i>Archivos subidos</h5>
                             </div>
@@ -205,9 +263,11 @@ usort($archivos, function ($a, $b) {
                                                 $ext = pathinfo($archivo['archivo_url'], PATHINFO_EXTENSION);
                                                 $esImagen = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                                                 $esPDF = strtolower($ext) === 'pdf';
-                                            ?>
+                                                ?>
                                                 <tr>
-                                                    <td><span class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span></td>
+                                                    <td><span
+                                                            class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span>
+                                                    </td>
                                                     <td>
                                                         <?php if ($esImagen): ?>
                                                             <img src="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= $archivo['archivo_url'] ?>"
@@ -218,9 +278,17 @@ usort($archivos, function ($a, $b) {
                                                     </td>
                                                     <td><?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></td>
                                                     <td>
-                                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalArchivo<?= $archivo['id'] ?>">
+                                                        <!-- En pantallas grandes y medianas, mostrar el botón de modal -->
+                                                        <button class="btn btn-outline-primary btn-sm d-none d-md-inline-block"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalArchivo<?= $archivo['id'] ?>">
                                                             <i class="bi bi-eye"></i> Ver
                                                         </button>
+                                                        <!-- En dispositivos móviles, mostrar enlace de descarga con icono -->
+                                                        <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>"
+                                                            class="btn btn-outline-primary btn-sm d-block d-md-none" download>
+                                                            <i class="bi bi-download"></i> Descargar PDF
+                                                        </a>
                                                     </td>
                                                 </tr>
 
@@ -230,26 +298,40 @@ usort($archivos, function ($a, $b) {
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title">Detalles del Archivo</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"></button>
                                                             </div>
                                                             <div class="modal-body">
                                                                 <div class="accordion" id="accordion<?= $archivo['id'] ?>">
                                                                     <div class="accordion-item">
                                                                         <h2 class="accordion-header">
-                                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $archivo['id'] ?>">
+                                                                            <button class="accordion-button collapsed"
+                                                                                type="button" data-bs-toggle="collapse"
+                                                                                data-bs-target="#collapse<?= $archivo['id'] ?>">
                                                                                 Información del archivo
                                                                             </button>
                                                                         </h2>
-                                                                        <div id="collapse<?= $archivo['id'] ?>" class="accordion-collapse collapse">
+                                                                        <div id="collapse<?= $archivo['id'] ?>"
+                                                                            class="accordion-collapse collapse">
                                                                             <div class="accordion-body">
                                                                                 <div class="row">
                                                                                     <!-- Columna 1: Información del Estudiante -->
                                                                                     <div class="col-md-6">
-                                                                                        <p><strong>ID Estudiante:</strong> <?= $estudiantes['codigo_acceso'] ?></p>
-                                                                                        <p><strong>Nombre:</strong> <?= $estudiante['nombre_completo'] ?></p>
-                                                                                        <p><strong>Tipo:</strong> <?= htmlspecialchars($archivo['tipo']) ?></p>
-                                                                                        <p><strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></p>
-                                                                                        <p><strong>Archivo:</strong> <?= basename($archivo['archivo_url']) ?></p>
+                                                                                        <p><strong>ID Estudiante:</strong>
+                                                                                            <?= $estudiantes['codigo_acceso'] ?>
+                                                                                        </p>
+                                                                                        <p><strong>Nombre:</strong>
+                                                                                            <?= $estudiante['nombre_completo'] ?>
+                                                                                        </p>
+                                                                                        <p><strong>Tipo:</strong>
+                                                                                            <?= htmlspecialchars($archivo['tipo']) ?>
+                                                                                        </p>
+                                                                                        <p><strong>Fecha:</strong>
+                                                                                            <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
+                                                                                        </p>
+                                                                                        <p><strong>Archivo:</strong>
+                                                                                            <?= basename($archivo['archivo_url']) ?>
+                                                                                        </p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -258,19 +340,16 @@ usort($archivos, function ($a, $b) {
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer d-flex justify-content-center">
-                                                                <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>" class="btn btn-success" target="_blank">
+                                                                <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>"
+                                                                    class="btn btn-success" target="_blank">
                                                                     <i class="bi bi-eye"></i> Ver PDF
                                                                 </a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
-
-
                                             <?php endforeach; ?>
                                         </tbody>
-
                                     </table>
                                 </div>
                             </div>
@@ -283,6 +362,7 @@ usort($archivos, function ($a, $b) {
                 </div>
             </div>
         </div>
+
 
         <div class="row g-4">
             <button id="eliminarBtn" class="btn btn-danger m-2 w-100 w-sm-80 mx-auto" style="display: none;">
@@ -340,7 +420,7 @@ usort($archivos, function ($a, $b) {
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const contenedor = document.getElementById("formularioPasaporte");
             const agregarBtn = document.getElementById("btnSubirPasaporte");
             const btnSubirNotas = document.getElementById("btnSubirNotas");
@@ -351,7 +431,7 @@ usort($archivos, function ($a, $b) {
                 modal.show();
             }
 
-            agregarBtn.addEventListener("click", function() {
+            agregarBtn.addEventListener("click", function () {
                 if (!contenedor.hasChildNodes()) {
                     contenedor.innerHTML = `
                        <div class="form-section border rounded p-4 shadow-sm bg-white">
@@ -398,7 +478,7 @@ usort($archivos, function ($a, $b) {
                     eliminarBtn.style.display = "inline-block";
                 }
             });
-            eliminarBtn.addEventListener("click", function() {
+            eliminarBtn.addEventListener("click", function () {
                 if (contenedor.hasChildNodes()) {
 
                     contenedor.innerHTML = "";
@@ -407,7 +487,7 @@ usort($archivos, function ($a, $b) {
             });
 
 
-            btnSubirNotas.addEventListener("click", function() {
+            btnSubirNotas.addEventListener("click", function () {
                 if (!contenedor.hasChildNodes()) {
 
                     fetch('formulario_notas.php')
