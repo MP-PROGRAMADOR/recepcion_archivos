@@ -29,22 +29,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Inicializar errores
     $errores = [];
+    $hay_dato_para_actualizar = false;
 
-    // Validaciones de los campos
-    if (empty($numero_pasaporte)) {
-        $errores[] = "El número de pasaporte es obligatorio.";
+    // Validaciones de los campos: solo si no están vacíos
+    if (!empty($numero_pasaporte)) {
+        $hay_dato_para_actualizar = true;
+        if (empty($numero_pasaporte)) {
+            $errores[] = "El número de pasaporte es obligatorio.";
+        }
     }
 
-    if (empty($fecha_emision)) {
-        $errores[] = "La fecha de emisión es obligatoria.";
-    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_emision)) {
-        $errores[] = "El formato de la fecha de emisión no es válido. Usa YYYY-MM-DD.";
+    if (!empty($fecha_emision)) {
+        $hay_dato_para_actualizar = true;
+        if (empty($fecha_emision)) {
+            $errores[] = "La fecha de emisión es obligatoria.";
+        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_emision)) {
+            $errores[] = "El formato de la fecha de emisión no es válido. Usa YYYY-MM-DD.";
+        }
     }
 
-    if (empty($fecha_expiracion)) {
-        $errores[] = "La fecha de expiración es obligatoria.";
-    } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_expiracion)) {
-        $errores[] = "El formato de la fecha de expiración no es válido. Usa YYYY-MM-DD.";
+    if (!empty($fecha_expiracion)) {
+        $hay_dato_para_actualizar = true;
+        if (empty($fecha_expiracion)) {
+            $errores[] = "La fecha de expiración es obligatoria.";
+        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_expiracion)) {
+            $errores[] = "El formato de la fecha de expiración no es válido. Usa YYYY-MM-DD.";
+        }
     }
 
     // Función para validar las fechas del pasaporte
@@ -84,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validar las fechas del pasaporte
     $validacion_fechas = validarFechasPasaporte($fecha_emision, $fecha_expiracion);
-    if ($validacion_fechas) {
+    if (!$validacion_fechas) {
         $errores[] = $validacion_fechas;
     }
 
@@ -94,6 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($archivo_extension !== 'pdf') {
             $errores[] = "Solo se permiten archivos PDF.";
         }
+    }
+
+    // Si no hay campos para actualizar, mostrar mensaje de error
+    if (!$hay_dato_para_actualizar) {
+        $errores[] = "Debes ingresar al menos un campo para actualizar.";
     }
 
     // Si existen errores, redirigir con los errores en sesión
