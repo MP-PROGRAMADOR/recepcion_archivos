@@ -5,7 +5,7 @@ if (session_status() == PHP_SESSION_NONE) {
   session_start();
 }
 
-// Validar la variable $_SESSION['favicon']
+/* // Validar la variable $_SESSION['favicon']
 $favico = isset($_SESSION["config"]) ? $_SESSION["config"] : 'favicon.ico'; // Ruta predeterminada
 $favico = htmlspecialchars($favico); // Asegura que no haya inyecciones de código
 
@@ -30,7 +30,7 @@ switch ($extension) {
       break;
 }
 
-$favico = $_SESSION["config"];
+$favico = $_SESSION["config"]; */
 ?>
 <!DOCTYPE html>
 <html lang="es">
