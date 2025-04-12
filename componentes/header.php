@@ -46,7 +46,7 @@ $favico = $_SESSION["config"];
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 
   <!-- O si usas un PNG -->
-  <link rel="icon" type="image/png" href="<?php echo htmlspecialchars($favico)?>">
+  <link rel="icon" type="image/png" href=" ">
 
   <!-- Para SVG (opcional) -->
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
