@@ -1,3 +1,5 @@
+
+
 <?php
 // Iniciar sesión de forma segura
 if (session_status() === PHP_SESSION_DISABLED) {
@@ -5,66 +7,31 @@ if (session_status() === PHP_SESSION_DISABLED) {
 } elseif (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+          require_once 'config/conexion.php';
+        // Obtener la configuración actual del sitio
+        $sql = "SELECT * FROM configuracion LIMIT 1";
 
-require_once 'config/conexion.php';
+        try {
+            $stmt = $pdo->query($sql);
+            $config = $stmt->fetch(PDO::FETCH_ASSOC); // Asegura array asociativo
+        
+            // Validar que se obtuvo la configuración
+            if ($config) {
+                $_SESSION['config'] = $config;
+            } else {
+                // Opcional: manejo si no hay config
+                $_SESSION['config'] = 'esta vacia';
+            }
 
-// Obtener la configuración actual del sitio
-$sql = "SELECT * FROM configuracion LIMIT 1";
+        } catch (PDOException $e) {
+            // Manejo de errores en producción debería ser más discreto
+            die("Error al obtener configuración: " . $e->getMessage());
+        }
 
-try {
-    $stmt = $pdo->query($sql);
-    $config = $stmt->fetch(PDO::FETCH_ASSOC); // Asegura array asociativo
-    
-    // Validar que se obtuvo la configuración
-    if ($config) {
-        $_SESSION['config'] = $config;
-        $_SESSION["favico"] = $config["logo"];
-    } else {
-        // Opcional: manejo si no hay config
-        $_SESSION['config'] = 'está vacía';
-    }
-
-} catch (PDOException $e) {
-    // Manejo de errores en producción debería ser más discreto
-    die("Error al obtener configuración: " . $e->getMessage());
-}
-
-$foto = $config['img_admin']; // Ej: logo.png
-$rutaRelativa = './php/upload/configuracion/' . basename($foto);
-$degradado = $config['color_primario'];
-
-// Ruta del favicon
-$favico = $_SESSION["favico"]; // Ruta predeterminada
-//$rutaFavico = './php/upload/configuracion/' . basename($favico);
-$rutaFavico = './php/upload/configuracion/' . basename($favico);
-
-// Verificar la extensión del favicon
-$extension = strtolower(pathinfo($favico, PATHINFO_EXTENSION));
-
-// Establecer el tipo MIME según la extensión del archivo
-switch ($extension) {
-    case 'ico':
-        $mime_type = 'image/x-icon';
-        break;
-    case 'png':
-        $mime_type = 'image/png';
-        break;
-    case 'webp': // Corregido a 'webp'
-        $mime_type = 'image/webp'; 
-        break;
-    case 'svg':
-        $mime_type = 'image/svg+xml';
-        break;
-    default:
-        // Si la extensión no es válida, usamos el favicon por defecto
-        $favico = 'favicon.ico';
-        $mime_type = 'image/x-icon';
-        break;
-}
-
-echo "la ruta: ".$rutaFavico;
-?>
-
+        $foto = $config['img_admin']; // Ej: logo.png
+        $rutaRelativa = './php/upload/configuracion/' . basename($foto);
+        $degradado = $config['color_primario']
+            ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -72,9 +39,6 @@ echo "la ruta: ".$rutaFavico;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Iniciar sesión - Sistema Académico</title>
-
-    <!-- Favicon dinámico -->
-    <link rel="icon" type="<?php echo htmlspecialchars($mime_type); ?>" href="<?php echo htmlspecialchars($rutaFavico); ?>">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -168,9 +132,43 @@ echo "la ruta: ".$rutaFavico;
             ;
             z-index: -1;
         }
+
+
+        .panel-izquierdo {
+            position: relative;
+            background: url('<?php echo !empty($foto) && file_exists($rutaRelativa) ? $rutaRelativa : 'https://via.placeholder.com/300x100'; ?>') no-repeat center center;
+            background-size: cover;
+            min-height: 100vh;
+            padding: 3rem;
+            color: white;
+            z-index: 1;
+        }
+
+        .panel-izquierdo::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Opción A: Sombra con opacidad azul oscura */
+            /*background: rgba(0, 50, 90, 0.75);*/
+            /* Opción B: Degradado (puedes usar esta en vez de la de arriba) */
+            background:
+                <?php echo !empty($color_primario) ? $color_primario : 'linear-gradient(to bottom right, rgba(0, 84, 140, 0.34), rgba(0, 30, 60, 0.7))'; ?>
+            ;
+            z-index: -1;
+        }
+
+        .panel-izquierdo h1,
+        .panel-izquierdo p {
+            z-index: 2;
+            position: relative;
+        }
     </style>
 
 </head>
+
 <body class="fade-in">
 
     <div class="container-fluid g-0">
