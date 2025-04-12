@@ -1,14 +1,6 @@
 <?php
-// Iniciar sesión
 session_start();
 include_once("../config/conexion.php");
-
-// Verificar si el usuario tiene permisos de administrador
-if (!isset($_SESSION['usuario_id'])) {
-    $_SESSION['error'] = "Acceso no autorizado. Inicia sesión como administrador.";
-    header('Location: ../index.php');
-    exit;
-}
 
 // Carpeta base donde se guardan los archivos
 $carpeta_base = 'upload';
@@ -34,28 +26,25 @@ function moverArchivo($campo_nombre, $archivo, $directorio_base = 'upload')
         return false;
     }
 
-    // Crear subcarpeta con el nombre del campo
+    // Crear subcarpeta 'upload/configuracion' si no existe
     $carpeta_destino = $directorio_base . '/configuracion';
     if (!is_dir($carpeta_destino)) {
-        mkdir($carpeta_destino, 0777, true);
+        if (!mkdir($carpeta_destino, 0777, true)) {
+            $_SESSION['error'] = "No se pudo crear la carpeta de destino '$carpeta_destino'.";
+            return false;
+        }
     }
 
     // Sanitizar nombre de archivo
     $nombre_archivo = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($archivo['name']));
-    $ruta_final =  $nombre_archivo;
+    $ruta_final = $carpeta_destino . '/' . $nombre_archivo;
 
-    // Evitar sobrescritura
-   /*  $contador = 1;
-    $nombre_base = pathinfo($nombre_archivo, PATHINFO_FILENAME);
-    $ext = pathinfo($nombre_archivo, PATHINFO_EXTENSION);
-    while (file_exists($ruta_final)) {
-        $ruta_final = $carpeta_destino . '/' . $nombre_base . "_$contador." . $ext;
-        $contador++;
-    } */
-
+    if (file_exists($ruta_final)) {
+        unlink($ruta_final);
+    }
     // Mover archivo
     if (move_uploaded_file($archivo['tmp_name'], $ruta_final)) {
-        return $ruta_final;
+        return $ruta_final; // Devolver la ruta completa
     } else {
         $_SESSION['error'] = "Error al mover el archivo '$campo_nombre'.";
         return false;
@@ -64,7 +53,6 @@ function moverArchivo($campo_nombre, $archivo, $directorio_base = 'upload')
 
 // Procesar formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitizar entradas
     $nombre_sitio = htmlspecialchars(trim($_POST['nombre_sitio']));
     $color_primario = htmlspecialchars(trim($_POST['color_primario']));
     $descripcion = htmlspecialchars(trim($_POST['descripcion']));
@@ -75,11 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Cargar valores actuales (por si no se actualizan imágenes)
     $query = $pdo->query("SELECT logo, img_estudiante, img_admin FROM configuracion WHERE id = 1");
     $config = $query->fetch(PDO::FETCH_ASSOC);
 
-    // Procesar archivos
     $logo_ruta = (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK)
         ? moverArchivo('logo', $_FILES['logo'], $carpeta_base)
         : $config['logo'];
@@ -93,12 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         : $config['img_admin'];
 
     if (!$logo_ruta || !$img_estudiante_ruta || !$img_admin_ruta) {
-        // Si hay error en alguno, ya se guardó en $_SESSION['error']
         header('Location: ../admin/configuracion.php');
         exit;
     }
 
-    // Actualizar configuración
     try {
         $sql = "UPDATE configuracion 
                 SET nombre_sitio = :nombre_sitio, 

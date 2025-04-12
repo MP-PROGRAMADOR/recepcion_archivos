@@ -1,9 +1,12 @@
 <?php
-
+ 
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
-
+/* if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../index.php');
+    exit;
+} */
 // Configuración de paginación
 $por_pagina = 5;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;

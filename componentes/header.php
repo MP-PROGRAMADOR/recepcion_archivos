@@ -1,9 +1,36 @@
 <?php
- 
-if (!isset($_SESSION['usuario_id'])) {
-  header('Location: ../index.php');
-  exit;
+// Iniciar sesión de forma segura
+// Comienza la sesión si no está ya iniciada
+if (session_status() == PHP_SESSION_NONE) {
+  session_start();
 }
+
+// Validar la variable $_SESSION['favicon']
+$favico = isset($_SESSION["config"]) ? $_SESSION["config"] : 'favicon.ico'; // Ruta predeterminada
+$favico = htmlspecialchars($favico); // Asegura que no haya inyecciones de código
+
+// Obtener la extensión del archivo
+$extension = strtolower(pathinfo($favico, PATHINFO_EXTENSION));
+
+// Establecer el tipo MIME según la extensión del archivo
+switch ($extension) {
+  case 'ico':
+      $mime_type = 'image/x-icon';
+      break;
+  case 'png':
+      $mime_type = 'image/png';
+      break;
+  case 'svg':
+      $mime_type = 'image/svg+xml';
+      break;
+  default:
+      // Si la extensión no es válida, usamos el favicon por defecto
+      $favico = 'favicon.ico';
+      $mime_type = 'image/x-icon';
+      break;
+}
+
+$favico = $_SESSION["config"];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -15,6 +42,15 @@ if (!isset($_SESSION['usuario_id'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Favicon clásico (.ico) -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- O si usas un PNG -->
+  <link rel="icon" type="image/png" href="<?php echo htmlspecialchars($favico)?>">
+
+  <!-- Para SVG (opcional) -->
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+
   <style>
     * {
       box-sizing: border-box;

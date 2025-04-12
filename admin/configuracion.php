@@ -1,15 +1,16 @@
 <?php
 // Iniciar sesión
 
+session_start();
 
 // Incluir el header
 include_once("../componentes/header.php");
 
 // Verificar si el usuario tiene permisos de administrador
-if (!isset($_SESSION['usuario_id'])) {
+/* if (!isset($_SESSION['usuario_id'])) {
     header('Location: ../index.php');
     exit;
-}
+} */
 
 // Obtener la configuración actual del sitio
 $sql = "SELECT * FROM configuracion LIMIT 1";

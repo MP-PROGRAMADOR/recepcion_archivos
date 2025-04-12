@@ -1,7 +1,18 @@
 <?php
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+ 
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php"); 
+ 
+/* if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../index.php');
+    exit;
+} */
+
+
+ 
 $stmt = $pdo->query("
     SELECT 
         (SELECT COUNT(*) FROM estudiantes) AS total_estudiantes,
