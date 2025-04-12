@@ -13,8 +13,23 @@ if (!isset($_SESSION['usuario_id'])) {
 
 // Obtener la configuración actual del sitio
 $sql = "SELECT * FROM configuracion LIMIT 1";
-$resultado = $pdo->query($sql);
-$config = $resultado->fetch();
+
+try {
+    $stmt = $pdo->query($sql);
+    $config = $stmt->fetch(PDO::FETCH_ASSOC); // Asegura array asociativo
+
+    // Validar que se obtuvo la configuración
+    if ($config) {
+        $_SESSION['config'] = $config;
+    } else {
+        // Opcional: manejo si no hay config
+        $_SESSION['config'] = 'esta vacia';
+    }
+
+} catch (PDOException $e) {
+    // Manejo de errores en producción debería ser más discreto
+    die("Error al obtener configuración: " . $e->getMessage());
+}
 
 // Si no existe la configuración, crear una nueva
 if (!$config) {

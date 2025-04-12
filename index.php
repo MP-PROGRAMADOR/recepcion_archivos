@@ -77,9 +77,59 @@
             text-decoration: none;
         }
 
+        <?php
+          require_once 'config/conexion.php';
+        // Obtener la configuración actual del sitio
+        $sql = "SELECT * FROM configuracion LIMIT 1";
+
+        try {
+            $stmt = $pdo->query($sql);
+            $config = $stmt->fetch(PDO::FETCH_ASSOC); // Asegura array asociativo
+        
+            // Validar que se obtuvo la configuración
+            if ($config) {
+                $_SESSION['config'] = $config;
+            } else {
+                // Opcional: manejo si no hay config
+                $_SESSION['config'] = 'esta vacia';
+            }
+
+        } catch (PDOException $e) {
+            // Manejo de errores en producción debería ser más discreto
+            die("Error al obtener configuración: " . $e->getMessage());
+        }
+
+        $foto = $config['img_admin']; // Ej: logo.png
+        $rutaRelativa = './php/upload/configuracion/' . basename($foto);
+        $degradado = $config['color_primario']
+            ?>
         .panel-izquierdo {
             position: relative;
-            background: url('<?php $img_admin?>') no-repeat center center;
+            background: url('<?php echo $rutaRelativa; ?>') no-repeat center center;
+            background-size: cover;
+            min-height: 100vh;
+            padding: 3rem;
+            color: white;
+            z-index: 1;
+        }
+
+        .panel-izquierdo::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                <?php echo $degradado; ?>
+            ;
+            z-index: -1;
+        }
+
+
+        .panel-izquierdo {
+            position: relative;
+            background: url('<?php echo !empty($foto) && file_exists($rutaRelativa) ? $rutaRelativa : 'https://via.placeholder.com/300x100'; ?>') no-repeat center center;
             background-size: cover;
             min-height: 100vh;
             padding: 3rem;
@@ -97,7 +147,9 @@
             /* Opción A: Sombra con opacidad azul oscura */
             /*background: rgba(0, 50, 90, 0.75);*/
             /* Opción B: Degradado (puedes usar esta en vez de la de arriba) */
-            background: <?php echo !empty($color_primario) ? $color_primario : 'linear-gradient(to bottom right, rgba(0, 84, 140, 0.34), rgba(0, 30, 60, 0.7))'; ?>;
+            background:
+                <?php echo !empty($color_primario) ? $color_primario : 'linear-gradient(to bottom right, rgba(0, 84, 140, 0.34), rgba(0, 30, 60, 0.7))'; ?>
+            ;
             z-index: -1;
         }
 
@@ -124,8 +176,7 @@
                     institucionales.
                 </p>
             </div>
-
-
+ 
             <!-- Panel derecho -->
             <div class="col-md-7 d-flex align-items-center justify-content-center bg-white px-4 py-5">
                 <div class="w-100" style="max-width: 420px;">
@@ -170,7 +221,7 @@
                             <i class="bi bi-arrow-left me-1"></i> Registrarse
                         </a>
                     </div>
-                    
+
                 </div>
             </div>
 
