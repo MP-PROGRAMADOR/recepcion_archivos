@@ -6,7 +6,7 @@
         </div>
 
         <div class="card-body bg-light rounded-bottom-4 px-4 py-4">
-            <form id="pasaporteForm" action="../php/gurdar_pasaporte.php" method="POST" enctype="multipart/form-data" novalidate>
+            <form id="pasaporteForm" action="../php/guardar_pasaporte.php" method="POST" enctype="multipart/form-data" novalidate>
                 <div class="row g-4">
 
                     <!-- Número de Pasaporte -->

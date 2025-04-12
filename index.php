@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -78,7 +79,7 @@
 
         .panel-izquierdo {
             position: relative;
-            background: url('img.jpg') no-repeat center center;
+            background: url('<?php $img_admin?>') no-repeat center center;
             background-size: cover;
             min-height: 100vh;
             padding: 3rem;
@@ -96,7 +97,7 @@
             /* Opción A: Sombra con opacidad azul oscura */
             /*background: rgba(0, 50, 90, 0.75);*/
             /* Opción B: Degradado (puedes usar esta en vez de la de arriba) */
-             background: linear-gradient(to bottom right, rgba(0, 84, 140, 0.34), rgba(0, 30, 60, 0.7)); 
+            background: <?php echo !empty($color_primario) ? $color_primario : 'linear-gradient(to bottom right, rgba(0, 84, 140, 0.34), rgba(0, 30, 60, 0.7))'; ?>;
             z-index: -1;
         }
 
@@ -164,6 +165,9 @@
                     <div class="text-center mt-4">
                         <a href="estudiante/index.php" class="link-volver">
                             <i class="bi bi-arrow-left me-1"></i> Ver Panel de Estudiante
+                        </a>
+                        <a href="register.php" class="link-volver">
+                            <i class="bi bi-arrow-left me-1"></i> Registrarse
                         </a>
                     </div>
                     

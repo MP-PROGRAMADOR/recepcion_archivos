@@ -5,7 +5,7 @@ session_start();
 if (!isset($_SESSION['estudiante'])) {
     header("Location: index.php");
     exit();
-}
+} 
 
 require_once '../config/conexion.php';
 
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pdo->commit();
 
-            $_SESSION['mensaje_exito'] = "Nota registrada correctamente.";
+            $_SESSION['exito'] = "Nota registrada correctamente.";
             header("Location: ../estudiante/panel_estudiante.php");
             exit();
 
@@ -114,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 } else {
-    echo "<div class='alert alert-warning'>Método no permitido.</div>";
+    $errores[] = "Método no permitido.";
+    $_SESSION['errores'] = $errores;
 }
 ?>

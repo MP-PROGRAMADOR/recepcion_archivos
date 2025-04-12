@@ -2,7 +2,7 @@
  
 <?php
 
-require_once '../config/conexion.php';
+include_once("../componentes/header.php");
 
 // Generar automáticamente años académicos desde 2000 hasta el año actual
 $anio_inicio = 2000;
@@ -27,11 +27,11 @@ try {
         // Verifica si el año ya existe en la base de datos
         if (!in_array($nombreAnio, $existentes)) {
             // Verifica si ya se tiene un año académico con estudiantes registrados
-            if (in_array($anio, $aniosConEstudiantes)) {
-                $insert = $pdo->prepare("INSERT INTO anios_academicos (nombre) VALUES (:nombre)");
-                $insert->execute([':nombre' => $nombreAnio]);
-                $existentes[] = $nombreAnio;  // Añadir al array de existentes para no volver a insertar
-            }
+            $insert = $pdo->prepare("INSERT INTO anios_academicos (nombre) VALUES (:nombre)");
+            $insert->execute([':nombre' => $nombreAnio]);
+            $existentes[] = $nombreAnio;  // Añadir al array de existentes para no volver a insertar
+           /*  if (in_array($anio, $aniosConEstudiantes)) {
+            } */
         }
     }
 } catch (PDOException $e) {
@@ -71,7 +71,7 @@ try {
 }
 
 
-include_once("../componentes/header.php");
+
 include_once("../componentes/sidebar.php");
 ?>
 

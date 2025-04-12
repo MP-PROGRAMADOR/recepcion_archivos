@@ -269,3 +269,16 @@ INSERT INTO paises (nombre) VALUES
 ('Yemen'),
 ('Zambia'),
 ('Zimbabwe');
+
+USE recepcion_archivo;
+DROP TABLE configuracion;
+CREATE TABLE configuracion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_sitio VARCHAR(255) NOT NULL,
+    logo VARCHAR(255),
+    color_primario VARCHAR(7) NULL,  
+    descripcion TEXT NULL, 
+    img_estudiante VARCHAR(255) DEFAULT NULL,
+    img_admin VARCHAR(255) DEFAULT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

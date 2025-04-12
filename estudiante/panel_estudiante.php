@@ -68,7 +68,7 @@ $verifica->bindParam(':estudiante_id', $estudiante_id);
 $verifica->execute();
 $pasaporteExiste = $verifica->fetchColumn();
 
- 
+
 
 
 
@@ -225,6 +225,51 @@ $pasaporteExiste = $verifica->fetchColumn();
         endif;
         ?>
 
+        <?php
+
+
+        if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
+            ?>
+            <div id="alerta-exito"
+                class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
+                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+                <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
+                <div>
+                    <strong>¡Éxito!</strong>
+                    <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
+                </div>
+                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+
+            <script>
+                // Ocultar automáticamente luego de 6 segundos
+                setTimeout(() => {
+                    const alerta = document.getElementById('alerta-exito');
+                    if (alerta) {
+                        alerta.classList.remove('show');
+                        alerta.classList.add('fade');
+                        setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
+                    }
+                }, 6000);
+            </script>
+
+            <style>
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+            <?php
+            unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
+        endif;
+        ?>
 
         <!-- FIN DE LA ALERTA -->
 
@@ -302,75 +347,20 @@ $pasaporteExiste = $verifica->fetchColumn();
                                                     <td><?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></td>
                                                     <td>
                                                         <!-- En pantallas grandes y medianas, mostrar el botón de modal -->
-                                                        <button class="btn btn-outline-primary btn-sm d-none d-md-inline-block"
+                                                        <!--   <button class="btn btn-outline-primary btn-sm d-none d-md-inline-block"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#modalArchivo<?= $archivo['id'] ?>">
                                                             <i class="bi bi-eye"></i> Ver
-                                                        </button>
+                                                        </button> -->
                                                         <!-- En dispositivos móviles, mostrar enlace de descarga con icono -->
                                                         <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>"
-                                                            class="btn btn-outline-primary btn-sm d-block d-md-none" download>
+                                                            class="btn btn-outline-primary btn-sm " download>
                                                             <i class="bi bi-download"></i> Descargar PDF
                                                         </a>
                                                     </td>
                                                 </tr>
 
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="modalArchivo<?= $archivo['id'] ?>" tabindex="-1">
-                                                    <div class="modal-dialog modal-lg">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Detalles del Archivo</h5>
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="modal"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="accordion" id="accordion<?= $archivo['id'] ?>">
-                                                                    <div class="accordion-item">
-                                                                        <h2 class="accordion-header">
-                                                                            <button class="accordion-button collapsed"
-                                                                                type="button" data-bs-toggle="collapse"
-                                                                                data-bs-target="#collapse<?= $archivo['id'] ?>">
-                                                                                Información del archivo
-                                                                            </button>
-                                                                        </h2>
-                                                                        <div id="collapse<?= $archivo['id'] ?>"
-                                                                            class="accordion-collapse collapse">
-                                                                            <div class="accordion-body">
-                                                                                <div class="row">
-                                                                                    <!-- Columna 1: Información del Estudiante -->
-                                                                                    <div class="col-md-6">
-                                                                                        <p><strong>ID Estudiante:</strong>
-                                                                                            <?= $estudiantes['codigo_acceso'] ?>
-                                                                                        </p>
-                                                                                        <p><strong>Nombre:</strong>
-                                                                                            <?= $estudiante['nombre_completo'] ?>
-                                                                                        </p>
-                                                                                        <p><strong>Tipo:</strong>
-                                                                                            <?= htmlspecialchars($archivo['tipo']) ?>
-                                                                                        </p>
-                                                                                        <p><strong>Fecha:</strong>
-                                                                                            <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?>
-                                                                                        </p>
-                                                                                        <p><strong>Archivo:</strong>
-                                                                                            <?= basename($archivo['archivo_url']) ?>
-                                                                                        </p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer d-flex justify-content-center">
-                                                                <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>"
-                                                                    class="btn btn-success" target="_blank">
-                                                                    <i class="bi bi-eye"></i> Ver PDF
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+
                                             <?php endforeach; ?>
                                         </tbody>
                                     </table>

@@ -24,6 +24,7 @@ if (!isset($_SESSION['usuario_id'])) {
       font-family: 'Inter', sans-serif;
       margin: 0;
       height: 100vh;
+      padding: .5rem;
       overflow: hidden;
     }
 
@@ -187,6 +188,61 @@ if (!isset($_SESSION['usuario_id'])) {
     .cv-value {
       margin-bottom: 10px;
     }
+
+    /*
+    ESTILOS DE LA CONFIGURACION DEL SITIO WEB 
+     */
+    /* Estilos para el formulario de configuración */
+    .config-form {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .config-form .form-group {
+      margin-bottom: 20px;
+    }
+
+    .config-form label {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .config-form input[type="text"],
+    .config-form textarea,
+    .config-form input[type="color"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .config-form textarea {
+      min-height: 100px;
+    }
+
+    .config-form .btn-submit {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .config-form .btn-submit:hover {
+      background-color: #45a049;
+    }
   </style>
 
   <?php
@@ -202,10 +258,10 @@ if (!isset($_SESSION['usuario_id'])) {
     ORDER BY estudiantes DESC;
 ";
 
-  
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  $stmt = $pdo->prepare($query);
+  $stmt->execute();
+  $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
   ?>
 
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

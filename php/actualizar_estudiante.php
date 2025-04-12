@@ -4,93 +4,100 @@ if (!isset($_SESSION['usuario_id'])) {
     header('Location: ../index.php');
     exit;
 }
-require_once("../config/conexion.php");
-
-// Verificamos si el ID del estudiante está presente y es válido
-if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
-    $_SESSION['errores'][] = "ID del estudiante no válido.";
-    header("Location: ../admin/estudiantes.php");
-    exit;
-}
-
-$id = (int) $_POST['id']; // ID del estudiante
-
-// Recolectar y sanitizar datos del formulario
-$nombre_completo = trim($_POST['nombre_completo'] ?? '');
-$fecha_nacimiento = $_POST['fecha_nacimiento'] ?? '';
-$pais_id = $_POST['pais'] ?? '';
-$foto_actual = $_POST['foto_actual'] ?? null;
+require_once '../config/conexion.php';
 
 $errores = [];
+$id = intval($_POST['id'] ?? 0);
+$nombre = trim($_POST['nombre_completo'] ?? '');
+$fecha = trim($_POST['fecha_nacimiento'] ?? '');
+$pais_id = intval($_POST['pais'] ?? 0);
 
 // Validaciones básicas
-if (empty($nombre_completo)) $errores[] = "El nombre completo es obligatorio.";
-if (empty($fecha_nacimiento)) $errores[] = "La fecha de nacimiento es obligatoria.";
-if (empty($pais_id)) $errores[] = "Debe seleccionar un país.";
+if ($nombre === '') $errores[] = "El nombre es obligatorio.";
+if ($fecha === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+    $errores[] = "Fecha inválida.";
+} elseif ($fecha > date('Y-m-d')) {
+    $errores[] = "La fecha no puede ser futura.";
+}
+if ($pais_id <= 0) $errores[] = "País no válido.";
 
-// Validar duplicado (excepto el actual estudiante)
-$sql = "SELECT COUNT(*) FROM estudiantes WHERE nombre_completo = :nombre AND id != :id";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([':nombre' => $nombre_completo, ':id' => $id]);
+// Validar duplicado (ignorando el estudiante actual)
+$nombre_normalizado = strtolower(preg_replace('/\s+/', ' ', $nombre));
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM estudiantes WHERE LOWER(TRIM(REPLACE(nombre_completo, '  ', ' '))) = ? AND id != ?");
+$stmt->execute([$nombre_normalizado, $id]);
 if ($stmt->fetchColumn() > 0) {
-    $errores[] = "Ya existe otro estudiante con ese nombre completo.";
+    $errores[] = "Ya existe otro estudiante con ese nombre.";
 }
 
-// Manejo de imagen
-$nombre_foto_final = $foto_actual;
-if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-    $foto_tmp = $_FILES['foto']['tmp_name'];
-    $nombre_foto = basename($_FILES['foto']['name']);
-    $ext = strtolower(pathinfo($nombre_foto, PATHINFO_EXTENSION));
-    $permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+// Procesar imagen si se subió
+$ruta_foto = null;
+if (!empty($_FILES['foto']['name'])) {
+    $permitidos = ['image/jpeg', 'image/png', 'image/webp'];
+    $foto = $_FILES['foto'];
 
-    if (!in_array($ext, $permitidas)) {
-        $errores[] = "Formato de imagen no válido.";
-    } else {
-        $nombre_foto_final = uniqid("estudiante_") . "." . $ext;
-        $ruta_destino = "upload/" . $nombre_foto_final;
+    if (!in_array($foto['type'], $permitidos)) $errores[] = "Imagen no válida.";
+    if ($foto['size'] > 2 * 1024 * 1024) $errores[] = "Máximo 2MB.";
+    if (!is_uploaded_file($foto['tmp_name'])) $errores[] = "Error al cargar imagen.";
 
-        if (!move_uploaded_file($foto_tmp, $ruta_destino)) {
-            $errores[] = "Error al subir la nueva foto.";
-        } else {
-            // Eliminar foto anterior si existe
-            if ($foto_actual && file_exists("upload/" . $foto_actual)) {
-                unlink("upload/" . $foto_actual);
-            }
+    if (empty($errores)) {
+        $extension = pathinfo($foto['name'], PATHINFO_EXTENSION);
+        $directorio = __DIR__ . '/upload/perfil/';
+        if (!is_dir($directorio)) mkdir($directorio, 0777, true);
+
+        // Obtener código de acceso actual o generar uno si no hay
+        $stmt = $pdo->prepare("SELECT codigo_acceso FROM estudiantes WHERE id = ?");
+        $stmt->execute([$id]);
+        $codigo = $stmt->fetchColumn();
+
+        if (!$codigo) {
+            // Generar código si no existe
+            $iniciales_nombre = implode('', array_map(fn($w) => strtoupper($w[0]), explode(' ', $nombre)));
+            $stmt = $pdo->prepare("SELECT nombre FROM paises WHERE id = ?");
+            $stmt->execute([$pais_id]);
+            $iniciales_pais = implode('', array_map(fn($w) => strtoupper($w[0]), explode(' ', $stmt->fetchColumn())));
+            $anio = date('y');
+            $codigo = "$iniciales_nombre-$iniciales_pais-$anio-$id";
+        }
+
+        $nombre_archivo = "perfil-$codigo.$extension";
+        $ruta_relativa = "upload/perfil/$nombre_archivo";
+        $ruta_completa = $directorio . $nombre_archivo;
+
+        if (move_uploaded_file($foto['tmp_name'], $ruta_completa)) {
+            $ruta_foto = $ruta_relativa;
         }
     }
 }
 
-// Si hay errores, redirigimos
+// Si hay errores, redirigir
 if (!empty($errores)) {
     $_SESSION['errores'] = $errores;
-    header("Location: ../admin/editar_estudiantes.php?id=$id");
+    header("Location: ../admin/editar_estudiante.php?id=$id");
     exit;
 }
 
-// Actualizar en base de datos
+// Actualizar en la base de datos
 try {
-    $sql = "UPDATE estudiantes 
-            SET nombre_completo = :nombre, 
-                fecha_nacimiento = :fecha, 
-                pais_id = :pais, 
-                ruta_foto = :foto 
-            WHERE id = :id";
+    $query = "UPDATE estudiantes SET nombre_completo = ?, fecha_nacimiento = ?, pais_id = ?";
+    $params = [$nombre, $fecha, $pais_id];
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        ':nombre' => $nombre_completo,
-        ':fecha' => $fecha_nacimiento,
-        ':pais' => $pais_id,
-        ':foto' => $nombre_foto_final,
-        ':id' => $id
-    ]);
+    if ($ruta_foto !== null) {
+        $query .= ", ruta_foto = ?";
+        $params[] = $ruta_foto;
+    }
+
+    $query .= " WHERE id = ?";
+    $params[] = $id;
+
+    $stmt = $pdo->prepare($query);
+    $stmt->execute($params);
 
     $_SESSION['exito'] = "Estudiante actualizado correctamente.";
     header("Location: ../admin/estudiantes.php");
     exit;
 } catch (PDOException $e) {
-    $_SESSION['errores'][] = "Error al actualizar: " . $e->getMessage();
-    header("Location: ../admin/editar_estudiantes.php?id=$id");
+    $_SESSION['errores'] = ["Error al actualizar: " . $e->getMessage()];
+    header("Location: ../admin/editar_estudiante.php?id=$id");
     exit;
 }
+?>

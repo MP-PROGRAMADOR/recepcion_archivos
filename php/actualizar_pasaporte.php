@@ -31,7 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errores = [];
     $hay_dato_para_actualizar = false;
 
-    // Validaciones de los campos: solo si no están vacíos
+    // Validaciones de los campos: solo si no están vacíos 
+    if (!empty($archivo)) {
+        $hay_dato_para_actualizar = true;
+        if (empty($archivo)) {
+            $errores[] = "El El archivo es obligatorio.";
+        }
+    }
+    
     if (!empty($numero_pasaporte)) {
         $hay_dato_para_actualizar = true;
         if (empty($numero_pasaporte)) {
@@ -185,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare($update_query);
                 $stmt->execute($update_params);
             }
-
+            $_SESSION["exito"] = "¡El pasaporte ha sido actualizado exitosamente!";
             header("Location: ../estudiante/panel_estudiante.php");
             exit;
 

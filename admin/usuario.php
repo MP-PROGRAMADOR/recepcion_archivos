@@ -1,6 +1,8 @@
 <?php
-session_start();
-require_once '../config/conexion.php';
+
+include_once("../componentes/header.php");
+include_once("../componentes/sidebar.php");
+
 
 // Configuración de paginación
 $por_pagina = 5;
@@ -27,8 +29,6 @@ try {
     die("Error al obtener los usuarios: " . $e->getMessage());
 }
 
-include_once("../componentes/header.php");
-include_once("../componentes/sidebar.php");
 ?>
 
 <main class="content" id="mainContent">

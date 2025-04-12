@@ -161,6 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':archivo_url', $nombre_archivo_final);
         $stmt->execute();
 
+        $_SESSION["exito"] = "¡Carga de archivos exitoso!";
         header("Location: ../estudiante/panel_estudiante.php");
         exit;
 
