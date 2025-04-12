@@ -1,5 +1,5 @@
+<?php include_once("../componentes/header.php"); ?>
 <?php
-require_once '../config/conexion.php';
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("ID de estudiante no válido.");
@@ -48,7 +48,7 @@ try {
 }
 ?>
 
-<?php include_once("../componentes/header.php"); ?>
+
 <?php include_once("../componentes/sidebar.php"); ?>
 
 <main class="content" id="mainContent">

@@ -1,7 +1,7 @@
 <?php
-session_start(); // Asegúrate de que esto esté al principio del archivo
-// Conexión
-require_once '../config/conexion.php';
+include_once("../componentes/header.php");
+// Asegúrate de que esto esté al principio del archivo
+ 
 
 // Consulta de estudiantes con JOIN a países
 // Configuración de paginación
@@ -39,7 +39,6 @@ try {
 
 
 // Layout común
-include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 ?>
 

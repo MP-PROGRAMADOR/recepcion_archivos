@@ -59,6 +59,21 @@ $archivos = array_merge($notas, $pasaportes);
 usort($archivos, function ($a, $b) {
     return strtotime($b['fecha_subida']) - strtotime($a['fecha_subida']);
 });
+
+
+/* Verificar que el usuario ya inguesó un pasaporte */
+// Comprobar si el estudiante ya ha subido un pasaporte
+$verifica = $pdo->prepare("SELECT COUNT(*) FROM pasaportes WHERE estudiante_id = :estudiante_id");
+$verifica->bindParam(':estudiante_id', $estudiante_id);
+$verifica->execute();
+$pasaporteExiste = $verifica->fetchColumn();
+
+
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -122,13 +137,23 @@ usort($archivos, function ($a, $b) {
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a id="btnSubirPasaporte" class="nav-link text-white" href="#"><i
-                                class="bi bi-upload me-1"></i>Subir
-                            Pasaporte</a>
-                    </li>
+                    <?php if ($pasaporteExiste): ?>
+                        <li class="nav-item">
+                            <a id="btnActualizarPasaporte" class="nav-link text-white" href="#">
+                                <i class="bi bi-pencil-square me-1"></i> Actualizar Pasaporte
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a id="btnSubirPasaporte" class="nav-link text-white" href="#">
+                                <i class="bi bi-upload me-1"></i> Subir Pasaporte
+                            </a>
+                        </li>
+                    <?php endif; ?>
                     <li class="nav-item">
                         <a id="btnSubirNotas" class="nav-link text-white" href="#"><i
                                 class="bi bi-upload me-1"></i>Subir Notas</a>
@@ -148,6 +173,107 @@ usort($archivos, function ($a, $b) {
         </div>
     </nav>
     <div class="container my-4 ">
+
+        <!-- INICIO DE LA ALERTA DE ERRORRES -->
+        <?php
+
+
+        if (isset($_SESSION['errores']) && is_array($_SESSION['errores'])):
+            ?>
+            <div id="alerta-errores"
+                class="alert alert-danger alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-danger-subtle rounded-3"
+                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+                <i class="bi bi-exclamation-triangle-fill fs-4 flex-shrink-0 mt-1"></i>
+                <div>
+                    <strong>Se detectaron errores:</strong>
+                    <ul class="mb-0 mt-1">
+                        <?php foreach ($_SESSION['errores'] as $error): ?>
+                            <li><?= htmlspecialchars($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+
+            <script>
+                // Ocultar automáticamente luego de 6 segundos
+                setTimeout(() => {
+                    const alerta = document.getElementById('alerta-errores');
+                    if (alerta) {
+                        alerta.classList.remove('show');
+                        alerta.classList.add('fade');
+                        setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
+                    }
+                }, 9000);
+            </script>
+
+            <style>
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+            <?php
+            unset($_SESSION['errores']); // Limpiar errores de la sesión
+        endif;
+        ?>
+
+        <?php
+
+
+        if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
+            ?>
+            <div id="alerta-exito"
+                class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
+                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+                <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
+                <div>
+                    <strong>¡Éxito!</strong>
+                    <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
+                </div>
+                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+
+            <script>
+                // Ocultar automáticamente luego de 6 segundos
+                setTimeout(() => {
+                    const alerta = document.getElementById('alerta-exito');
+                    if (alerta) {
+                        alerta.classList.remove('show');
+                        alerta.classList.add('fade');
+                        setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
+                    }
+                }, 6000);
+            </script>
+
+            <style>
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+            <?php
+            unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
+        endif;
+        ?>
+
+        <!-- FIN DE LA ALERTA -->
+
+
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="info-box d-flex">
@@ -185,7 +311,7 @@ usort($archivos, function ($a, $b) {
             <div class="col-md-6">
                 <div class="info-box">
                     <?php if (!empty($archivos)): ?>
-                        <div class=" shadow-sm border-0">
+                        <div class="shadow-sm border-0">
                             <div class="card-header bg-white border-bottom-0">
                                 <h5 class="mb-0"><i class="bi bi-folder2-open me-2"></i>Archivos subidos</h5>
                             </div>
@@ -205,9 +331,11 @@ usort($archivos, function ($a, $b) {
                                                 $ext = pathinfo($archivo['archivo_url'], PATHINFO_EXTENSION);
                                                 $esImagen = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                                                 $esPDF = strtolower($ext) === 'pdf';
-                                            ?>
+                                                ?>
                                                 <tr>
-                                                    <td><span class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span></td>
+                                                    <td><span
+                                                            class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span>
+                                                    </td>
                                                     <td>
                                                         <?php if ($esImagen): ?>
                                                             <img src="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= $archivo['archivo_url'] ?>"
@@ -218,59 +346,23 @@ usort($archivos, function ($a, $b) {
                                                     </td>
                                                     <td><?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></td>
                                                     <td>
-                                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalArchivo<?= $archivo['id'] ?>">
+                                                        <!-- En pantallas grandes y medianas, mostrar el botón de modal -->
+                                                        <!--   <button class="btn btn-outline-primary btn-sm d-none d-md-inline-block"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#modalArchivo<?= $archivo['id'] ?>">
                                                             <i class="bi bi-eye"></i> Ver
-                                                        </button>
+                                                        </button> -->
+                                                        <!-- En dispositivos móviles, mostrar enlace de descarga con icono -->
+                                                        <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>"
+                                                            class="btn btn-outline-primary btn-sm " download>
+                                                            <i class="bi bi-download"></i> Descargar PDF
+                                                        </a>
                                                     </td>
                                                 </tr>
-
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="modalArchivo<?= $archivo['id'] ?>" tabindex="-1">
-                                                    <div class="modal-dialog modal-lg">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Detalles del Archivo</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="accordion" id="accordion<?= $archivo['id'] ?>">
-                                                                    <div class="accordion-item">
-                                                                        <h2 class="accordion-header">
-                                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $archivo['id'] ?>">
-                                                                                Información del archivo
-                                                                            </button>
-                                                                        </h2>
-                                                                        <div id="collapse<?= $archivo['id'] ?>" class="accordion-collapse collapse">
-                                                                            <div class="accordion-body">
-                                                                                <div class="row">
-                                                                                    <!-- Columna 1: Información del Estudiante -->
-                                                                                    <div class="col-md-6">
-                                                                                        <p><strong>ID Estudiante:</strong> <?= $estudiantes['codigo_acceso'] ?></p>
-                                                                                        <p><strong>Nombre:</strong> <?= $estudiante['nombre_completo'] ?></p>
-                                                                                        <p><strong>Tipo:</strong> <?= htmlspecialchars($archivo['tipo']) ?></p>
-                                                                                        <p><strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></p>
-                                                                                        <p><strong>Archivo:</strong> <?= basename($archivo['archivo_url']) ?></p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer d-flex justify-content-center">
-                                                                <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>" class="btn btn-success" target="_blank">
-                                                                    <i class="bi bi-eye"></i> Ver PDF
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
 
 
                                             <?php endforeach; ?>
                                         </tbody>
-
                                     </table>
                                 </div>
                             </div>
@@ -284,161 +376,136 @@ usort($archivos, function ($a, $b) {
             </div>
         </div>
 
-        <div class="row g-4">
-            <button id="eliminarBtn" class="btn btn-danger m-2 w-100 w-sm-80 mx-auto" style="display: none;">
-                <i class="bi bi-trash"></i> Eliminar Formulario
-            </button>
-            <div id="formularioPasaporte" class="mt-3"></div>
-        </div>
 
+        <div class="row mt-5">
 
-    </div>
-
-    <!-- MODAL PARA ORIENTAR AL USUARIO EN CASO DE ESTAR ACTIVO UN FORMULARIO Y SOLICITA OTRO -->
-
-
-    <!-- Modal de Advertencia -->
-    <div class="modal fade" id="modalPasosFormulario" tabindex="-1" aria-labelledby="modalPasosLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-warning shadow">
-                <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title" id="modalPasosLabel">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i> ¡Atención!
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body text-dark">
-                    <p><i class="bi bi-info-circle-fill me-2 text-primary"></i> Pasos para solicitar un nuevo
-                        formulario:</p>
-                    <ol class="ps-3">
-                        <li><i class="bi bi-pencil-fill text-secondary me-2"></i> Rellene el formulario que solicitaste
-                            previamente.</li>
-                        <li><i class="bi bi-send-fill text-success me-2"></i> Dale al botón <strong>Enviar</strong>.
-                        </li>
-                        <li><i class="bi bi-trash-fill text-danger me-2"></i> Da clic sobre el botón <strong>Eliminar
-                                formulario</strong>.</li>
-                        <li><i class="bi bi-plus-circle-fill text-info me-2"></i> Y finalmente llama al nuevo
-                            formulario.</li>
-                    </ol>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">
-                        <i class="bi bi-check-circle-fill me-1"></i>Entendido
+            <div class="  border-0 rounded-4">
+                <div class="card-body text-end">
+                    <button id="eliminarBtn" class="btn btn-danger btn-lg px-4 py-2 rounded-pill"
+                        style="display: none;">
+                        <i class="bi bi-trash me-2"></i> Eliminar Formulario
                     </button>
                 </div>
+                <div id="formularioPasaporteNota" class="colum-12 "></div>
             </div>
-        </div>
-    </div>
 
 
-
-
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const contenedor = document.getElementById("formularioPasaporte");
-            const agregarBtn = document.getElementById("btnSubirPasaporte");
-            const btnSubirNotas = document.getElementById("btnSubirNotas");
-            const eliminarBtn = document.getElementById("eliminarBtn");
-
-            function mostrarModalPasos() {
-                const modal = new bootstrap.Modal(document.getElementById('modalPasosFormulario'));
-                modal.show();
-            }
-
-            agregarBtn.addEventListener("click", function() {
-                if (!contenedor.hasChildNodes()) {
-                    contenedor.innerHTML = `
-                       <div class="form-section border rounded p-4 shadow-sm bg-white">
-    <h5 class="d-flex justify-content-between mb-4 text-primary">
-        <i class="bi bi-passport me-2"></i>Formulario de Pasaporte
-    </h5>
-    <form id="pasaporteForm" action="../php/gurdar_pasaporte.php" method="POST" enctype="multipart/form-data">
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <label for="numero" class="form-label fw-semibold text-dark">N° de Pasaporte</label>
-                <input type="text" name="numero_pasaporte" id="numero" class="form-control" required placeholder="Ej: A12345678">
-            </div>
-            <div class="col-md-6 mb-4">
-                <label for="archivo" class="form-label">Selecciona archivo (PDF)</label>
-                <input type="file" name="archivo" id="archivo" class="form-control" accept="application/pdf" required>
-                <small class="text-muted">Solo se permiten archivos PDF</small>
-            </div>
-            <div class="col-md-6 mb-4">
-                <label for="fecha_emision" class="form-label">Fecha de Emisión</label>
-                <input type="date" name="fecha_emision" id="fecha_emision" class="form-control" required>
-            </div>
-            <div class="col-md-6 mb-4">
-                <label for="fecha_expiracion" class="form-label">Fecha de Expiración</label>
-                <input type="date" name="fecha_expiracion" id="fecha_expiracion" class="form-control" required>
-            </div>
         </div>
 
-        <!-- Barra de progreso -->
-        <div id="progressContainer" class="mb-4" style="display:none;">
-            <label for="progress" class="form-label">Subiendo archivo...</label>
-            <progress id="progress" value="0" max="100" class="w-100"></progress>
+
+        <!--  <div class="row g-4">
+            <div class="card">
+
+                <button id="eliminarBtn" class="btn btn-danger " style="display: none;">
+                    <i class="bi bi-trash"></i> Eliminar Formulario
+                </button>
+            </div>
+            <div id="formularioPasaporteNota" class="row"></div>
+        </div>
+ -->
+        <!-- MODAL PARA ORIENTAR AL USUARIO EN CASO DE ESTAR ACTIVO UN FORMULARIO Y SOLICITA OTRO -->
+        <div class="modal fade" id="modalPasosFormulario" tabindex="-1" aria-labelledby="modalPasosLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-warning shadow">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="modalPasosLabel">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> ¡Atención!
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body text-dark">
+                        <p><i class="bi bi-info-circle-fill me-2 text-primary"></i> Pasos para solicitar un nuevo
+                            formulario:</p>
+                        <ol class="ps-3">
+                            <li><i class="bi bi-pencil-fill text-secondary me-2"></i> Rellene el formulario que
+                                solicitaste previamente.</li>
+                            <li><i class="bi bi-send-fill text-success me-2"></i> Dale al botón <strong>Enviar</strong>.
+                            </li>
+                            <li><i class="bi bi-trash-fill text-danger me-2"></i> Da clic sobre el botón
+                                <strong>Eliminar formulario</strong>.
+                            </li>
+                            <li><i class="bi bi-plus-circle-fill text-info me-2"></i> Y finalmente llama al nuevo
+                                formulario.</li>
+                        </ol>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">
+                            <i class="bi bi-check-circle-fill me-1"></i>Entendido
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <button type="submit" class="btn btn-success px-4">
-            <i class="bi bi-save me-2"></i>Guardar pasaporte
-        </button>
-    </form>
-</div>          `;
-                } else {
-                    mostrarModalPasos();
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const contenedor = document.getElementById("formularioPasaporteNota");
+                const eliminarBtn = document.getElementById("eliminarBtn");
+                const btnSubirPasaporte = document.getElementById("btnSubirPasaporte");
+                const btnSubirNotas = document.getElementById("btnSubirNotas");
+                const btnActualizarPasaporte = document.getElementById("btnActualizarPasaporte");
+
+                function mostrarModalPasos() {
+                    const modal = new bootstrap.Modal(document.getElementById('modalPasosFormulario'));
+                    modal.show();
                 }
 
-                if (contenedor.children.length > 0) {
-                    eliminarBtn.style.display = "inline-block";
+                // Eliminar formulario
+                if (eliminarBtn) {
+                    eliminarBtn.addEventListener("click", function () {
+                        contenedor.innerHTML = "";
+                        eliminarBtn.style.display = "none";
+                    });
                 }
+
+                // Función general para cargar formularios
+                function cargarFormulario(ruta) {
+                    if (!contenedor.hasChildNodes()) {
+                        fetch(ruta)
+                            .then(response => {
+                                if (!response.ok) throw new Error('Error al cargar el formulario');
+                                return response.text();
+                            })
+                            .then(html => {
+                                contenedor.innerHTML = html;
+                                eliminarBtn.style.display = "inline-block";
+                            })
+                            .catch(error => {
+                                contenedor.innerHTML = `<div class="alert alert-danger">Hubo un problema al cargar el formulario: ${error.message}</div>`;
+                            });
+                    } else {
+                        mostrarModalPasos();
+                    }
+                }
+
+                // Botón subir pasaporte
+                if (btnSubirPasaporte) {
+                    btnSubirPasaporte.addEventListener("click", function () {
+                        cargarFormulario('formulario_pasaporte.php');
+
+                    });
+                }
+
+                // Botón subir notas
+                if (btnSubirNotas) {
+                    btnSubirNotas.addEventListener("click", function () {
+                        cargarFormulario('formulario_notas.php');
+                    });
+                }
+                //boton actualizar_pasaporte
+                if (btnActualizarPasaporte) {
+                    btnActualizarPasaporte.addEventListener("click", function () {
+                        cargarFormulario('formulario_actualizar_pasaporte.php');
+                    });
+                }
+
+
             });
-            eliminarBtn.addEventListener("click", function() {
-                if (contenedor.hasChildNodes()) {
+        </script>
 
-                    contenedor.innerHTML = "";
-                    eliminarBtn.style.display = "none";
-                }
-            });
-
-
-            btnSubirNotas.addEventListener("click", function() {
-                if (!contenedor.hasChildNodes()) {
-
-                    fetch('formulario_notas.php')
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Error al cargar el formulario');
-                            }
-                            return response.text();
-                        })
-                        .then(html => {
-                            document.getElementById('formularioPasaporte').innerHTML = html;
-
-                        })
-                        .catch(error => {
-                            document.getElementById('formularioPasaporte').innerHTML =
-                                `<div class="alert alert-danger">Hubo un problema al cargar el formulario: ${error.message}</div>`;
-                        });
-
-
-                } else {
-                    mostrarModalPasos();
-                }
-
-                if (contenedor.children.length > 0) {
-                    eliminarBtn.style.display = "inline-block";
-                }
-            });
-
-
-        });
-    </script>
 
 
 

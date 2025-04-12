@@ -99,7 +99,7 @@ try {
                 <!-- Botón -->
                 <div class="col-12 text-end mt-3">
                     <button type="submit" class="btn btn-success px-4 rounded-pill shadow">
-                        <i class="bi bi-save me-2"></i>Guardar Nota
+                        <i class="bi bi-upload me-2"></i>Guardar Nota
                     </button>
                 </div>
 

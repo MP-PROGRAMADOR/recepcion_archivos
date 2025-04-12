@@ -1,8 +1,7 @@
 <?php
 
 include_once("../componentes/header.php");
-include_once("../componentes/sidebar.php");
-require_once '../config/conexion.php';
+include_once("../componentes/sidebar.php"); 
 $stmt = $pdo->query("
     SELECT 
         (SELECT COUNT(*) FROM estudiantes) AS total_estudiantes,
@@ -34,7 +33,7 @@ $queryNotas = $pdo->query("
 $archivos = array_merge($queryPasaportes->fetchAll(PDO::FETCH_ASSOC), $queryNotas->fetchAll(PDO::FETCH_ASSOC));
 ?>
 
-?>
+ 
 
 <main class="content" id="mainContent">
 

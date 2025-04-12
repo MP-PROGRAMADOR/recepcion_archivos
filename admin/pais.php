@@ -2,8 +2,7 @@
 
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
-
-require_once '../config/conexion.php';
+ 
 
 // Configuración de paginación
 $por_pagina = 10;

@@ -1,8 +1,7 @@
 <?php
-session_start();
+ 
 include_once("../componentes/header.php");
-include_once("../componentes/sidebar.php");
-include_once("../config/conexion.php");
+include_once("../componentes/sidebar.php"); 
 
 // Obtener ID
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;

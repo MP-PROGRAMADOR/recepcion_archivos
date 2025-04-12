@@ -1,8 +1,7 @@
 <?php
-session_start(); // Necesario para acceder a $_SESSION
+
 include_once("../componentes/header.php");
-include_once("../componentes/sidebar.php");
-include_once("../config/conexion.php");
+include_once("../componentes/sidebar.php"); 
 
 // Consulta para obtener los países
 try {

@@ -8,6 +8,9 @@
 <!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-POp85FNN7wd+ghv5H7bb5UMJK30MYvq8dZ1a8n60UG2jNk65P60h0kXPBkFsR4EX" crossorigin="anonymous"></script>
+
 <script>
   function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");

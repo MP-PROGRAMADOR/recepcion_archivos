@@ -32,6 +32,12 @@ if ($fecha_nacimiento === '') {
     $errores[] = "La fecha de nacimiento es obligatoria.";
 } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_nacimiento)) {
     $errores[] = "Formato de fecha no válido. Usa YYYY-MM-DD.";
+} else {
+    // Validación de que la fecha de nacimiento no sea superior al año actual
+    $fecha_actual = date('Y-m-d');
+    if ($fecha_nacimiento > $fecha_actual) {
+        $errores[] = "La fecha de nacimiento no puede ser superior a la fecha actual.";
+    }
 }
 
 if (!is_numeric($pais_id)) {
@@ -111,7 +117,7 @@ try {
 
     // Subir imagen
     if ($foto_subida) {
-        $nombre_archivo = 'perfil-' . $codigo_acceso.'.' . $extension;
+        $nombre_archivo = 'perfil-' . $codigo_acceso . '.' . $extension;
         $ruta_guardada = 'upload/perfil/' . $nombre_archivo;
         $ruta_completa = $directorio . $nombre_archivo;
         
@@ -133,3 +139,4 @@ try {
     header("Location: ../admin/registrar_estudiantes.php");
     exit;
 }
+?>
