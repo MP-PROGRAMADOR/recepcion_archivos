@@ -10,103 +10,104 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
- 
-// Definir la carpeta donde se guardarán las imágenes
-$directorio_destino = __DIR__ . './upload/configuracion/';
-if (!is_dir($directorio_destino)) {
-    mkdir($directorio_destino, 0777, true);
-} else {
-    chmod($directorio_destino, 0777);
-}
+// Carpeta base donde se guardan los archivos
+$carpeta_base = 'upload';
 
-// Función para mover el archivo subido
-function moverArchivo($archivo, $directorio_destino)
+// Función para mover un archivo subido
+function moverArchivo($campo_nombre, $archivo, $directorio_base = 'upload')
 {
-    // Verificar si el archivo fue subido sin errores
-    if ($archivo['error'] == 0) {
-        // Verificar la extensión del archivo
-        $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $extension = strtolower(pathinfo($archivo['name'], PATHINFO_EXTENSION));
-
-        // Validar si la extensión es válida
-        if (!in_array($extension, $extensiones_permitidas)) {
-            $_SESSION['error'] = "Extensión de archivo no permitida. Solo se permiten archivos JPG, JPEG, PNG, GIF, WEBP.";
-            return false;
-        }
-
-        // Verificar el tamaño del archivo (2MB máximo)
-        $tamano_maximo = 2 * 1024 * 1024; // 2MB
-        if ($archivo['size'] > $tamano_maximo) {
-            $_SESSION['error'] = "El archivo excede el tamaño máximo permitido (2MB).";
-            return false;
-        }
-
-        // Obtener el nombre del archivo y la ruta de destino
-        $nombre_archivo = basename($archivo['name']);
-        $ruta_archivo = $nombre_archivo;
-
-        // Mover el archivo a la carpeta de destino
-        if (move_uploaded_file($archivo['tmp_name'], $ruta_archivo)) {
-            return $ruta_archivo;
-        } else {
-            $_SESSION['error'] = "Error al mover el archivo.";
-            return false; // Error al mover el archivo
-        }
+    if ($archivo['error'] !== UPLOAD_ERR_OK) {
+        $_SESSION['error'] = "Error al subir el archivo '$campo_nombre'.";
+        return false;
     }
-    $_SESSION['error'] = "Error al subir el archivo.";
-    return false; // Error al subir el archivo
+
+    $ext_permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    $extension = strtolower(pathinfo($archivo['name'], PATHINFO_EXTENSION));
+
+    if (!in_array($extension, $ext_permitidas)) {
+        $_SESSION['error'] = "Extensión no permitida en '$campo_nombre'. Solo se permiten: JPG, PNG, GIF, WEBP.";
+        return false;
+    }
+
+    if ($archivo['size'] > 2 * 1024 * 1024) {
+        $_SESSION['error'] = "El archivo '$campo_nombre' excede el límite de 2MB.";
+        return false;
+    }
+
+    // Crear subcarpeta con el nombre del campo
+    $carpeta_destino = $directorio_base . '/configuracion';
+    if (!is_dir($carpeta_destino)) {
+        mkdir($carpeta_destino, 0777, true);
+    }
+
+    // Sanitizar nombre de archivo
+    $nombre_archivo = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($archivo['name']));
+    $ruta_final =  $nombre_archivo;
+
+    // Evitar sobrescritura
+   /*  $contador = 1;
+    $nombre_base = pathinfo($nombre_archivo, PATHINFO_FILENAME);
+    $ext = pathinfo($nombre_archivo, PATHINFO_EXTENSION);
+    while (file_exists($ruta_final)) {
+        $ruta_final = $carpeta_destino . '/' . $nombre_base . "_$contador." . $ext;
+        $contador++;
+    } */
+
+    // Mover archivo
+    if (move_uploaded_file($archivo['tmp_name'], $ruta_final)) {
+        return $ruta_final;
+    } else {
+        $_SESSION['error'] = "Error al mover el archivo '$campo_nombre'.";
+        return false;
+    }
 }
 
-// Procesar el formulario cuando se envía
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Sanitizar y validar los datos del formulario
+// Procesar formulario
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitizar entradas
     $nombre_sitio = htmlspecialchars(trim($_POST['nombre_sitio']));
     $color_primario = htmlspecialchars(trim($_POST['color_primario']));
     $descripcion = htmlspecialchars(trim($_POST['descripcion']));
 
-    // Validar que los campos no estén vacíos
     if (empty($nombre_sitio) || empty($color_primario) || empty($descripcion)) {
         $_SESSION['error'] = "Todos los campos son obligatorios.";
         header('Location: ../admin/configuracion.php');
         exit;
     }
 
-    // Verificar si se subió una imagen de logo y moverla
-    if (isset($_FILES['logo']) && $_FILES['logo']['error'] == 0) {
-        $logo_ruta = moverArchivo($_FILES['logo'], $directorio_destino);
-        if (!$logo_ruta) {
-            header('Location: ../admin/configuracion.php');
-            exit;
-        }
-    } else {
-        $logo_ruta = $config['logo']; // Usar el logo actual si no se sube uno nuevo
+    // Cargar valores actuales (por si no se actualizan imágenes)
+    $query = $pdo->query("SELECT logo, img_estudiante, img_admin FROM configuracion WHERE id = 1");
+    $config = $query->fetch(PDO::FETCH_ASSOC);
+
+    // Procesar archivos
+    $logo_ruta = (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK)
+        ? moverArchivo('logo', $_FILES['logo'], $carpeta_base)
+        : $config['logo'];
+
+    $img_estudiante_ruta = (isset($_FILES['img_estudiante']) && $_FILES['img_estudiante']['error'] === UPLOAD_ERR_OK)
+        ? moverArchivo('img_estudiante', $_FILES['img_estudiante'], $carpeta_base)
+        : $config['img_estudiante'];
+
+    $img_admin_ruta = (isset($_FILES['img_admin']) && $_FILES['img_admin']['error'] === UPLOAD_ERR_OK)
+        ? moverArchivo('img_admin', $_FILES['img_admin'], $carpeta_base)
+        : $config['img_admin'];
+
+    if (!$logo_ruta || !$img_estudiante_ruta || !$img_admin_ruta) {
+        // Si hay error en alguno, ya se guardó en $_SESSION['error']
+        header('Location: ../admin/configuracion.php');
+        exit;
     }
 
-    // Verificar si se subió una imagen de estudiante y moverla
-    if (isset($_FILES['img_estudiante']) && $_FILES['img_estudiante']['error'] == 0) {
-        $img_estudiante_ruta = moverArchivo($_FILES['img_estudiante'], $directorio_destino);
-        if (!$img_estudiante_ruta) {
-            header('Location: ../admin/configuracion.php');
-            exit;
-        }
-    } else {
-        $img_estudiante_ruta = $config['img_estudiante']; // Usar la imagen actual si no se sube una nueva
-    }
-
-    // Verificar si se subió una imagen de admin y moverla
-    if (isset($_FILES['img_admin']) && $_FILES['img_admin']['error'] == 0) {
-        $img_admin_ruta = moverArchivo($_FILES['img_admin'], $directorio_destino);
-        if (!$img_admin_ruta) {
-            header('Location: ../admin/configuracion.php');
-            exit;
-        }
-    } else {
-        $img_admin_ruta = $config['img_admin']; // Usar la imagen actual si no se sube una nueva
-    }
-
-    // Actualizar la configuración en la base de datos
+    // Actualizar configuración
     try {
-        $sql = "UPDATE configuracion SET nombre_sitio = :nombre_sitio, logo = :logo, color_primario = :color_primario, descripcion = :descripcion, img_estudiante = :img_estudiante, img_admin = :img_admin WHERE id = 1";
+        $sql = "UPDATE configuracion 
+                SET nombre_sitio = :nombre_sitio, 
+                    logo = :logo, 
+                    color_primario = :color_primario, 
+                    descripcion = :descripcion, 
+                    img_estudiante = :img_estudiante, 
+                    img_admin = :img_admin 
+                WHERE id = 1";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':nombre_sitio' => $nombre_sitio,
@@ -118,12 +119,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ]);
 
         $_SESSION['success'] = "Configuración actualizada correctamente.";
-        header('Location: ../admin/configuracion.php');
-        exit;
     } catch (Exception $e) {
-        $_SESSION['error'] = "Error al actualizar la configuración: " . $e->getMessage();
-        header('Location: ../admin/configuracion.php');
-        exit;
+        $_SESSION['error'] = "Error al actualizar: " . $e->getMessage();
     }
+
+    header('Location: ../admin/configuracion.php');
+    exit;
 }
 ?>

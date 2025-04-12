@@ -1,6 +1,6 @@
 <?php
 // Iniciar sesión
- 
+
 
 // Incluir el header
 include_once("../componentes/header.php");
@@ -35,8 +35,7 @@ if (!$config) {
 include_once("../componentes/sidebar.php");
 ?>
 
-<main class="content" id="mainContent">
-    <h1 class="page-title">Configuración del Sitio</h1>
+<main class="content" id="mainContent"> 
     <!-- Mostrar mensajes de error o éxito -->
     <?php if (isset($_SESSION['error'])): ?>
         <div class="alert alert-danger">
@@ -52,11 +51,32 @@ include_once("../componentes/sidebar.php");
         <?php unset($_SESSION['success']); ?>
     <?php endif; ?>
 
-    <!-- Formulario de carga de imágenes -->
-    <form action="../php/guardar_configuracion.php" method="POST" enctype="multipart/form-data" class="p-5 border rounded bg-light shadow-sm">
+    
+<!-- Título y logo alineados -->
+<div class="row align-items-center mb-4">
+    <div class="col-auto">
+        <?php
+        $foto = $config['logo']; // Ej: logo.png
+        $rutaRelativa = '../php/upload/configuracion/' . basename($foto);
+        ?>
+        <?php if (!empty($foto) && file_exists($rutaRelativa)): ?>
+            <img src="<?= $rutaRelativa ?>" class="img-fluid rounded" alt="logo" style="max-width: 60px;">
+        <?php else: ?>
+            <img src="https://via.placeholder.com/60" class="img-fluid rounded" alt="logo por defecto">
+        <?php endif; ?>
+    </div>
+    <div class="col">
+        <h3 class="mb-0" style="font-family: 'Arial', sans-serif; color: #333; font-weight: bold;">
+            Configuración del Sitio
+        </h3>
+    </div>
+</div>
+
+
+
+    <form action="../php/guardar_configuracion.php" method="POST" enctype="multipart/form-data"
+        class="p-5 border rounded bg-light shadow-sm">
         <!-- Título del formulario -->
-        <h3 class="mb-4 text-center" style="font-family: 'Arial', sans-serif; color: #333; font-weight: bold;">
-            Configuración del Sitio</h3>
 
         <!-- Nombre del Sitio -->
         <div class="form-group mb-4">
