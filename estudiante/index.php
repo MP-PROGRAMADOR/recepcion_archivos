@@ -1,30 +1,35 @@
-
 <?php
-          require_once '../config/conexion.php';
-        // Obtener la configuración actual del sitio
-        $sql = "SELECT * FROM configuracion LIMIT 1";
+// Iniciar sesión de forma segura
+if (session_status() === PHP_SESSION_DISABLED) {
+    die("⚠️ Las sesiones están deshabilitadas en la configuración del servidor.");
+} elseif (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once '../config/conexion.php';
+// Obtener la configuración actual del sitio
+$sql = "SELECT * FROM configuracion LIMIT 1";
 
-        try {
-            $stmt = $pdo->query($sql);
-            $config = $stmt->fetch(PDO::FETCH_ASSOC); // Asegura array asociativo
-        
-            // Validar que se obtuvo la configuración
-            if ($config) {
-                $_SESSION['config'] = $config;
-            } else {
-                // Opcional: manejo si no hay config
-                $_SESSION['config'] = 'esta vacia';
-            }
+try {
+    $stmt = $pdo->query($sql);
+    $config = $stmt->fetch(PDO::FETCH_ASSOC); // Asegura array asociativo
 
-        } catch (PDOException $e) {
-            // Manejo de errores en producción debería ser más discreto
-            die("Error al obtener configuración: " . $e->getMessage());
-        }
-        $foto = $config['img_estudiante']; // Ej: logo.png
-        $rutaRelativa = '../php/upload/configuracion/' . basename($foto);
-        $degradado = $config['color_primario']
+    // Validar que se obtuvo la configuración
+    if ($config) {
+        $_SESSION['config'] = $config;
+    } else {
+        // Opcional: manejo si no hay config
+        $_SESSION['config'] = 'esta vacia';
+    }
 
-            ?>
+} catch (PDOException $e) {
+    // Manejo de errores en producción debería ser más discreto
+    die("Error al obtener configuración: " . $e->getMessage());
+}
+$foto = $config['img_estudiante']; // Ej: logo.png
+$rutaRelativa = '../php/upload/configuracion/' . basename($foto);
+$degradado = $config['color_primario']
+
+    ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -91,7 +96,7 @@
 
         <!-- Card de imagen superior -->
         <div class="card-img-top">
-            <img src="img.jpg" alt="Imagen encabezado">
+            <img src="<?php echo htmlspecialchars($rutaRelativa) ?>" alt="Imagen encabezado">
             <div class="login-card text-center">
 
                 <!-- Card de formulario -->
