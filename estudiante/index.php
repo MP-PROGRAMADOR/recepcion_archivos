@@ -64,7 +64,7 @@
 
         <!-- Card de imagen superior -->
         <div class="card-img-top">
-            <img src="img.jpg" alt="Imagen encabezado">
+            <img src="../config/img/admin_alumno.jpg" alt="Imagen encabezado">
             <div class="login-card text-center">
 
                 <!-- Card de formulario -->
