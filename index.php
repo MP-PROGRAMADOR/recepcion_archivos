@@ -1,5 +1,3 @@
-
-
 <?php
 // Iniciar sesión de forma segura
 if (session_status() === PHP_SESSION_DISABLED) {
@@ -7,31 +5,32 @@ if (session_status() === PHP_SESSION_DISABLED) {
 } elseif (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-          require_once 'config/conexion.php';
-        // Obtener la configuración actual del sitio
-        $sql = "SELECT * FROM configuracion LIMIT 1";
+require_once 'config/conexion.php';
+// Obtener la configuración actual del sitio
+$sql = "SELECT * FROM configuracion LIMIT 1";
 
-        try {
-            $stmt = $pdo->query($sql);
-            $config = $stmt->fetch(PDO::FETCH_ASSOC); // Asegura array asociativo
-        
-            // Validar que se obtuvo la configuración
-            if ($config) {
-                $_SESSION['config'] = $config;
-            } else {
-                // Opcional: manejo si no hay config
-                $_SESSION['config'] = 'esta vacia';
-            }
+try {
+    $stmt = $pdo->query($sql);
+    $config = $stmt->fetch(PDO::FETCH_ASSOC); // Asegura array asociativo
 
-        } catch (PDOException $e) {
-            // Manejo de errores en producción debería ser más discreto
-            die("Error al obtener configuración: " . $e->getMessage());
-        }
+    // Validar que se obtuvo la configuración
+    if ($config) {
+        $_SESSION['config'] = $config;
+    } else {
+        // Opcional: manejo si no hay config
+        $_SESSION['config'] = 'esta vacia';
+    }
 
-        $foto = $config['img_admin']; // Ej: logo.png
-        $rutaRelativa = './php/upload/configuracion/' . basename($foto);
-        $degradado = $config['color_primario']
-            ?>
+} catch (PDOException $e) {
+    // Manejo de errores en producción debería ser más discreto
+    die("Error al obtener configuración: " . $e->getMessage());
+}
+
+$foto = $config['img_admin']; // Ej: logo.png
+//$rutaRelativa = !empty('./php/upload/configuracion/' . basename($foto) );
+$rutaRelativa = (!empty('./php/upload/configuracion/' . basename($foto)) && file_exists('./php/upload/configuracion/' . basename($foto))) ? './php/upload/configuracion/' . basename($foto) : '#';
+$degradado = $config['color_primario']
+    ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -120,29 +119,7 @@ if (session_status() === PHP_SESSION_DISABLED) {
             z-index: 1;
         }
 
-        .panel-izquierdo::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-                <?php echo $degradado; ?>
-            ;
-            z-index: -1;
-        }
-
-
-        .panel-izquierdo {
-            position: relative;
-            background: url('<?php echo !empty($foto) && file_exists($rutaRelativa) ? $rutaRelativa : 'https://via.placeholder.com/300x100'; ?>') no-repeat center center;
-            background-size: cover;
-            min-height: 100vh;
-            padding: 3rem;
-            color: white;
-            z-index: 1;
-        }
+       
 
         .panel-izquierdo::before {
             content: "";
@@ -183,7 +160,7 @@ if (session_status() === PHP_SESSION_DISABLED) {
                     institucionales.
                 </p>
             </div>
- 
+
             <!-- Panel derecho -->
             <div class="col-md-7 d-flex align-items-center justify-content-center bg-white px-4 py-5">
                 <div class="w-100" style="max-width: 420px;">
