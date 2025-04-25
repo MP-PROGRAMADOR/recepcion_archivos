@@ -1,50 +1,24 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 11-04-2025 a las 09:14:11
--- Versión del servidor: 10.4.25-MariaDB
--- Versión de PHP: 8.1.10
+
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
---
--- Base de datos: `recepcion_archivo`
---
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `anios_academicos`
---
 
 CREATE TABLE `anios_academicos` (
   `id` int(11) NOT NULL,
   `nombre` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Volcado de datos para la tabla `anios_academicos`
---
+
 
 INSERT INTO `anios_academicos` (`id`, `nombre`) VALUES
 (1, '2023-2024'),
 (2, '2024-2025');
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `estudiantes`
---
 
 CREATE TABLE `estudiantes` (
   `id` int(11) NOT NULL,
@@ -56,18 +30,11 @@ CREATE TABLE `estudiantes` (
   `creado_en` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Volcado de datos para la tabla `estudiantes`
---
+
 
 INSERT INTO `estudiantes` (`id`, `nombre_completo`, `codigo_acceso`, `fecha_nacimiento`, `pais_id`, `ruta_foto`, `creado_en`) VALUES
 (2, 'Bartolome Yamal', 'BY-A-25-2', '2009-01-06', 12, 'upload/perfil/perfil-BY-A-25-2.jpeg', '2025-04-11 08:30:59');
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `notas`
---
 
 CREATE TABLE `notas` (
   `id` int(11) NOT NULL,
@@ -85,9 +52,7 @@ CREATE TABLE `paises` (
   `nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Volcado de datos para la tabla `paises`
---
+
 
 INSERT INTO `paises` (`id`, `nombre`) VALUES
 (1, 'Afghanistan'),
@@ -282,11 +247,7 @@ INSERT INTO `paises` (`id`, `nombre`) VALUES
 (190, 'Zambia'),
 (191, 'Zimbabwe');
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `pasaportes`
---
 
 CREATE TABLE `pasaportes` (
   `id` int(11) NOT NULL,
@@ -308,128 +269,80 @@ CREATE TABLE `usuarios` (
   `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Volcado de datos para la tabla `usuarios`
---
+
 
 INSERT INTO `usuarios` (`id`, `nombre`, `email`, `contrasena`, `creado_en`) VALUES
 (1, 'MINERVA GIMENEZ', 'minerva@prueba.com', '$2y$10$duVZG93NwcxWRv4WGhY0mOjE8R5EhIuvAnt6nSgyUbbYrD/Z8p.OW', '2025-04-10 16:43:30');
 
---
--- Índices para tablas volcadas
---
 
---
--- Indices de la tabla `anios_academicos`
---
 ALTER TABLE `anios_academicos`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `nombre` (`nombre`);
 
---
--- Indices de la tabla `estudiantes`
---
 ALTER TABLE `estudiantes`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `codigo_acceso` (`codigo_acceso`),
   ADD KEY `fk_estudiantes_pais` (`pais_id`);
 
---
--- Indices de la tabla `notas`
---
+
 ALTER TABLE `notas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_notas_estudiante` (`estudiante_id`),
   ADD KEY `fk_notas_anio` (`anio_academico_id`);
 
---
--- Indices de la tabla `paises`
---
+
 ALTER TABLE `paises`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `nombre` (`nombre`);
 
---
--- Indices de la tabla `pasaportes`
---
+
 ALTER TABLE `pasaportes`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_pasaporte_estudiante` (`estudiante_id`);
 
---
--- Indices de la tabla `usuarios`
---
+
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
 
---
--- AUTO_INCREMENT de las tablas volcadas
---
 
---
--- AUTO_INCREMENT de la tabla `anios_academicos`
---
 ALTER TABLE `anios_academicos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- AUTO_INCREMENT de la tabla `estudiantes`
---
+
 ALTER TABLE `estudiantes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- AUTO_INCREMENT de la tabla `notas`
---
+
 ALTER TABLE `notas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
---
--- AUTO_INCREMENT de la tabla `paises`
---
+
 ALTER TABLE `paises`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=192;
 
---
--- AUTO_INCREMENT de la tabla `pasaportes`
---
+
 ALTER TABLE `pasaportes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
+
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
---
--- Restricciones para tablas volcadas
---
 
---
--- Filtros para la tabla `estudiantes`
---
 ALTER TABLE `estudiantes`
   ADD CONSTRAINT `fk_estudiantes_pais` FOREIGN KEY (`pais_id`) REFERENCES `paises` (`id`) ON UPDATE CASCADE;
 
---
--- Filtros para la tabla `notas`
---
+
 ALTER TABLE `notas`
   ADD CONSTRAINT `fk_notas_anio` FOREIGN KEY (`anio_academico_id`) REFERENCES `anios_academicos` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_notas_estudiante` FOREIGN KEY (`estudiante_id`) REFERENCES `estudiantes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Filtros para la tabla `pasaportes`
---
+
 ALTER TABLE `pasaportes`
   ADD CONSTRAINT `fk_pasaporte_estudiante` FOREIGN KEY (`estudiante_id`) REFERENCES `estudiantes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 USE recepcion_archivo; 
 CREATE TABLE configuracion (

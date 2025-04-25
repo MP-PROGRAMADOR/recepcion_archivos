@@ -7,15 +7,17 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 require_once '../config/conexion.php';
 
-$directorio = __DIR__ . './upload/perfil/';
+// Ruta correcta para crear la carpeta 'perfil' dentro de 'php/upload'
+$directorio = __DIR__ . '/../php/upload/perfil/'; // Ruta dentro de la carpeta 'php/upload/'
 if (!is_dir($directorio)) {
-    mkdir($directorio, 0777, true);
+    mkdir($directorio, 0777, true); // Crea la carpeta si no existe
 } else {
-    chmod($directorio, 0777);
+    chmod($directorio, 0777); // Ajusta permisos si la carpeta ya existe
 }
 
 $errores = [];
 
+// Recoger datos del formulario
 $nombre_completo_original = trim($_POST['nombre_completo'] ?? '');
 $fecha_nacimiento = trim($_POST['fecha_nacimiento'] ?? '');
 $pais_id = htmlspecialchars(trim($_POST['pais']));
@@ -32,12 +34,6 @@ if ($fecha_nacimiento === '') {
     $errores[] = "La fecha de nacimiento es obligatoria.";
 } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_nacimiento)) {
     $errores[] = "Formato de fecha no válido. Usa YYYY-MM-DD.";
-} else {
-    // Validación de que la fecha de nacimiento no sea superior al año actual
-    $fecha_actual = date('Y-m-d');
-    if ($fecha_nacimiento > $fecha_actual) {
-        $errores[] = "La fecha de nacimiento no puede ser superior a la fecha actual.";
-    }
 }
 
 if (!is_numeric($pais_id)) {
@@ -90,7 +86,6 @@ if (!empty($errores)) {
     exit;
 }
 
-
 try {
     // Insertar estudiante
     $stmt = $pdo->prepare("INSERT INTO estudiantes (nombre_completo, fecha_nacimiento, pais_id) VALUES (?, ?, ?)");
@@ -118,7 +113,7 @@ try {
     // Subir imagen
     if ($foto_subida) {
         $nombre_archivo = 'perfil-' . $codigo_acceso . '.' . $extension;
-        $ruta_guardada = 'upload/perfil/' . $nombre_archivo;
+        $ruta_guardada = 'upload/perfil/' . $nombre_archivo; // Guardar en 'php/upload/perfil'
         $ruta_completa = $directorio . $nombre_archivo;
         
         if (move_uploaded_file($nombre_temporal, $ruta_completa)) {
@@ -126,6 +121,7 @@ try {
         }
     }
     
+    // Actualizar la base de datos con la ruta de la foto
     $stmt = $pdo->prepare("UPDATE estudiantes SET codigo_acceso = ?, ruta_foto = ? WHERE id = ?");
     $stmt->execute([$codigo_acceso, $ruta_foto, $estudiante_id]);
 
@@ -139,4 +135,3 @@ try {
     header("Location: ../admin/registrar_estudiantes.php");
     exit;
 }
-?>

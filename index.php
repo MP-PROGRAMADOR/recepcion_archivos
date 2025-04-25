@@ -5,31 +5,12 @@ if (session_status() === PHP_SESSION_DISABLED) {
 } elseif (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-require_once 'config/conexion.php';
-// Obtener la configuración actual del sitio
-$sql = "SELECT * FROM configuracion LIMIT 1";
 
-try {
-    $stmt = $pdo->query($sql);
-    $config = $stmt->fetch(PDO::FETCH_ASSOC); // Asegura array asociativo
 
-    // Validar que se obtuvo la configuración
-    if ($config) {
-        $_SESSION['config'] = $config;
-    } else {
-        // Opcional: manejo si no hay config
-        $_SESSION['config'] = 'esta vacia';
-    }
 
-} catch (PDOException $e) {
-    // Manejo de errores en producción debería ser más discreto
-    die("Error al obtener configuración: " . $e->getMessage());
-}
 
-$foto = $config['img_admin']; // Ej: logo.png
-//$rutaRelativa = !empty('./php/upload/configuracion/' . basename($foto) );
-$rutaRelativa = (!empty('./php/upload/configuracion/' . basename($foto)) && file_exists('./php/upload/configuracion/' . basename($foto))) ? './php/upload/configuracion/' . basename($foto) : '#';
-$degradado = $config['color_primario']
+
+
     ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -132,7 +113,7 @@ $degradado = $config['color_primario']
             /*background: rgba(0, 50, 90, 0.75);*/
             /* Opción B: Degradado (puedes usar esta en vez de la de arriba) */
             background:
-                <?php echo !empty($color_primario) ? $color_primario : 'linear-gradient(to bottom right, rgba(0, 84, 140, 0.34), rgba(0, 30, 60, 0.7))'; ?>
+            linear-gradient(to bottom right, rgba(0, 84, 140, 0.34), rgba(0, 30, 60, 0.7));
             ;
             z-index: -1;
         }

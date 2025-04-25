@@ -62,11 +62,7 @@
     <!-- Sección Configuración -->
     <li class="text-uppercase text-secondary small fw-bold mt-2 mb-2">Configuración</li>
 
-    <li class="nav-item mb-2">
-      <a href="configuracion.php" class="nav-link text-white">
-        <i class="bi bi-gear-fill me-2"></i> Ajustes
-      </a>
-    </li>
+   
 
     <!-- Cierre de sesión -->
     <li class="nav-item">
