@@ -5,7 +5,7 @@ session_start();
 if (!isset($_SESSION['estudiante'])) {
     header("Location: index.php");
     exit();
-} 
+}
 
 require_once '../config/conexion.php';
 
@@ -51,32 +51,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             // Obtener código de acceso del estudiante desde sesión
             $codigoAcceso = $_SESSION['estudiante']['codigo_acceso'];
-            // Obtener años académicos
 
+            // Obtener año académico
             $stmtAnios = $pdo->prepare("SELECT nombre FROM anios_academicos WHERE id = ?");
             $stmtAnios->execute([$anio_academico_id]);
             $anios = $stmtAnios->fetch(PDO::FETCH_ASSOC);
 
+            if (!$anios) {
+                throw new Exception("Año académico no encontrado.");
+            }
 
-            // Generar nombre único con código de acceso
-            //  $nombreArchivo = $codigoAcceso . '_' . uniqid('nota_', true) . '.pdf';
+            // Generar nombre de archivo
             $nombreArchivo = 'Notas_' . $anios['nombre'] . '_' . $codigoAcceso . '.pdf';
 
-            // Ruta destino
+            // Ruta de guardado
             $directorio = 'upload/notas/';
             $rutaCompleta = $directorio . $nombreArchivo;
 
             // Crear carpeta si no existe
             if (!is_dir($directorio)) {
                 if (!mkdir($directorio, 0755, true)) {
-                    $errores[] = throw new Exception("No se pudo crear la carpeta de destino.");
+                    throw new Exception("No se pudo crear la carpeta de destino.");
                 }
             }
 
             // Iniciar transacción
             $pdo->beginTransaction();
 
-            // Insertar nota
+            // Insertar en base de datos
             $stmt = $pdo->prepare("INSERT INTO notas (estudiante_id, anio_academico_id, observaciones, archivo_url, fecha_subida)
                                    VALUES (?, ?, ?, ?, NOW())");
             $stmt->execute([
@@ -86,12 +88,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $nombreArchivo
             ]);
 
-            // Mover archivo
+            // Mover archivo subido
             if (!move_uploaded_file($archivo['tmp_name'], $rutaCompleta)) {
                 $pdo->rollBack();
-                $errores[] = throw new Exception("Error al guardar el archivo PDF.");
+                throw new Exception("Error al guardar el archivo PDF.");
             }
 
+            // Confirmar transacción
             $pdo->commit();
 
             $_SESSION['exito'] = "Nota registrada correctamente.";
@@ -99,22 +102,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
 
         } catch (Exception $e) {
-            if ($pdo->inTransaction())
+            if ($pdo->inTransaction()) {
                 $pdo->rollBack();
-            $errores[] = "Error: " . htmlspecialchars($e->getMessage()) . " ";
-        }
-    } else {
-        // Mostrar errores
-
-        // Si hay errores, redirigir con los errores en sesión
-        if (!empty($errores)) {
-            $_SESSION['errores'] = $errores;
-            header("Location: ../estudiante/panel_estudiante.php");
-            exit;
+            }
+            $errores[] = "Error: " . htmlspecialchars($e->getMessage());
         }
     }
+
+    // Redirigir si hay errores
+    if (!empty($errores)) {
+        $_SESSION['errores'] = $errores;
+        header("Location: ../estudiante/panel_estudiante.php");
+        exit;
+    }
+
 } else {
-    $errores[] = "Método no permitido.";
-    $_SESSION['errores'] = $errores;
+    $_SESSION['errores'] = ["Método no permitido."];
+    header("Location: ../estudiante/panel_estudiante.php");
+    exit;
 }
 ?>
