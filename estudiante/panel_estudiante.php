@@ -6,8 +6,54 @@ if (!isset($_SESSION['estudiante'])) {
 }
 
 $estudiantes = $_SESSION['estudiante'];
-
+$id_estudiante = $_SESSION['id'];
 include_once('../config/conexion.php');
+
+
+// Verificamos si el ID del estudiante está en la sesión
+if (isset($_SESSION['id'])) {
+    $id_estudiante = $_SESSION['id'];
+
+    try {
+        // Realizamos la consulta para obtener la foto de perfil del estudiante
+        $stmt = $pdo->prepare("SELECT foto_perfil FROM estudiantes WHERE id = :id_estudiante");
+        $stmt->bindParam(':id_estudiante', $id_estudiante);
+        $stmt->execute();
+
+        // Obtenemos el resultado de la consulta
+        $estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($estudiante) {
+            // Verificamos si la columna foto_perfil está vacía o no
+            if (empty($estudiante['foto_perfil'])) {
+                // Si no tiene foto de perfil, redirigimos a la página de perfil
+                header("Location: perfil.php");
+                exit;
+            } else {
+                // Si tiene foto de perfil, redirigimos a la página principal (o donde se necesite)
+                header("Location: panel_estudiante.php");
+                exit;
+            }
+        } else {
+            // Si el estudiante no existe (esto debería ser improbable si la sesión está correctamente gestionada)
+            echo "Estudiante no encontrado.";
+        }
+    } catch (PDOException $e) {
+        echo "Error de conexión: " . $e->getMessage();
+    }
+} else {
+    // Si no hay ID de estudiante en la sesión, redirigimos al login
+    header("Location: index.php");
+    exit;
+}
+
+
+
+
+
+
+
+
 
 // Consultar datos del estudiante
 $stmt = $pdo->prepare("SELECT e.id, e.codigo_acceso, e.nombre_completo, e.fecha_nacimiento, e.creado_en, e.ruta_foto, p.nombre AS pais 

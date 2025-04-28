@@ -6,9 +6,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $contrasena = $_POST['contrasena'];
 
-    
-
-
     if (!empty($email) && !empty($contrasena)) {
         try {
             $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email");
@@ -22,13 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['usuario_nombre'] = $usuario['nombre'];
                 $_SESSION['usuario_email'] = $usuario['email'];
 
-                header("Location: ../admin/index.php");
+                // Verificar si tiene foto de perfil
+                if (!empty($usuario['foto_perfil'])) {
+                    // Si tiene foto de perfil, redirigir a la página principal
+                    header("Location: ../admin/panel_estudiante.php");
+                } else {
+                    // Si no tiene foto de perfil, redirigir a la página de perfil
+                    header("Location: ../estudiante/perfil.php");
+                }
                 exit;
             } else {
-
-                
-
-                $_SESSION['error'] = 'Error de Email.';
+                $_SESSION['error'] = 'Error de Email o Contraseña incorrectos.';
                 header('Location: ../index.php');
                 exit;
             }
@@ -40,3 +41,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
