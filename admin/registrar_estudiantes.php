@@ -12,7 +12,38 @@ try {
     echo "<script>Swal.fire('Error', 'Error al cargar los países: " . $e->getMessage() . "', 'error');</script>";
     $paises = [];
 }
+// Consulta para obtener los países
+try {
+    $stmt = $pdo->prepare("SELECT id, nombre FROM paises ORDER BY nombre ASC");
+    $stmt->execute();
+    $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "<script>Swal.fire('Error', 'Error al cargar los países: " . $e->getMessage() . "', 'error');</script>";
+    $paises = [];
+}
+
+// Consulta para obtener las ciudades
+try {
+    $stmt = $pdo->prepare("SELECT id, nombre FROM ciudades ORDER BY nombre ASC");
+    $stmt->execute();
+    $ciudades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "<script>Swal.fire('Error', 'Error al cargar las ciudades: " . $e->getMessage() . "', 'error');</script>";
+    $ciudades = [];
+}
+
+// Consulta para obtener las universidades
+try {
+    $stmt = $pdo->prepare("SELECT id, nombre FROM universidades ORDER BY nombre ASC");
+    $stmt->execute();
+    $universidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "<script>Swal.fire('Error', 'Error al cargar las universidades: " . $e->getMessage() . "', 'error');</script>";
+    $universidades = [];
+}
 ?>
+
+
 
 <main class="content" id="mainContentGuin">
     <div class="container mt-4">
