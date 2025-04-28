@@ -10,10 +10,33 @@ $estudiante_id = intval($_GET['id']);
 try {
     // Datos personales del estudiante
     $stmt = $pdo->prepare("
-        SELECT e.id, e.nombre_completo, e.codigo_acceso, e.fecha_nacimiento, e.ruta_foto, e.creado_en, p.nombre AS pais
-        FROM estudiantes e
-        INNER JOIN paises p ON e.pais_id = p.id
-        WHERE e.id = ?
+      SELECT 
+    e.id,
+    e.nombre_completo,
+    e.codigo_acceso,
+    e.fecha_nacimiento,
+    e.anio_inicio_carrera,
+    e.anio_fin_carrera,
+    e.telefono,
+    e.creado_en,
+    e.pais_id,
+    e.email,
+    e.ciudad_id,
+    e.universidad_id,
+    e.idioma_id,
+    p.nombre AS nombre_pais,
+    c.nombre AS nombre_ciudad,
+    u.nombre AS nombre_universidad,
+    i.nombre AS nombre_idioma,
+    i.meses_duracion AS meses_duracion_idioma
+FROM estudiantes e
+LEFT JOIN paises p ON e.pais_id = p.id
+LEFT JOIN ciudades c ON e.ciudad_id = c.id
+LEFT JOIN universidades u ON e.universidad_id = u.id
+LEFT JOIN idiomas i ON e.idioma_id = i.id
+WHERE e.id = ?
+
+
     ");
     $stmt->execute([$estudiante_id]);
     $estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -61,7 +84,7 @@ try {
                 <a href="estudiantes.php" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Volver al Listado
                 </a>
-                 
+
             </div>
         </div>
 
@@ -70,8 +93,8 @@ try {
             <h5><i class="bi bi-person-circle me-2"></i>Datos Personales</h5>
             <div class="row">
                 <div class="col-md-4 text-center mb-3">
-                    <?php if (!empty($estudiante['ruta_foto']) && file_exists("../php/" . $estudiante['ruta_foto'])): ?>
-                        <img src="../php/<?= htmlspecialchars($estudiante['ruta_foto']) ?>" class="cv-photo img-thumbnail" alt="Foto">
+                    <?php if (!empty($estudiante['foto_perfil']) && file_exists("../php/" . $estudiante['foto_perfil'])): ?>
+                        <img src="../php/<?= htmlspecialchars($estudiante['foto_perfil']) ?>" class="cv-photo img-thumbnail" alt="Foto">
                     <?php else: ?>
                         <div class="text-muted">
                             <i class="bi bi-person-circle fs-1"></i><br>Sin foto
@@ -82,9 +105,47 @@ try {
                     <p class="cv-label">Código del Estudiante: <span class="cv-value"><?= $estudiante['codigo_acceso'] ?></span></p>
                     <p class="cv-label">Nombre Completo: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_completo']) ?></span></p>
                     <p class="cv-label">Fecha de Nacimiento: <span class="cv-value"><?= date('d/m/Y', strtotime($estudiante['fecha_nacimiento'])) ?></span></p>
-                    <p class="cv-label">País de Origen: <span class="cv-value"><?= htmlspecialchars($estudiante['pais']) ?></span></p>
+
+                    <!-- Verificación de Email -->
+                    <p class="cv-label">Correo Electronico: <span class="cv-value"><?= !empty($estudiante['email']) ? htmlspecialchars($estudiante['email']) : 'No se ha subido' ?></span></p>
+
+                    <!-- Verificación de Teléfono -->
+                    <p class="cv-label">Telefono: <span class="cv-value"><?= !empty($estudiante['telefono']) ? htmlspecialchars($estudiante['telefono']) : 'No se ha subido' ?></span></p>
+
+                    <p class="cv-label">País de Estudios: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_pais']) ?></span></p>
+                    <p class="cv-label">En la Ciudad: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_ciudad']) ?></span></p>
+                    <p class="cv-label">En la Universidad: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_universidad']) ?></span></p>
+
+                    <!-- Año de Inicio y Año de Finalización -->
+                    <p class="cv-label">Año de Inicio: <span class="cv-value"><?= htmlspecialchars($estudiante['anio_inicio_carrera']) ?></span></p>
+                    <p class="cv-label">Año de Finalización: <span class="cv-value"><?= htmlspecialchars($estudiante['anio_fin_carrera']) ?></span></p>
+
+                    <!-- Calcular años de carrera -->
+                    <?php
+                    $anio_inicio = (int)$estudiante['anio_inicio_carrera'];
+                    $anio_fin = (int)$estudiante['anio_fin_carrera'];
+                    $años_de_carrera = $anio_fin - $anio_inicio;
+                    ?>
+                    <p class="cv-label">Años de Carrera: <span class="cv-value"><?= $años_de_carrera ?></span></p>
+
+                    <!-- Idioma -->
+                    <?php if (!empty($estudiante['nombre_idioma'])): ?>
+                        <p class="cv-label">Idioma: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_idioma']) ?></span></p>
+                        <p class="cv-label">Meses de Duración: <span class="cv-value"><?= htmlspecialchars($estudiante['meses_duracion_idioma']) ?></span></p>
+
+                        <!-- Sumar meses de idioma a los años de carrera -->
+                        <?php
+                        $total_meses = (int)$estudiante['meses_duracion_idioma'];
+                        $total_años = $años_de_carrera + ($total_meses / 12);
+                        ?>
+                        <p class="cv-label">Años de Carrera + Idioma: <span class="cv-value"><?= number_format($total_años, 2) ?> años</span></p>
+                    <?php else: ?>
+                        <p class="cv-label">Idioma: <span class="cv-value">No escogió idioma</span></p>
+                    <?php endif; ?>
+
                     <p class="cv-label">Fecha de Registro: <span class="cv-value"><?= date('d/m/Y H:i', strtotime($estudiante['creado_en'])) ?></span></p>
                 </div>
+
             </div>
         </div>
 
