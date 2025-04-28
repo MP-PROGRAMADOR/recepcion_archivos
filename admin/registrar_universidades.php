@@ -63,7 +63,7 @@ include_once("../componentes/sidebar.php");
                 <h5 class="mb-0">Registrar Nueva Universidad</h5>
             </div>
             <div class="card-body">
-                <form action="../php/guardar_universidad.php" method="POST" novalidate>
+                <form action="../php/guardar_universidades.php" method="POST" novalidate>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="nombre_universidad" class="form-label fw-bold">Nombre de la Universidad</label>
