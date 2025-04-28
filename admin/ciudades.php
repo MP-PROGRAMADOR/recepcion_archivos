@@ -73,6 +73,9 @@ try {
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3><i class="bi bi-buildings-fill me-2"></i>Listado de Ciudades con Estudiantes Inscritos</h3>
+            <a href="registrar_ciudades.php" class="btn btn-primary">
+            <i class="bi bi-person-plus-fill me-1"></i> Nueva ciudad
+        </a>
         </div>
 
         <div class="card shadow rounded-4">
