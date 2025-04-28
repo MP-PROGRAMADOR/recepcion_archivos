@@ -61,6 +61,7 @@ include_once("../componentes/sidebar.php");
             <div class="card-header bg-primary text-white d-flex align-items-center">
                 <i class="bi bi-geo-alt-fill fs-4 me-2"></i>
                 <h5 class="mb-0">Registrar Nueva Ciudad</h5>
+            
             </div>
             <div class="card-body">
                 <form action="../php/guardar_ciudades.php" method="POST" novalidate>
