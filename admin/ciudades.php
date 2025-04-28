@@ -103,7 +103,7 @@ try {
                                 <?php foreach ($ciudades as $ciudad): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($ciudad['id']) ?></td>
-                                        <td><?= htmlspecialchars($ciudad['nombre']) ?></td>
+                                        <td><?= htmlspecialchars($ciudad['ciudad']) ?></td>
                                         <td><?= htmlspecialchars($ciudad['estudiantes']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
