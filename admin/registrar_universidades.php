@@ -59,36 +59,35 @@ include_once("../componentes/sidebar.php");
 
         <div class="card shadow rounded-4">
             <div class="card-header bg-primary text-white d-flex align-items-center">
-                <i class="bi bi-geo-alt-fill fs-4 me-2"></i>
-                <h5 class="mb-0">Registrar Nueva Ciudad</h5>
-            
+                <i class="bi bi-university fs-4 me-2"></i>
+                <h5 class="mb-0">Registrar Nueva Universidad</h5>
             </div>
             <div class="card-body">
-                <form action="../php/guardar_ciudades.php" method="POST" novalidate>
+                <form action="../php/guardar_universidad.php" method="POST" novalidate>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="nombre_ciudad" class="form-label fw-bold">Nombre de la Ciudad</label>
-                            <input type="text" id="nombre_ciudad" name="nombre" class="form-control" placeholder="Ej: Buenos Aires" required>
+                            <label for="nombre_universidad" class="form-label fw-bold">Nombre de la Universidad</label>
+                            <input type="text" id="nombre_universidad" name="nombre" class="form-control" placeholder="Ej: Universidad Nacional" required>
                         </div>
 
                         <div class="col-md-6">
-                            <label for="pais_id" class="form-label fw-bold">País</label>
-                            <select name="pais_id" class="form-select" required>
-                                <option value="">Seleccionar País</option>
-                                <!-- Aquí irían las opciones dinámicas del país, obtenidas de la base de datos -->
+                            <label for="ciudad_id" class="form-label fw-bold">Ciudad</label>
+                            <select name="ciudad_id" class="form-select" required>
+                                <option value="">Seleccionar Ciudad</option>
+                                <!-- Aquí irían las opciones dinámicas de ciudades, obtenidas de la base de datos -->
                                 <?php
                                 try {
                                     // Conexión y consulta segura usando PDO
                                     include_once('../config/conexion.php');
-                                    $query = "SELECT id, nombre FROM paises";
+                                    $query = "SELECT id, nombre FROM ciudades";
                                     $stmt = $pdo->query($query);
 
-                                    // Mostrar las opciones del país
-                                    while ($pais = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                        echo "<option value='" . htmlspecialchars($pais['id'], ENT_QUOTES, 'UTF-8') . "'>" . htmlspecialchars($pais['nombre'], ENT_QUOTES, 'UTF-8') . "</option>";
+                                    // Mostrar las opciones de ciudad
+                                    while ($ciudad = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                        echo "<option value='" . htmlspecialchars($ciudad['id'], ENT_QUOTES, 'UTF-8') . "'>" . htmlspecialchars($ciudad['nombre'], ENT_QUOTES, 'UTF-8') . "</option>";
                                     }
                                 } catch (PDOException $e) {
-                                    echo "<option value=''>Error al cargar países</option>";
+                                    echo "<option value=''>Error al cargar ciudades</option>";
                                 }
                                 ?>
                             </select>
@@ -99,7 +98,7 @@ include_once("../componentes/sidebar.php");
                         <button type="submit" class="btn btn-success me-2">
                             <i class="bi bi-save-fill me-1"></i> Guardar
                         </button>
-                        <a href="ciudades.php" class="btn btn-secondary">
+                        <a href="universidades.php" class="btn btn-secondary">
                             <i class="bi bi-x-circle-fill me-1"></i> Cancelar
                         </a>
                     </div>
