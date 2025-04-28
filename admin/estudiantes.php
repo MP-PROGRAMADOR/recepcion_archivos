@@ -1,7 +1,7 @@
 <?php
 include_once("../componentes/header.php");
 // Asegúrate de que esto esté al principio del archivo
- 
+
 
 // Consulta de estudiantes con JOIN a países
 // Configuración de paginación
@@ -21,7 +21,7 @@ try {
 // Obtener estudiantes con límite y offset (incluyendo país)
 try {
     $stmt = $pdo->prepare("
-        SELECT e.id, e.nombre_completo, e.codigo_acceso, e.fecha_nacimiento, e.creado_en, 
+        SELECT e.id, e.nombre_completo,e.anio_inicio_carrera,e.anio_fin_carrera,e.telefono, e.codigo_acceso, e.fecha_nacimiento, e.creado_en, 
                p.nombre AS pais, e.ruta_foto
         FROM estudiantes e
         INNER JOIN paises p ON e.pais_id = p.id
@@ -44,52 +44,38 @@ include_once("../componentes/sidebar.php");
 
 <main class="content" id="mainContent">
     <div class="container-fluid">
-        <!-- INICIO DE LA ALERTA -->
-        <?php
 
 
-        if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
-            ?>
-            <div id="alerta-exito"
-                class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
-                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
-                <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
-                <div>
-                    <strong>¡Éxito!</strong>
-                    <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
-                </div>
-                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        <?php if (isset($_SESSION['mensaje'])): ?>
+            <div id="alerta-sesion" class="alert alert-<?= $_SESSION['tipo_mensaje'] ?> alert-dismissible fade show mt-3" role="alert">
+                <?= $_SESSION['mensaje'] ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
 
             <script>
-                // Ocultar automáticamente luego de 6 segundos
-                setTimeout(() => {
-                    const alerta = document.getElementById('alerta-exito');
+                // Espera 6 segundos y luego cierra la alerta automáticamente
+                setTimeout(function() {
+                    var alerta = document.getElementById('alerta-sesion');
                     if (alerta) {
                         alerta.classList.remove('show');
                         alerta.classList.add('fade');
-                        setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
+                        setTimeout(function() {
+                            alerta.remove();
+                        }, 500); // Dar tiempo a la animación de Bootstrap
                     }
                 }, 6000);
             </script>
 
-            <style>
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-10px);
-                    }
-
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            </style>
             <?php
-            unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
-        endif;
-        ?>
+            unset($_SESSION['mensaje']);
+            unset($_SESSION['tipo_mensaje']);
+            ?>
+        <?php endif; ?>
+
+
+
+
+
 
         <!-- FIN DE LA ALERTA -->
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -116,9 +102,11 @@ include_once("../componentes/sidebar.php");
                                 <th>Nombre</th>
                                 <th>Código de Acceso</th>
                                 <th>Fecha de Nacimiento</th>
-                                <th>Registro</th>
-                                <th>País</th>
-                                <th>Foto</th>
+                                <th>Pais</th>
+                                <th>Fecha De Inicio</th>
+                                <th>Fecha De Fin</th>
+                                <th>Telefono</th>
+                                <th>Foto</th> <!-- Columna Foto ahora después del Teléfono -->
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -130,34 +118,25 @@ include_once("../componentes/sidebar.php");
                                         <td><?= htmlspecialchars($est['nombre_completo']) ?></td>
                                         <td><?= htmlspecialchars($est['codigo_acceso']) ?></td>
                                         <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
-                                        <td><?= date('d/m/Y H:i', strtotime($est['creado_en'])) ?></td>
-                                        <td><?= htmlspecialchars($est['pais'] ?? 'No definido') ?></td>
-                                        <td>
-                                        <?php
-                                            $foto = $est['ruta_foto']; // Ej: upload/perfil/perfil-12345678.png
-                                            $rutaRelativa = '/php/' . $foto; // Ruta visible desde el navegador
-                                            $rutaServidor = '../php/' . $foto; // Ruta física en disco
+                                        <td><?= htmlspecialchars($est['pais']) ?></td>
+                                        <td><?= htmlspecialchars($est['anio_inicio_carrera']) ?></td>
+                                        <td><?= htmlspecialchars($est['anio_fin_carrera']) ?></td>
+                                        <td><?= htmlspecialchars($est['telefono']) ?></td>
 
-                                            // Depuración
-                                            //echo "Ruta física: " . $rutaServidor . "<br>"; 
-                                            //echo "Ruta en el navegador: " . $rutaRelativa . "<br>";
-                                            ?>
-                                            
-                                            <?php if (!empty($foto) && file_exists($rutaServidor)): ?>
-                                                <img src="../<?= $rutaRelativa ?>" class="rounded "
-                                                    alt="Foto de <?= htmlspecialchars($est['nombre_completo']) ?>" width="60"
-                                                    height="60">
+                                        <!-- Foto del perfil -->
+                                        <td>
+                                            <?php if (!empty($est['foto_perfil']) && file_exists('../php/upload/perfil/' . $est['foto_perfil'])): ?>
+                                                <img src="../php/upload/perfil/<?= htmlspecialchars($est['foto_perfil']) ?>" alt="Foto de Perfil" style="width: 50px; height: 50px; object-fit: cover;">
                                             <?php else: ?>
-                                                <span class="text-muted">Sin foto</span>
+                                                <span class="text-muted">NINGÚN PERFIL</span>
                                             <?php endif; ?>
                                         </td>
+
                                         <td>
-                                            <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>"
-                                                class="btn btn-warning btn-sm" title="Editar">
+                                            <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-warning btn-sm" title="Editar">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
-                                            <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>"
-                                                class="btn btn-success btn-sm" title="Detalles">
+                                            <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-success btn-sm" title="Detalles">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                         </td>
@@ -165,11 +144,13 @@ include_once("../componentes/sidebar.php");
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted">No hay estudiantes registrados</td>
+                                    <td colspan="10" class="text-center text-muted">No hay estudiantes registrados</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
+
+
                 </div>
 
 
@@ -212,10 +193,10 @@ include_once("../componentes/sidebar.php");
 
 <!-- Buscador en tiempo real -->
 <script>
-    $(document).ready(function () {
-        $("#busqueda").on("keyup", function () {
+    $(document).ready(function() {
+        $("#busqueda").on("keyup", function() {
             let valor = $(this).val().toLowerCase();
-            $("#contenidoTabla tr").filter(function () {
+            $("#contenidoTabla tr").filter(function() {
                 $(this).toggle($(this).text().toLowerCase().includes(valor));
             });
         });
