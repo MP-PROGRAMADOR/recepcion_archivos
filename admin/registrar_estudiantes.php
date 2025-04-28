@@ -132,21 +132,7 @@ include_once("../componentes/alerta.php");
 
                     </div>
 
-
-                    <div class="row col-12 mt-2">
-                        <div class="col-6 ">
-                            <label for="foto" class="form-label fw-bold">Foto del Estudiante</label>
-                            <input type="file" id="foto" name="foto" class="form-control" accept="image/*" required
-                                onchange="previewImage(event)">
-                        </div>
-
-                        <div class="col-6  text-center">
-                            <label class="form-label fw-bold">Vista previa:</label><br>
-                            <img id="foto_preview" src="#" alt="Vista previa" class="img-thumbnail rounded-4 shadow"
-                                style="max-width: 200px; display: none;">
-                        </div>
-
-                    </div>
+ 
             </div>
 
             <div class="d-flex justify-content-end mt-4">
