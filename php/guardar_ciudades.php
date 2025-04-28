@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once('../php/conexion.php');
+include_once('../config/conexion.php');
 
 // Verificar si el formulario fue enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
