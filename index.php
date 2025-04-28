@@ -92,7 +92,7 @@ if (session_status() === PHP_SESSION_DISABLED) {
 
         .panel-izquierdo {
             position: relative;
-            background: url('<?php echo $rutaRelativa; ?>') no-repeat center center;
+            background: url('') no-repeat center center;
             background-size: cover;
             min-height: 100vh;
             padding: 3rem;
