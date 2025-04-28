@@ -133,3 +133,12 @@ CREATE TABLE `configuracion` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 COMMIT;
+
+
+ALTER TABLE `estudiantes`
+ADD COLUMN IF NOT EXISTS `fecha_inicio_carrera` year  NULL,
+ADD COLUMN IF NOT EXISTS `ciudad_id` int(11) DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS `universidad_id` int(11) DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS`idioma_id` int(11) DEFAULT NULL,
+ADD COLUMN  IF NOT EXISTS `anio_fin_carrera` year DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS `universidad_id` int(11) DEFAULT NULL;
