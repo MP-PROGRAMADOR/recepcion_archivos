@@ -50,7 +50,7 @@ try {
         <!-- INICIO DE LA ALERTA DE ERRORRES -->
         <?php
 
-include_once("../componentes/alerta.php");
+        include_once("../componentes/alerta.php");
 
         ?>
 
@@ -63,89 +63,140 @@ include_once("../componentes/alerta.php");
             </div>
 
             <div class="card-body">
-                <form action="../php/guardar_estudiantes.php" method="POST" enctype="multipart/form-data">
+                <form action="../php/guardar_estudiantes.php" method="POST" enctype="multipart/form-data"
+                    class="needs-validation" novalidate>
                     <div class="row g-3">
+
+                        <!-- Nombre Completo -->
                         <div class="col-md-6 mb-2">
-                            <label for="nombre_completo" class="form-label fw-bold">Nombre Completo</label>
-                            <input type="text" id="nombre_completo" name="nombre_completo" class="form-control" required
-                                placeholder="Ej: María López">
+                            <label for="nombre_completo" class="form-label fw-bold">
+                                Nombre Completo
+                            </label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                <input type="text" id="nombre_completo" name="nombre_completo" class="form-control"
+                                    required placeholder="Ej: María López">
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, ingresa tu nombre completo.</div>
+                            </div>
                         </div>
 
+                        <!-- Fecha de Nacimiento -->
                         <div class="col-md-6 mb-2">
-                            <label for="fecha_nacimiento" class="form-label fw-bold">Fecha de Nacimiento</label>
-                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control"
-                                required>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label for="fecha_inicio_carrera" class="form-label fw-bold">Fecha de Inicio de
-                                Carrera</label>
-                            <input type="date" id="fecha_inicio_carrera" name="fecha_inicio_carrera"
-                                class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label for="fecha_fin_carrera" class="form-label fw-bold">Fecha de fin de Carrera</label>
-                            <input type="date" id="fecha_fin_carrera" name="fecha_fin_carrera" class="form-control"
-                                required>
+                            <label for="fecha_nacimiento" class="form-label fw-bold">
+                                Fecha de Nacimiento
+                            </label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-calendar-date-fill"></i></span>
+                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control"
+                                    required>
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, selecciona tu fecha de nacimiento.</div>
+                            </div>
                         </div>
 
-
-
-                        <!-- Selección de País -->
+                        <!-- Fecha de Inicio de Carrera -->
                         <div class="col-md-6 mb-2">
-                            <label for="pais" class="form-label fw-bold">País de estudios</label>
-                            <select id="pais" name="pais" class="form-select" required>
-                                <option value="" disabled selected>Selecciona tu país</option>
-                                <?php foreach ($paises as $pais): ?>
-                                    <option value="<?= htmlspecialchars($pais['id']) ?>" class="country-item">
-                                        <?= htmlspecialchars($pais['nombre']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-
-
-                        </div>
-                        <!-- Selección de ciudad -->
-                        <div class="col-md-6 mb-2">
-                            <label for="pais" class="form-label fw-bold">ciudad de estudios</label>
-                            <select id="ciudad" name="ciudad" class="form-select" required>
-                                <option value="" disabled selected>Selecciona tu ciudad</option>
-                                <?php foreach ($ciudades as $ciudad): ?>
-                                    <option value="<?= htmlspecialchars($ciudad['id']) ?>" class="country-item">
-                                        <?= htmlspecialchars($ciudad['nombre']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <!-- Selección de universidad -->
-                        <div class="col-md-6 mb-2">
-                            <label for="universidad" class="form-label fw-bold">universidad</label>
-                            <select id="universidad" name="universidad" class="form-select" required>
-                                <option value="" disabled selected>Selecciona tu universidad</option>
-                                <?php foreach ($universidades as $universidad): ?>
-                                    <option value="<?= htmlspecialchars($universidad['id']) ?>" class="country-item">
-                                        <?= htmlspecialchars($universidad['nombre']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                            <label for="fecha_inicio_carrera" class="form-label fw-bold">
+                                Fecha de Inicio de Carrera
+                            </label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-calendar-plus-fill"></i></span>
+                                <input type="date" id="fecha_inicio_carrera" name="fecha_inicio_carrera"
+                                    class="form-control" required>
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, selecciona la fecha de inicio de carrera.</div>
+                            </div>
                         </div>
 
+                        <!-- Fecha de Fin de Carrera -->
+                        <div class="col-md-6 mb-2">
+                            <label for="fecha_fin_carrera" class="form-label fw-bold">
+                                Fecha de Fin de Carrera
+                            </label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-calendar-check-fill"></i></span>
+                                <input type="date" id="fecha_fin_carrera" name="fecha_fin_carrera" class="form-control"
+                                    required>
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, selecciona la fecha de fin de carrera.</div>
+                            </div>
+                        </div>
 
+                        <!-- País de estudios -->
+                        <div class="col-md-6 mb-2">
+                            <label for="pais" class="form-label fw-bold">
+                                País de Estudios
+                            </label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                                <select id="pais" name="pais" class="form-select" required>
+                                    <option value="" disabled selected>Selecciona tu país</option>
+                                    <?php foreach ($paises as $pais): ?>
+                                        <option value="<?= htmlspecialchars($pais['id']) ?>">
+                                            <?= htmlspecialchars($pais['nombre']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, selecciona un país.</div>
+                            </div>
+                        </div>
+
+                        <!-- Ciudad de estudios -->
+                        <div class="col-md-6 mb-2">
+                            <label for="ciudad" class="form-label fw-bold">
+                                Ciudad de Estudios
+                            </label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-geo-fill"></i></span>
+                                <select id="ciudad" name="ciudad" class="form-select" required>
+                                    <option value="" disabled selected>Selecciona tu ciudad</option>
+                                    <?php foreach ($ciudades as $ciudad): ?>
+                                        <option value="<?= htmlspecialchars($ciudad['id']) ?>">
+                                            <?= htmlspecialchars($ciudad['nombre']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, selecciona una ciudad.</div>
+                            </div>
+                        </div>
+
+                        <!-- Universidad -->
+                        <div class="col-md-6 mb-2">
+                            <label for="universidad" class="form-label fw-bold">
+                                Universidad
+                            </label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                <select id="universidad" name="universidad" class="form-select" required>
+                                    <option value="" disabled selected>Selecciona tu universidad</option>
+                                    <?php foreach ($universidades as $universidad): ?>
+                                        <option value="<?= htmlspecialchars($universidad['id']) ?>">
+                                            <?= htmlspecialchars($universidad['nombre']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, selecciona una universidad.</div>
+                            </div>
+                        </div>
                     </div>
 
- 
-            </div>
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-between mb-4 p-4">
+                        <button type="submit" class="btn btn-success me-2">
+                            <i class="bi bi-check-circle-fill me-1"></i> Registrar
+                        </button>
+                        <a href="estudiantes.php" class="btn btn-secondary">
+                            <i class="bi bi-x-circle-fill me-1"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
 
-            <div class="d-flex justify-content-end mt-4">
-                <button type="submit" class="btn btn-success me-2">
-                    <i class="bi bi-check-circle-fill me-1"></i> Registrar
-                </button>
-                <a href="estudiantes.php" class="btn btn-secondary">
-                    <i class="bi bi-x-circle-fill me-1"></i> Cancelar
-                </a>
             </div>
-            </form>
         </div>
-    </div>
     </div>
 </main>
 
@@ -173,7 +224,27 @@ include_once("../componentes/alerta.php");
 
 
 
- 
+
 </script>
+
+<script>
+// Validación Bootstrap 5
+(() => {
+  'use strict'
+
+  const forms = document.querySelectorAll('.needs-validation')
+
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>
+
 
 <?php include_once("../componentes/footer.php"); ?>
