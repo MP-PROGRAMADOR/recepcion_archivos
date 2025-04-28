@@ -1,9 +1,3 @@
-
-
-
-
-
-
 <?php
 
 include_once("../componentes/header.php");
@@ -19,20 +13,28 @@ $total_stmt = $pdo->query("SELECT COUNT(*) as total FROM universidades");
 $total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 $total_paginas = ceil($total_filas / $por_pagina);
 
-// Obtener universidades
+// Obtener universidades con ciudad, país y el número total de estudiantes
 try {
-    $stmt = $pdo->prepare("SELECT u.id, u.nombre, c.nombre AS ciudad 
+    $stmt = $pdo->prepare("SELECT u.id, u.nombre AS universidad, 
+                                  c.nombre AS ciudad, 
+                                  p.nombre AS pais, 
+                                  COUNT(e.id) AS total_estudiantes
                            FROM universidades u
                            INNER JOIN ciudades c ON u.ciudad_id = c.id
+                           INNER JOIN paises p ON c.pais_id = p.id
+                           LEFT JOIN estudiantes e ON u.id = e.universidad_id
+                           GROUP BY u.id, c.id, p.id
                            ORDER BY u.id DESC
                            LIMIT :inicio, :por_pagina");
+
     $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
     $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
     $stmt->execute();
     $universidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    die("Error al obtener las universidades: " . $e->getMessage());
+    die("Error al obtener las universidades con estudiantes: " . $e->getMessage());
 }
+
 ?>
 
 <main class="content" id="mainContent">
@@ -79,8 +81,8 @@ try {
             unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
         endif;
         ?>
-
         <!-- FIN DE LA ALERTA -->
+
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3><i class="bi bi-university me-2"></i>Listado de Universidades</h3>
             <a href="registrar_universidades.php" class="btn btn-primary">
@@ -104,8 +106,10 @@ try {
                         <thead class="table-dark">
                             <tr>
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
-                                <th><i class="bi bi-building me-1"></i>Nombre</th>
+                                <th><i class="bi bi-building me-1"></i>Universidad</th>
                                 <th><i class="bi bi-geo-alt me-1"></i>Ciudad</th>
+                                <th><i class="bi bi-flag me-1"></i>País</th>
+                                <th><i class="bi bi-person-fill me-1"></i>Total Estudiantes</th>
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
@@ -113,13 +117,15 @@ try {
                                 <?php foreach ($universidades as $universidad): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($universidad['id']) ?></td>
-                                        <td><?= htmlspecialchars($universidad['nombre']) ?></td>
+                                        <td><?= htmlspecialchars($universidad['universidad']) ?></td>
                                         <td><?= htmlspecialchars($universidad['ciudad']) ?></td>
+                                        <td><?= htmlspecialchars($universidad['pais']) ?></td>
+                                        <td><?= htmlspecialchars($universidad['total_estudiantes']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="3" class="text-center text-muted">No hay universidades registradas</td>
+                                    <td colspan="5" class="text-center text-muted">No hay universidades registradas</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
