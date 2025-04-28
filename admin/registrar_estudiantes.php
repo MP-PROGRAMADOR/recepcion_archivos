@@ -3,16 +3,7 @@
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
-// Consulta para obtener los países
-try {
-    $stmt = $pdo->prepare("SELECT id, nombre FROM paises ORDER BY nombre ASC");
-    $stmt->execute();
-    $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    echo "<script>Swal.fire('Error', 'Error al cargar los países: " . $e->getMessage() . "', 'error');</script>";
-    $paises = [];
-}
-// Consulta para obtener los países
+// Consultas a la base de datos
 try {
     $stmt = $pdo->prepare("SELECT id, nombre FROM paises ORDER BY nombre ASC");
     $stmt->execute();
@@ -22,7 +13,6 @@ try {
     $paises = [];
 }
 
-// Consulta para obtener las ciudades
 try {
     $stmt = $pdo->prepare("SELECT id, nombre FROM ciudades ORDER BY nombre ASC");
     $stmt->execute();
@@ -32,7 +22,6 @@ try {
     $ciudades = [];
 }
 
-// Consulta para obtener las universidades
 try {
     $stmt = $pdo->prepare("SELECT id, nombre FROM universidades ORDER BY nombre ASC");
     $stmt->execute();
@@ -43,19 +32,10 @@ try {
 }
 ?>
 
-
-
 <main class="content" id="mainContentGuin">
     <div class="container mt-4">
-        <!-- INICIO DE LA ALERTA DE ERRORRES -->
-        <?php
+        <?php include_once("../componentes/alerta.php"); ?>
 
-        include_once("../componentes/alerta.php");
-
-        ?>
-
-
-        <!-- FIN DE LA ALERTA -->
         <div class="card shadow rounded-4">
             <div class="card-header bg-success text-white d-flex align-items-center">
                 <i class="bi bi-person-lines-fill fs-4 me-2"></i>
@@ -63,19 +43,14 @@ try {
             </div>
 
             <div class="card-body">
-                <form action="../php/guardar_estudiantes.php" method="POST" enctype="multipart/form-data"
-                    class="needs-validation" novalidate>
+                <form action="../php/guardar_estudiantes.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                     <div class="row g-3">
-
                         <!-- Nombre Completo -->
                         <div class="col-md-6 mb-2">
-                            <label for="nombre_completo" class="form-label fw-bold">
-                                Nombre Completo
-                            </label>
+                            <label for="nombre_completo" class="form-label fw-bold">Nombre Completo</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                                <input type="text" id="nombre_completo" name="nombre_completo" class="form-control"
-                                    required placeholder="Ej: María López">
+                                <input type="text" id="nombre_completo" name="nombre_completo" class="form-control" required placeholder="Ej: María López">
                                 <div class="valid-feedback">¡Correcto!</div>
                                 <div class="invalid-feedback">Por favor, ingresa tu nombre completo.</div>
                             </div>
@@ -83,59 +58,24 @@ try {
 
                         <!-- Fecha de Nacimiento -->
                         <div class="col-md-6 mb-2">
-                            <label for="fecha_nacimiento" class="form-label fw-bold">
-                                Fecha de Nacimiento
-                            </label>
+                            <label for="fecha_nacimiento" class="form-label fw-bold">Fecha de Nacimiento</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text"><i class="bi bi-calendar-date-fill"></i></span>
-                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control"
-                                    required>
+                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" required>
                                 <div class="valid-feedback">¡Correcto!</div>
                                 <div class="invalid-feedback">Por favor, selecciona tu fecha de nacimiento.</div>
                             </div>
                         </div>
 
-                        <!-- Fecha de Inicio de Carrera -->
-                        <div class="col-md-6 mb-2">
-                            <label for="fecha_inicio_carrera" class="form-label fw-bold">
-                                Fecha de Inicio de Carrera
-                            </label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text"><i class="bi bi-calendar-plus-fill"></i></span>
-                                <input type="date" id="fecha_inicio_carrera" name="fecha_inicio_carrera"
-                                    class="form-control" required>
-                                <div class="valid-feedback">¡Correcto!</div>
-                                <div class="invalid-feedback">Por favor, selecciona la fecha de inicio de carrera.</div>
-                            </div>
-                        </div>
-
-                        <!-- Fecha de Fin de Carrera -->
-                        <div class="col-md-6 mb-2">
-                            <label for="fecha_fin_carrera" class="form-label fw-bold">
-                                Fecha de Fin de Carrera
-                            </label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text"><i class="bi bi-calendar-check-fill"></i></span>
-                                <input type="date" id="fecha_fin_carrera" name="fecha_fin_carrera" class="form-control"
-                                    required>
-                                <div class="valid-feedback">¡Correcto!</div>
-                                <div class="invalid-feedback">Por favor, selecciona la fecha de fin de carrera.</div>
-                            </div>
-                        </div>
-
                         <!-- País de estudios -->
                         <div class="col-md-6 mb-2">
-                            <label for="pais" class="form-label fw-bold">
-                                País de Estudios
-                            </label>
+                            <label for="pais" class="form-label fw-bold">País de Estudios</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
                                 <select id="pais" name="pais" class="form-select" required>
                                     <option value="" disabled selected>Selecciona tu país</option>
                                     <?php foreach ($paises as $pais): ?>
-                                        <option value="<?= htmlspecialchars($pais['id']) ?>">
-                                            <?= htmlspecialchars($pais['nombre']) ?>
-                                        </option>
+                                        <option value="<?= htmlspecialchars($pais['id']) ?>"><?= htmlspecialchars($pais['nombre']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="valid-feedback">¡Correcto!</div>
@@ -145,18 +85,11 @@ try {
 
                         <!-- Ciudad de estudios -->
                         <div class="col-md-6 mb-2">
-                            <label for="ciudad" class="form-label fw-bold">
-                                Ciudad de Estudios
-                            </label>
+                            <label for="ciudad" class="form-label fw-bold">Ciudad de Estudios</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text"><i class="bi bi-geo-fill"></i></span>
-                                <select id="ciudad" name="ciudad" class="form-select" required>
+                                <select id="ciudad" name="ciudad" class="form-select" required disabled>
                                     <option value="" disabled selected>Selecciona tu ciudad</option>
-                                    <?php foreach ($ciudades as $ciudad): ?>
-                                        <option value="<?= htmlspecialchars($ciudad['id']) ?>">
-                                            <?= htmlspecialchars($ciudad['nombre']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
                                 </select>
                                 <div class="valid-feedback">¡Correcto!</div>
                                 <div class="invalid-feedback">Por favor, selecciona una ciudad.</div>
@@ -165,18 +98,11 @@ try {
 
                         <!-- Universidad -->
                         <div class="col-md-6 mb-2">
-                            <label for="universidad" class="form-label fw-bold">
-                                Universidad
-                            </label>
+                            <label for="universidad" class="form-label fw-bold">Universidad</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text"><i class="bi bi-building"></i></span>
-                                <select id="universidad" name="universidad" class="form-select" required>
+                                <select id="universidad" name="universidad" class="form-select" required disabled>
                                     <option value="" disabled selected>Selecciona tu universidad</option>
-                                    <?php foreach ($universidades as $universidad): ?>
-                                        <option value="<?= htmlspecialchars($universidad['id']) ?>">
-                                            <?= htmlspecialchars($universidad['nombre']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
                                 </select>
                                 <div class="valid-feedback">¡Correcto!</div>
                                 <div class="invalid-feedback">Por favor, selecciona una universidad.</div>
@@ -194,7 +120,6 @@ try {
                         </a>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
@@ -203,37 +128,81 @@ try {
 <!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- JS Vista previa imagen -->
+
 <script>
-    function previewImage(event) {
-        const input = event.target;
-        const preview = document.getElementById('foto_preview');
+document.getElementById('pais').addEventListener('change', function() {
+    var paisId = this.value;
 
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
+    // Verifica que el valor de paisId esté correcto
+    console.log("ID del país seleccionado: " + paisId);
 
-            reader.onload = function (e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            };
+    if (paisId) {
+        // Realiza la solicitud AJAX al archivo get_ciudades.php
+        fetch(`../php/get_ciudades.php?pais_id=${paisId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Respuesta del servidor:", data);
 
-            reader.readAsDataURL(input.files[0]);
-        }
+                if (data.errores) {
+                    Swal.fire('Error', data.errores, 'error');
+                } else {
+                    var ciudadSelect = document.getElementById('ciudad');
+                    ciudadSelect.innerHTML = '<option value="" disabled selected>Selecciona tu ciudad</option>';
+
+                    data.ciudades.forEach(function(ciudad) {
+                        ciudadSelect.innerHTML += `<option value="${ciudad.id}">${ciudad.nombre}</option>`;
+                    });
+
+                    ciudadSelect.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar las ciudades:', error);
+                Swal.fire('Error', 'Ocurrió un error al intentar cargar las ciudades.', 'error');
+            });
+    } else {
+        var ciudadSelect = document.getElementById('ciudad');
+        ciudadSelect.disabled = true;
     }
+});
 
+document.getElementById('ciudad').addEventListener('change', function() {
+    var ciudadId = this.value;
+    
+    if (ciudadId) {
+        fetch(`../php/get_universidades.php?ciudad_id=${ciudadId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Aquí verificamos la respuesta completa
+            var universidadSelect = document.getElementById('universidad');
+            universidadSelect.innerHTML = '<option value="" disabled selected>Selecciona tu universidad</option>';
 
-
-
-
+            if (data.universidades && Array.isArray(data.universidades)) {
+                data.universidades.forEach(function(universidad) {
+                    universidadSelect.innerHTML += `<option value="${universidad.id}">${universidad.nombre}</option>`;
+                });
+                universidadSelect.disabled = false; // Habilita el select de universidades
+            } else {
+                console.error('La propiedad "universidades" no es un array o está vacía.');
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener las universidades:', error);
+        });
+    }
+});
 </script>
 
 <script>
 // Validación Bootstrap 5
 (() => {
   'use strict'
-
   const forms = document.querySelectorAll('.needs-validation')
-
   Array.from(forms).forEach(form => {
     form.addEventListener('submit', event => {
       if (!form.checkValidity()) {
@@ -245,6 +214,5 @@ try {
   })
 })()
 </script>
-
 
 <?php include_once("../componentes/footer.php"); ?>
