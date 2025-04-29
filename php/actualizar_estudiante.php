@@ -11,6 +11,10 @@ $id = intval($_POST['id'] ?? 0);
 $nombre = trim($_POST['nombre_completo'] ?? '');
 $fecha = trim($_POST['fecha_nacimiento'] ?? '');
 $pais_id = intval($_POST['pais'] ?? 0);
+$ciudad_id = intval($_POST['ciudad'] ?? 0);
+$universidad_id = intval($_POST['universidad'] ?? 0);
+$anio_inicio = intval($_POST['anio_inicio_carrera'] ?? 0);
+$anio_fin = intval($_POST['anio_fin_carrera'] ?? 0);
 
 // Validaciones básicas
 if ($nombre === '') $errores[] = "El nombre es obligatorio.";
@@ -20,6 +24,10 @@ if ($fecha === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
     $errores[] = "La fecha no puede ser futura.";
 }
 if ($pais_id <= 0) $errores[] = "País no válido.";
+if ($ciudad_id <= 0) $errores[] = "Ciudad no válida.";
+if ($universidad_id <= 0) $errores[] = "Universidad no válida.";
+if ($anio_inicio <= 1900 || $anio_inicio > date('Y')) $errores[] = "Año de inicio no válido.";
+if ($anio_fin < $anio_inicio || $anio_fin > date('Y') + 10) $errores[] = "Año de fin no válido.";
 
 // Validar duplicado (ignorando el estudiante actual)
 $nombre_normalizado = strtolower(preg_replace('/\s+/', ' ', $nombre));
@@ -44,13 +52,11 @@ if (!empty($_FILES['foto']['name'])) {
         $directorio = __DIR__ . '/upload/perfil/';
         if (!is_dir($directorio)) mkdir($directorio, 0777, true);
 
-        // Obtener código de acceso actual o generar uno si no hay
         $stmt = $pdo->prepare("SELECT codigo_acceso FROM estudiantes WHERE id = ?");
         $stmt->execute([$id]);
         $codigo = $stmt->fetchColumn();
 
         if (!$codigo) {
-            // Generar código si no existe
             $iniciales_nombre = implode('', array_map(fn($w) => strtoupper($w[0]), explode(' ', $nombre)));
             $stmt = $pdo->prepare("SELECT nombre FROM paises WHERE id = ?");
             $stmt->execute([$pais_id]);
@@ -78,8 +84,8 @@ if (!empty($errores)) {
 
 // Actualizar en la base de datos
 try {
-    $query = "UPDATE estudiantes SET nombre_completo = ?, fecha_nacimiento = ?, pais_id = ?";
-    $params = [$nombre, $fecha, $pais_id];
+    $query = "UPDATE estudiantes SET nombre_completo = ?, fecha_nacimiento = ?, pais_id = ?, ciudad_id = ?, universidad_id = ?, anio_inicio_carrera = ?, anio_fin_carrera = ?";
+    $params = [$nombre, $fecha, $pais_id, $ciudad_id, $universidad_id, $anio_inicio, $anio_fin];
 
     if ($ruta_foto !== null) {
         $query .= ", ruta_foto = ?";

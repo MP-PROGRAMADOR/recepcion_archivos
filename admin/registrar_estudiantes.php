@@ -21,6 +21,7 @@ try {
                 <h5 class="mb-0">Formulario de Registro de Estudiante</h5>
             </div>
             <div class="card-body">
+                
                 <form action="../php/guardar_estudiantes.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                     <div class="row g-3">
                         <!-- Nombre Completo -->
@@ -113,6 +114,7 @@ try {
                         </a>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>

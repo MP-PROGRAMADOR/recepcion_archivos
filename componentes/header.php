@@ -39,9 +39,9 @@ $favico = $_SESSION["config"]; */
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard | Recepción de Archivos</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="../config/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../config/css/css2.css" rel="stylesheet" />
+  <link href="../config/css/bootstrap-icons.css" rel="stylesheet" />
   <!-- Favicon clásico (.ico) -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 
@@ -300,7 +300,7 @@ $favico = $_SESSION["config"]; */
   $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
   ?>
 
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript" src="../config/js/loader.js"></script>
   <script type="text/javascript">
     google.charts.load('current', {
       'packages': ['geochart'],
