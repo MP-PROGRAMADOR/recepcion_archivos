@@ -54,7 +54,7 @@ try {
 
 
 // Consultar datos del estudiante
-$stmt = $pdo->prepare("SELECT e.id, e.codigo_acceso, e.nombre_completo, e.fecha_nacimiento, e.creado_en, e.foto_perfil, p.nombre AS pais 
+$stmt = $pdo->prepare("SELECT e.id, e.codigo_acceso, e.nombre_completo, e.fecha_nacimiento, e.creado_en,e.email, e.telefono, e.foto_perfil, p.nombre AS pais 
                        FROM estudiantes e 
                        INNER JOIN paises p ON e.pais_id = p.id 
                        WHERE e.codigo_acceso = ?");
@@ -358,6 +358,16 @@ $pasaporteExiste = $verifica->fetchColumn();
                             <label class="form-label">Registrado en:</label>
                             <input type="text" class="form-control"
                                 value="<?= date('d/m/Y H:i', strtotime($estudiante['creado_en'])) ?>" disabled>
+                        </div>
+                        <div>
+                            <label class="form-label">Correo:</label>
+                            <input type="text" class="form-control"
+                                value="<?= htmlspecialchars($estudiante['email']) ?>" disabled>
+                        </div>
+                        <div>
+                            <label class="form-label">Telefono:</label>
+                            <input type="text" class="form-control"
+                                value="<?= htmlspecialchars($estudiante['telefono']) ?>" disabled>
                         </div>
                     </div>
                 </div>
