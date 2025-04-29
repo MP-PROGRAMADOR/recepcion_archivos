@@ -139,48 +139,70 @@ if (!isset($_SESSION['estudiante'])) {
       <div class="text-center">
         <img id="preview" class="preview-img" src="#" alt="Vista previa">
       </div>
+<!-- Nuevos campos agregados dentro del formulario, justo antes del campo de subir foto -->
 
-      <form id="uploadForm" action="../php/subir_foto.php" method="POST" enctype="multipart/form-data" novalidate>
-        <div class="mb-3">
-          <label for="foto" class="form-label">
-            <i class="bi bi-upload me-1"></i> Selecciona tu foto
-          </label>
-          <input class="form-control" type="file" id="foto" name="foto" accept="image/*" required>
-          <div class="form-text">Formatos aceptados: JPG, PNG | Tamaño máximo: 2MB.</div>
-          <div class="invalid-feedback">
-            Por favor, selecciona una imagen válida.
-          </div>
-        </div>
+<form id="uploadForm" action="../php/subir_foto.php" method="POST" enctype="multipart/form-data" novalidate>
 
-        <div class="d-grid">
-          <button type="submit" class="btn btn-custom">
-            <i class="bi bi-cloud-upload-fill me-2"></i> Subir Foto
-          </button>
+  <!-- Campo Correo Electrónico -->
+  <div class="mb-3">
+    <label for="correo" class="form-label">
+      <i class="bi bi-envelope-fill me-1"></i> Correo Electrónico
+    </label>
+    <input type="email" class="form-control" id="correo" name="correo" required>
+    <div class="invalid-feedback">
+      Por favor, ingresa un correo válido.
+    </div>
+  </div>
 
+  <!-- Campo Teléfono -->
+  <div class="mb-3">
+    <label for="telefono" class="form-label">
+      <i class="bi bi-telephone-fill me-1"></i> Teléfono
+    </label>
+    <input type="tel" class="form-control" id="telefono" name="telefono" pattern="^\+?[0-9\s\-]{7,15}$" required>
+    <div class="invalid-feedback">
+      Ingresa un número de teléfono válido.
+    </div>
+  </div>
 
+  <!-- Campo de foto (ya existente) -->
+  <div class="mb-3">
+    <label for="foto" class="form-label">
+      <i class="bi bi-upload me-1"></i> Selecciona tu foto
+    </label>
+    <input class="form-control" type="file" id="foto" name="foto" accept="image/*" required>
+    <div class="form-text">Formatos aceptados: JPG, PNG | Tamaño máximo: 2MB.</div>
+    <div class="invalid-feedback">
+      Por favor, selecciona una imagen válida.
+    </div>
+  </div>
 
-          <?php if (isset($_SESSION['success'])): ?>
-            <div id="alert-message" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-              <i class="bi bi-check-circle-fill me-2"></i>
-              <?= htmlspecialchars($_SESSION['success']) ?>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>
-            <?php unset($_SESSION['success']); ?>
-          <?php endif; ?>
+  <!-- Botón y mensajes -->
+  <div class="d-grid">
+    <button type="submit" class="btn btn-custom">
+      <i class="bi bi-cloud-upload-fill me-2"></i> Subir Foto
+    </button>
 
-          <?php if (isset($_SESSION['error'])): ?>
-            <div id="alert-message" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-              <i class="bi bi-exclamation-triangle-fill me-2"></i>
-              <?= htmlspecialchars($_SESSION['error']) ?>
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>
-            <?php unset($_SESSION['error']); ?>
-          <?php endif; ?>
+    <?php if (isset($_SESSION['success'])): ?>
+      <div id="alert-message" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <?= htmlspecialchars($_SESSION['success']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+      <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
 
+    <?php if (isset($_SESSION['error'])): ?>
+      <div id="alert-message" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <?= htmlspecialchars($_SESSION['error']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+      <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+  </div>
+</form>
 
-
-        </div>
-      </form>
     </div>
   </div>
 

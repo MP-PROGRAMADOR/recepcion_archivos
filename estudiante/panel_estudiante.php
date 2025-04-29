@@ -1,124 +1,92 @@
 <?php
 session_start();
-if (!isset($_SESSION['estudiante'])) {
+
+// Validar sesión
+if (!isset($_SESSION['estudiante'], $_SESSION['id'])) {
     header("Location: index.php");
-    exit();
-}
-
-$estudiantes = $_SESSION['estudiante'];
-$id_estudiante = $_SESSION['id'];
-include_once('../config/conexion.php');
-
-
-
-
-try {
-
-
-    // Consulta para verificar si ya tiene una foto de perfil
-    $stmt = $pdo->prepare("SELECT foto_perfil FROM estudiantes WHERE id = ?");
-    $stmt->execute([$id_estudiante]);
-    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($resultado) {
-        if (empty($resultado['foto_perfil'])) {
-            // No tiene foto de perfil, redirigir a perfil.php
-            header("Location: perfil.php");
-            exit;
-        }
-        // Tiene foto, continuar con el panel actual
-    } else {
-        // No se encontró el estudiante, redirigir a página de error o login
-        header("Location: index.php");
-        exit;
-    }
-} catch (PDOException $e) {
-    // Manejo de errores en caso de problemas de conexión o consulta
-    echo "Error al verificar la foto de perfil: " . $e->getMessage();
     exit;
 }
 
+require_once('../config/conexion.php');
 
+$id_estudiante = $_SESSION['id'];
+$codigo_acceso = $_SESSION['estudiante']['codigo_acceso'];
 
+try {
+    // Verificar si el estudiante tiene una foto de perfil
+    $stmt = $pdo->prepare("SELECT foto_perfil FROM estudiantes WHERE id = ?");
+    $stmt->execute([$id_estudiante]);
+    $fotoPerfil = $stmt->fetchColumn();
 
+    if ($fotoPerfil === false) {
+        // Estudiante no encontrado
+        header("Location: index.php");
+        exit;
+    }
 
+    if (empty($fotoPerfil)) {
+        // Sin foto de perfil
+        header("Location: perfil.php");
+        exit;
+    }
 
+    // Obtener datos del estudiante
+    $stmt = $pdo->prepare(" SELECT e.id, e.codigo_acceso, e.nombre_completo, e.fecha_nacimiento, e.creado_en, e.email, e.telefono, e.foto_perfil, p.nombre AS pais
+        FROM estudiantes e
+        INNER JOIN paises p ON e.pais_id = p.id
+        WHERE e.codigo_acceso = ?
+    ");
+    $stmt->execute([$codigo_acceso]);
+    $estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    if (!$estudiante) {
+        throw new Exception("Estudiante no encontrado.");
+    }
 
+    $estudiante_id = $estudiante['id'];
 
+    // Obtener pasaporte del estudiante
+    $stmt = $pdo->prepare("SELECT * FROM pasaportes WHERE estudiante_id = ?");
+    $stmt->execute([$estudiante_id]);
+    $pasaporte = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // Obtener archivos de notas
+    $stmt = $pdo->prepare("
+        SELECT 'Nota' AS tipo, id, archivo_url, fecha_subida
+        FROM notas
+        WHERE estudiante_id = ?
+    ");
+    $stmt->execute([$estudiante_id]);
+    $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Obtener archivos de pasaportes
+    $stmt = $pdo->prepare("
+        SELECT 'Pasaporte' AS tipo, id, archivo_url, fecha_subida
+        FROM pasaportes
+        WHERE estudiante_id = ?
+    ");
+    $stmt->execute([$estudiante_id]);
+    $pasaportes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Combinar y ordenar archivos por fecha
+    $archivos = array_merge($notas, $pasaportes);
+    usort($archivos, function ($a, $b) {
+        return strtotime($b['fecha_subida']) - strtotime($a['fecha_subida']);
+    });
 
+    // Verificar si el estudiante ya subió un pasaporte
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM pasaportes WHERE estudiante_id = ?");
+    $stmt->execute([$estudiante_id]);
+    $pasaporteExiste = $stmt->fetchColumn();
 
-
-
-// Consultar datos del estudiante
-$stmt = $pdo->prepare("SELECT e.id, e.codigo_acceso, e.nombre_completo, e.fecha_nacimiento, e.creado_en,e.email, e.telefono, e.foto_perfil, p.nombre AS pais 
-                       FROM estudiantes e 
-                       INNER JOIN paises p ON e.pais_id = p.id 
-                       WHERE e.codigo_acceso = ?");
-$stmt->execute([$estudiantes['codigo_acceso']]);
-$estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$estudiante) {
-    die("Estudiante no encontrado.");
+} catch (Exception $e) {
+    // Manejo de errores generales
+    error_log("Error: " . $e->getMessage());
+    echo "Ocurrió un error al cargar los datos. Inténtalo más tarde.";
+    exit;
 }
-
-$estudiante_id = $estudiante['id'];
-
-// Obtener los datos del pasaporte
-$stmt = $pdo->prepare("SELECT * FROM pasaportes WHERE estudiante_id = :estudiante_id");
-$stmt->bindParam(':estudiante_id', $estudiante_id, PDO::PARAM_INT);
-$stmt->execute();
-
-// Obtener los resultados
-$pasaporte = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-
-
-
-
-// Consultar archivos de notas
-$stmt_notas = $pdo->prepare("SELECT 'Nota' AS tipo, id, archivo_url, fecha_subida 
-                             FROM notas 
-                             WHERE estudiante_id = ? 
-                             ORDER BY fecha_subida DESC");
-$stmt_notas->execute([$estudiante_id]);
-$notas = $stmt_notas->fetchAll(PDO::FETCH_ASSOC);
-
-// Consultar archivos de pasaportes
-$stmt_pasaportes = $pdo->prepare("SELECT 'Pasaporte' AS tipo, id, archivo_url, fecha_subida 
-                                  FROM pasaportes 
-                                  WHERE estudiante_id = ? 
-                                  ORDER BY fecha_subida DESC");
-$stmt_pasaportes->execute([$estudiante_id]);
-$pasaportes = $stmt_pasaportes->fetchAll(PDO::FETCH_ASSOC);
-
-// Combinar ambos arrays en uno solo
-$archivos = array_merge($notas, $pasaportes);
-
-// Ordenar por fecha_subida descendente
-usort($archivos, function ($a, $b) {
-    return strtotime($b['fecha_subida']) - strtotime($a['fecha_subida']);
-});
-
-
-/* Verificar que el usuario ya inguesó un pasaporte */
-// Comprobar si el estudiante ya ha subido un pasaporte
-$verifica = $pdo->prepare("SELECT COUNT(*) FROM pasaportes WHERE estudiante_id = :estudiante_id");
-$verifica->bindParam(':estudiante_id', $estudiante_id);
-$verifica->execute();
-$pasaporteExiste = $verifica->fetchColumn();
-
-
-
-
-
-
-
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -218,103 +186,7 @@ $pasaporteExiste = $verifica->fetchColumn();
     </nav>
     <div class="container my-4 ">
 
-        <!-- INICIO DE LA ALERTA DE ERRORRES -->
-        <?php
-
-
-        if (isset($_SESSION['errores']) && is_array($_SESSION['errores'])):
-        ?>
-            <div id="alerta-errores"
-                class="alert alert-danger alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-danger-subtle rounded-3"
-                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
-                <i class="bi bi-exclamation-triangle-fill fs-4 flex-shrink-0 mt-1"></i>
-                <div>
-                    <strong>Se detectaron errores:</strong>
-                    <ul class="mb-0 mt-1">
-                        <?php foreach ($_SESSION['errores'] as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>
-
-            <script>
-                // Ocultar automáticamente luego de 6 segundos
-                setTimeout(() => {
-                    const alerta = document.getElementById('alerta-errores');
-                    if (alerta) {
-                        alerta.classList.remove('show');
-                        alerta.classList.add('fade');
-                        setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
-                    }
-                }, 9000);
-            </script>
-
-            <style>
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-10px);
-                    }
-
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            </style>
-        <?php
-            unset($_SESSION['errores']); // Limpiar errores de la sesión
-        endif;
-        ?>
-
-        <?php
-
-
-        if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
-        ?>
-            <div id="alerta-exito"
-                class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
-                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
-                <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
-                <div>
-                    <strong>¡Éxito!</strong>
-                    <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
-                </div>
-                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>
-
-            <script>
-                // Ocultar automáticamente luego de 6 segundos
-                setTimeout(() => {
-                    const alerta = document.getElementById('alerta-exito');
-                    if (alerta) {
-                        alerta.classList.remove('show');
-                        alerta.classList.add('fade');
-                        setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
-                    }
-                }, 6000);
-            </script>
-
-            <style>
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-10px);
-                    }
-
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            </style>
-        <?php
-            unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
-        endif;
-        ?>
-
+      <?php include_once('alerta.php') ?>
         <!-- FIN DE LA ALERTA -->
 
 
@@ -457,16 +329,7 @@ $pasaporteExiste = $verifica->fetchColumn();
         </div>
 
 
-        <!--  <div class="row g-4">
-            <div class="card">
-
-                <button id="eliminarBtn" class="btn btn-danger " style="display: none;">
-                    <i class="bi bi-trash"></i> Eliminar Formulario
-                </button>
-            </div>
-            <div id="formularioPasaporteNota" class="row"></div>
-        </div>
- -->
+         
         <!-- MODAL PARA ORIENTAR AL USUARIO EN CASO DE ESTAR ACTIVO UN FORMULARIO Y SOLICITA OTRO -->
         <div class="modal fade" id="modalPasosFormulario" tabindex="-1" aria-labelledby="modalPasosLabel"
             aria-hidden="true">
