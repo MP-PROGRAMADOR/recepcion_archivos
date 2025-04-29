@@ -142,48 +142,66 @@ try {
 </head>
 
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="bi bi-mortarboard-fill me-2"></i> Usuario:
-                <?= htmlspecialchars($estudiante['nombre_completo']) ?></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <i class="bi bi-mortarboard-fill me-2"></i>
+      Usuario: <?= htmlspecialchars($estudiante['nombre_completo']) ?>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+        <?php if ($pasaporteExiste): ?>
+          <li class="nav-item">
+            <a id="btnActualizarPasaporte" class="nav-link text-white" href="#">
+              <i class="bi bi-pencil-square me-1"></i> Actualizar Pasaporte
+            </a>
+          </li>
+        <?php else: ?>
+          <li class="nav-item">
+            <a id="btnSubirPasaporte" class="nav-link text-white" href="#">
+              <i class="bi bi-upload me-1"></i> Subir Pasaporte
+            </a>
+          </li>
+        <?php endif; ?>
+
+        <li class="nav-item">
+          <a id="btnSubirNotas" class="nav-link text-white" href="#">
+            <i class="bi bi-upload me-1"></i> Subir Notas
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a id="btnActualizarContacto" class="nav-link text-white" href="#">
+            <i class="bi bi-person-lines-fill me-1"></i> Actualizar Contactos
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a id="btnActualizarPerfil" class="nav-link text-white" href="#">
+            <i class="bi bi-person-circle me-1"></i> Actualizar Perfil
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link text-white" href="../php/logout_estudiante.php">
+            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
 
 
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <?php if ($pasaporteExiste): ?>
-                        <li class="nav-item">
-                            <a id="btnActualizarPasaporte" class="nav-link text-white" href="#">
-                                <i class="bi bi-pencil-square me-1"></i> Actualizar Pasaporte
-                            </a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a id="btnSubirPasaporte" class="nav-link text-white" href="#">
-                                <i class="bi bi-upload me-1"></i> Subir Pasaporte
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                    <li class="nav-item">
-                        <a id="btnSubirNotas" class="nav-link text-white" href="#"><i
-                                class="bi bi-upload me-1"></i>Subir Notas</a>
 
-                    </li>
-
-                </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="../php/logout_estudiante.php"><i
-                                class="bi bi-box-arrow-right"></i> Cerrar
-                            sesión</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
     <div class="container my-4 ">
 
       <?php include_once('alerta.php') ?>
@@ -428,14 +446,24 @@ try {
                         cargarFormulario('formulario_actualizar_pasaporte.php');
                     });
                 }
+                //boton actualizar_pasaporte
+                if (btnActualizarContacto) {
+                    btnActualizarContacto.addEventListener("click", function() {
+                        cargarFormulario('formulario_actualizar_contacto.php');
+                    });
+                }
+                //boton actualizar_pasaporte
+                if (btnActualizarPerfil) {
+                    btnActualizarPerfil.addEventListener("click", function() {
+                        cargarFormulario('formulario_actualizar_perfil.php');
+                    });
+                }
 
 
             });
         </script>
 
-
-
-
+ 
 
 
 
