@@ -35,6 +35,7 @@ $universidades = $universidades->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <main class="content" id="mainContentGuin">
+<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container mt-4">
 
         <!-- INICIO DE LA ALERTA DE ERRORRES -->

@@ -28,6 +28,7 @@ include_once("../componentes/sidebar.php");
 ?>
 
 <main class="content" id="mainContent">
+<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3><i class="bi bi-mortarboard-fill me-2"></i>Listado de idiomas</h3>

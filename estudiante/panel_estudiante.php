@@ -453,7 +453,7 @@ try {
         </script>
 
  
-
+<script src="../config/js/canva.js"></script>
 
 
 

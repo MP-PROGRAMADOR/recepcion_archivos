@@ -76,6 +76,7 @@ include_once("../componentes/sidebar.php");
 ?>
 
 <main class="content" id="mainContent">
+<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3><i class="bi bi-calendar-check me-2"></i>Listado de Años Académicos con Estudiantes</h3>
@@ -149,9 +150,10 @@ include_once("../componentes/sidebar.php");
 </main>
 
 <!-- Bootstrap Icons y jQuery -->
+<script src="../config/js/canva.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+<script src="../config/js/canva.js"></script>
 <!-- Buscador dinámico -->
 <script>
     $(document).ready(function() {

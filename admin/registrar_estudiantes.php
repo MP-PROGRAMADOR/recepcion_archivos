@@ -13,6 +13,7 @@ try {
 }
 ?>
 <main class="content" id="mainContentGuin">
+<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container mt-4">
         <?php include_once("../componentes/alerta.php"); ?>
         <div class="card shadow rounded-4">

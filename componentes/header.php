@@ -55,14 +55,15 @@ foreach ($paises as $pais) {
     * {
       box-sizing: border-box;
     }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      height: 100vh;
-      padding: .5rem;
-      overflow: hidden;
+  body {
+      background: #f8f9fa;
+      min-height: 100vh;
+      color: linear-gradient(135deg, #1e1e2f, #2a2a40);
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
     }
+
+   
 
     .layout {
       display: flex;
@@ -278,6 +279,24 @@ foreach ($paises as $pais) {
 
     .config-form .btn-submit:hover {
       background-color: #45a049;
+    }
+    .card {
+      background-color: #f8f9fa;
+      border: none;
+    }
+
+    .card-header {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Canvas decorativo (líneas suaves animadas) */
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
     }
   </style>
 

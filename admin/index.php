@@ -6,8 +6,8 @@ include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
 if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ../index.php');
-    exit;
+  header('Location: ../index.php');
+  exit;
 }
 
 
@@ -41,11 +41,13 @@ $archivos = array_merge($queryPasaportes->fetchAll(PDO::FETCH_ASSOC), $queryNota
 ?>
 
 
-<main class="content" id="mainContent">
+<!-- Fondo canvas animado -->
 
- 
+<main class="content py-4 " id="mainContent">
+<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
 
-  <!-- Resumen de estadísticas -->
+
+  <!-- Estadísticas -->
   <div class="row g-3 mb-4 mt-5">
     <div class="col-md-4">
       <div class="card shadow-lg border-start border-primary border-4 rounded-3">
@@ -139,6 +141,8 @@ $archivos = array_merge($queryPasaportes->fetchAll(PDO::FETCH_ASSOC), $queryNota
   </div>
 
 </main>
+
+ 
 
 
 <?=

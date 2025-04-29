@@ -4,6 +4,7 @@ include_once("../componentes/sidebar.php");
 ?>
 
 <main class="content" id="mainContent">
+<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container mt-4">
 
      <!-- INICIO DE LA ALERTA DE ERRORRES -->

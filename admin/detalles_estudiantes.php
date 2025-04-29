@@ -62,6 +62,7 @@ try {
 <?php include_once("../componentes/sidebar.php"); ?>
 
 <main class="content" id="mainContent">
+<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     
     <!-- ENCABEZADO -->
     <div class="cv-header text-center mb-4 border-bottom pb-3 position-relative">
