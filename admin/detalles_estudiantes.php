@@ -62,21 +62,21 @@ try {
 <?php include_once("../componentes/sidebar.php"); ?>
 
 <main class="content" id="mainContent">
-    <div class="cv-container container py-4 bg-white shadow rounded" style="max-width: 900px; font-size: 0.95rem;">
-
-        <!-- ENCABEZADO -->
-        <div class="cv-header text-center mb-4 border-bottom pb-3 position-relative">
-            <h3 class="fw-bold text-primary"><i class="bi bi-person-vcard me-2"></i>Ficha del Estudiante</h3>
-            <div class="mt-3 d-flex justify-content-center gap-2 flex-wrap">
-                <a href="estudiantes.php" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Volver al Listado
-                </a>
-                <button onclick="window.print()" class="btn btn-primary">
-                    <i class="bi bi-printer-fill"></i> Imprimir CV
-                </button>
-            </div>
+    
+    <!-- ENCABEZADO -->
+    <div class="cv-header text-center mb-4 border-bottom pb-3 position-relative">
+        <h3 class="fw-bold text-primary"><i class="bi bi-person-vcard me-2"></i>Ficha del Estudiante</h3>
+        <div class="mt-3 d-flex justify-content-center gap-2 flex-wrap">
+            <a href="estudiantes.php" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Listado
+            </a>
+            <button onclick="window.print()" class="btn btn-primary">
+                <i class="bi bi-printer-fill"></i> Imprimir CV
+            </button>
         </div>
-
+    </div>
+    
+    <div class="cv-container container py-4 bg-white shadow rounded" style="max-width: 900px; font-size: 0.95rem;">
         <!-- PERFIL Y CONTACTO -->
         <div class="cv-section mb-4 p-3 rounded bg-light">
             <div class="row align-items-center">
@@ -100,27 +100,26 @@ try {
 
         <!-- INFORMACIÓN ACADÉMICA Y PASAPORTE -->
         <div class="row g-4">
-
             <!-- INFORMACIÓN ACADÉMICA -->
             <div class="col-lg-6">
                 <div class="cv-section border p-3 rounded shadow-sm h-100">
                     <h5 class="text-primary"><i class="bi bi-mortarboard-fill me-2"></i>Información Académica</h5>
-                    <p><strong>Universidad:</strong> <?= htmlspecialchars($estudiante['nombre_universidad']) ?></p>
-                    <p><strong>País:</strong> <?= htmlspecialchars($estudiante['nombre_pais']) ?></p>
-                    <p><strong>Ciudad:</strong> <?= htmlspecialchars($estudiante['nombre_ciudad']) ?></p>
-                    <p><strong>Inicio:</strong> <?= $estudiante['anio_inicio_carrera'] ?></p>
-                    <p><strong>Fin:</strong> <?= $estudiante['anio_fin_carrera'] ?></p>
+                    <p><i class="bi bi-building me-1 text-secondary"></i><strong>Universidad:</strong> <?= htmlspecialchars($estudiante['nombre_universidad']) ?></p>
+                    <p><i class="bi bi-geo-alt-fill me-1 text-secondary"></i><strong>País:</strong> <?= htmlspecialchars($estudiante['nombre_pais']) ?></p>
+                    <p><i class="bi bi-geo-fill me-1 text-secondary"></i><strong>Ciudad:</strong> <?= htmlspecialchars($estudiante['nombre_ciudad']) ?></p>
+                    <p><i class="bi bi-calendar-plus me-1 text-secondary"></i><strong>Inicio:</strong> <span id="inicioCarrera"><?= $estudiante['anio_inicio_carrera'] ?></span></p>
+                    <p><i class="bi bi-calendar-check me-1 text-secondary"></i><strong>Fin:</strong> <span id="finCarrera"><?= $estudiante['anio_fin_carrera'] ?></span></p>
                     <?php $años = (int) $estudiante['anio_fin_carrera'] - (int) $estudiante['anio_inicio_carrera']; ?>
-                    <p><strong>Duración:</strong> <?= $años ?> años</p>
+                    <p><i class="bi bi-hourglass-split me-1 text-secondary"></i><strong>Duración:</strong> <?= $años ?> años</p>
 
                     <?php if (!empty($estudiante['nombre_idioma'])): ?>
-                        <p><strong>Idioma:</strong> <?= $estudiante['nombre_idioma'] ?></p>
-                        <p><strong>Duración Idioma:</strong> <?= $estudiante['meses_duracion_idioma'] ?> meses</p>
-                        <p><strong>Total (incluyendo idioma):</strong> <?= number_format($años + ($estudiante['meses_duracion_idioma'] / 12), 2) ?> años</p>
+                        <p><i class="bi bi-translate me-1 text-secondary"></i><strong>Idioma:</strong> <?= $estudiante['nombre_idioma'] ?></p>
+                        <p><i class="bi bi-clock-history me-1 text-secondary"></i><strong>Duración Idioma:</strong> <?= $estudiante['meses_duracion_idioma'] ?> meses</p>
+                        <p><i class="bi bi-patch-check me-1 text-secondary"></i><strong>Total (incluyendo idioma):</strong> <?= number_format($años + ($estudiante['meses_duracion_idioma'] / 12), 2) ?> años</p>
                     <?php else: ?>
-                        <p><strong>Idioma:</strong> No registrado</p>
+                        <p><i class="bi bi-x-circle me-1 text-secondary"></i><strong>Idioma:</strong> No registrado</p>
                     <?php endif; ?>
-                    <p><strong>Estado:</strong> <span id="estadoCarrera" class="fw-semibold text-success"></span></p>
+                    <p><i class="bi bi-flag-fill me-1 text-secondary"></i><strong>Estado:</strong> <span id="estadoCarrera" class="fw-semibold"></span></p>
                 </div>
             </div>
 
@@ -129,19 +128,19 @@ try {
                 <div class="cv-section border p-3 rounded shadow-sm h-100">
                     <h5 class="text-primary"><i class="bi bi-pass-fill me-2"></i>Pasaporte</h5>
                     <?php if ($pasaporte): ?>
-                        <p><strong>Número:</strong> <?= htmlspecialchars($pasaporte['numero_pasaporte']) ?></p>
-                        <p><strong>Emisión:</strong> <?= date('d/m/Y', strtotime($pasaporte['fecha_emision'])) ?></p>
-                        <p><strong>Expiración:</strong> <span id="fechaExpPasaporte"><?= date('d/m/Y', strtotime($pasaporte['fecha_expiracion'])) ?></span></p>
-                        <p><strong>Archivo:</strong>
+                        <p><i class="bi bi-123 me-1 text-secondary"></i><strong>Número:</strong> <?= htmlspecialchars($pasaporte['numero_pasaporte']) ?></p>
+                        <p><i class="bi bi-calendar-event me-1 text-secondary"></i><strong>Emisión:</strong> <?= date('d/m/Y', strtotime($pasaporte['fecha_emision'])) ?></p>
+                        <p><i class="bi bi-calendar-x me-1 text-secondary"></i><strong>Expiración:</strong> <span id="fechaExpPasaporte"><?= date('d/m/Y', strtotime($pasaporte['fecha_expiracion'])) ?></span></p>
+                        <p><i class="bi bi-file-earmark-pdf me-1 text-secondary"></i><strong>Archivo:</strong>
                             <?php if (!empty($pasaporte['archivo_url'])): ?>
                                 <a href="../php/<?= htmlspecialchars($pasaporte['archivo_url']) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
-                                    <i class="bi bi-file-earmark-pdf"></i> Ver PDF
+                                    <i class="bi bi-eye-fill"></i> Ver PDF
                                 </a>
                             <?php else: ?>
                                 <span class="text-muted">No disponible</span>
                             <?php endif; ?>
                         </p>
-                        <p><strong>Estado:</strong> <span id="estadoPasaporte" class="fw-semibold text-success"></span></p>
+                        <p><i class="bi bi-flag-fill me-1 text-secondary"></i><strong>Estado:</strong> <span id="estadoPasaporte" class="fw-semibold"></span></p>
                     <?php else: ?>
                         <p class="text-muted">No hay datos de pasaporte.</p>
                     <?php endif; ?>
@@ -192,13 +191,11 @@ try {
         <div class="cv-section text-end text-muted mt-4">
             <small><i class="bi bi-clock me-1"></i>Registro del estudiante: <?= date('d/m/Y H:i', strtotime($estudiante['creado_en'])) ?></small>
         </div>
-
     </div>
 </main>
 
-
+<!-- JS dinámico -->
 <script>
-    // CARRERA
 (function calcularCarrera() {
     const inicio = parseInt(document.getElementById('inicioCarrera')?.textContent);
     const fin = parseInt(document.getElementById('finCarrera')?.textContent);
@@ -206,7 +203,9 @@ try {
     const restante = fin - actual;
     const estado = document.getElementById('estadoCarrera');
 
-    if (!estado) return;
+    if (!estado || isNaN(inicio) || isNaN(fin)) return;
+
+    estado.classList.remove("text-info", "text-warning", "text-success");
 
     if (restante > 0) {
         estado.textContent = `Faltan ${restante} año(s) para finalizar`;
@@ -220,7 +219,6 @@ try {
     }
 })();
 
-// PASAPORTE
 (function calcularPasaporte() {
     const fechaExpStr = document.getElementById('fechaExpPasaporte')?.textContent;
     if (!fechaExpStr) return;
@@ -228,112 +226,112 @@ try {
     const [dia, mes, anio] = fechaExpStr.split('/');
     const fechaExp = new Date(anio, mes - 1, dia);
     const hoy = new Date();
-
     const estado = document.getElementById('estadoPasaporte');
     if (!estado) return;
 
-    const aniosRestantes = fechaExp.getFullYear() - hoy.getFullYear();
+    estado.classList.remove("text-danger", "text-success");
 
     if (fechaExp < hoy) {
         estado.textContent = "Pasaporte expirado";
         estado.classList.add("text-danger");
     } else {
-        estado.textContent = `Faltan ${aniosRestantes} año(s) para expirar`;
+        const diff = fechaExp.getFullYear() - hoy.getFullYear();
+        estado.textContent = `Faltan ${diff} año(s) para expirar`;
         estado.classList.add("text-success");
     }
 })();
 </script>
+ 
+
 <?php include_once("../componentes/footer.php"); ?>
 
 
 <!--  PARA IMPRIMIR CV -->
 <style>
- 
-
-.cv-container {
-    max-width: 900px;
-    margin: auto;
-    background: #fff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-    position: relative;
-}
-
-/* Botón imprimir */
-#printBtn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-}
-
-/* Encabezado */
-.cv-header {
-    border-bottom: 2px solid #dee2e6;
-    padding-bottom: 15px;
-}
-
-.cv-header h3 {
-    font-weight: 700;
-}
-
-/* Foto perfil */
-.cv-photo {
-    width: 140px;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid #0d6efd;
-}
-
-/* Secciones */
-.cv-section {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 25px;
-    border-left: 5px solid #0d6efd;
-}
-
-.cv-section h5 {
-    font-weight: 600;
-    color: #0d6efd;
-    margin-bottom: 15px;
-}
-
-.cv-section p {
-    margin-bottom: 8px;
-}
-
-/* Tabla */
-table.table {
-    font-size: 0.9rem;
-}
-
-.table td, .table th {
-    vertical-align: middle !important;
-}
-
-/* Impresión */
-@media print {
-    body {
-        background: #fff !important;
-        padding: 0;
-    }
-
     .cv-container {
-        box-shadow: none;
-        border: none;
+        max-width: 900px;
+        margin: auto;
+        background: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        position: relative;
+    }
+
+    /* Botón imprimir */
+    #printBtn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    /* Encabezado */
+    .cv-header {
+        border-bottom: 2px solid #dee2e6;
+        padding-bottom: 15px;
+    }
+
+    .cv-header h3 {
+        font-weight: 700;
+    }
+
+    /* Foto perfil */
+    .cv-photo {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #0d6efd;
+    }
+
+    /* Secciones */
+    .cv-section {
+        background: #f8f9fa;
+        border-radius: 10px;
         padding: 20px;
-        margin: 0;
-        page-break-inside: avoid;
+        margin-bottom: 25px;
+        border-left: 5px solid #0d6efd;
     }
 
-    #printBtn,
-    .btn,
-    a.btn {
-        display: none !important;
+    .cv-section h5 {
+        font-weight: 600;
+        color: #0d6efd;
+        margin-bottom: 15px;
     }
-}
 
+    .cv-section p {
+        margin-bottom: 8px;
+    }
+
+    /* Tabla */
+    table.table {
+        font-size: 0.9rem;
+    }
+
+    .table td,
+    .table th {
+        vertical-align: middle !important;
+    }
+
+    /* Impresión */
+    @media print {
+        body {
+            background: #fff !important;
+            padding: 0;
+        }
+
+        .cv-container {
+            box-shadow: none;
+            border: none;
+            padding: 20px;
+            margin: 0;
+            page-break-inside: avoid;
+        }
+
+        #printBtn,
+        .btn,
+        a.btn {
+            display: none !important;
+        }
+    }
 </style>
