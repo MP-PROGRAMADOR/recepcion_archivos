@@ -10,43 +10,42 @@ $id_estudiante = $_SESSION['id'];
 include_once('../config/conexion.php');
 
 
-// Verificamos si el ID del estudiante está en la sesión
-if (isset($_SESSION['id'])) {
-    $id_estudiante = $_SESSION['id'];
 
-    try {
-        // Realizamos la consulta para obtener la foto de perfil del estudiante
-        $stmt = $pdo->prepare("SELECT foto_perfil FROM estudiantes WHERE id = :id_estudiante");
-        $stmt->bindParam(':id_estudiante', $id_estudiante);
-        $stmt->execute();
 
-        // Obtenemos el resultado de la consulta
-        $estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
+try {
+   
 
-        if ($estudiante) {
-            // Verificamos si la columna foto_perfil está vacía o no
-            if (empty($estudiante['foto_perfil'])) {
-                // Si no tiene foto de perfil, redirigimos a la página de perfil
-                header("Location: perfil.php");
-                exit;
-            } else {
-                // Si tiene foto de perfil, redirigimos a la página principal (o donde se necesite)
-                header("Location: panel_estudiante.php");
-                exit;
-            }
-        } else {
-            // Si el estudiante no existe (esto debería ser improbable si la sesión está correctamente gestionada)
-            echo "Estudiante no encontrado.";
+    // Consulta para verificar si ya tiene una foto de perfil
+    $stmt = $pdo->prepare("SELECT foto_perfil FROM estudiantes WHERE id = ?");
+    $stmt->execute([$id_estudiante]);
+    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($resultado) {
+        if (empty($resultado['foto_perfil'])) {
+            // No tiene foto de perfil, redirigir a perfil.php
+            header("Location: perfil.php");
+            exit;
         }
-    } catch (PDOException $e) {
-        echo "Error de conexión: " . $e->getMessage();
+        // Tiene foto, continuar con el panel actual
+    } else {
+        // No se encontró el estudiante, redirigir a página de error o login
+        header("Location: index.php");
+        exit;
     }
-} else {
-    // Si no hay ID de estudiante en la sesión, redirigimos al login
-    header("Location: index.php");
+
+} catch (PDOException $e) {
+    // Manejo de errores en caso de problemas de conexión o consulta
+    echo "Error al verificar la foto de perfil: " . $e->getMessage();
     exit;
 }
 
+
+
+
+
+
+
+    
 
 
 
