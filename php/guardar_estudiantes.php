@@ -35,7 +35,7 @@ try {
     }
 
     // Validaciones
-    $campos = ['nombre_completo', 'fecha_nacimiento', 'fecha_inicio_carrera', 'fecha_fin_carrera', 'pais', 'ciudad', 'universidad'];
+    $campos = ['nombre_completo', 'fecha_nacimiento', 'anio_inicio_carrera', 'anio_fin_carrera', 'pais', 'ciudad', 'universidad'];
     foreach ($campos as $campo) {
         if (empty($_POST[$campo])) {
             throw new Exception('Todos los campos son obligatorios.');
@@ -45,8 +45,8 @@ try {
     // Recoger datos
     $nombre_completo = trim($_POST['nombre_completo']);
     $fecha_nacimiento = $_POST['fecha_nacimiento'];
-    $fecha_inicio_carrera = $_POST['fecha_inicio_carrera'];
-    $fecha_fin_carrera = $_POST['fecha_fin_carrera'];
+    $fecha_inicio_carrera = $_POST['anio_inicio_carrera'];
+    $fecha_fin_carrera = $_POST['anio_fin_carrera'];
     $pais_id = (int)$_POST['pais'];
     $ciudad_id = (int)$_POST['ciudad'];
     $universidad_id = (int)$_POST['universidad'];
