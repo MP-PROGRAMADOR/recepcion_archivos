@@ -87,16 +87,27 @@ try {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <title>Panel - <?= htmlspecialchars($estudiante['nombre_completo']) ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de usuario - <?= htmlspecialchars($estudiante['nombre_completo']) ?>. Actualiza tu perfil y sube archivos importantes.">
+    <meta name="robots" content="index, follow">
+    <title>Panel - <?= htmlspecialchars($estudiante['nombre_completo']) ?></title>
+
+    <!-- Enlace al CSS de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Mejoras en el estilo y seguridad -->
     <style>
+        body {
+            padding-top: 50px;
+        }
+
         .foto-estudiante {
             width: 120px;
             height: 120px;
@@ -139,11 +150,8 @@ try {
             margin-bottom: 2rem;
         }
     </style>
-</head>
-
 <body class="bg-light">
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
       <i class="bi bi-mortarboard-fill me-2"></i>
@@ -209,126 +217,107 @@ try {
 
 
         <div class="row g-4">
-            <div class="col-md-6">
-                <div class="info-box d-flex">
-
-
-
-                    <?php if (!empty($estudiante['foto_perfil'])): ?>
-                        <img src="../php/upload/perfil/<?= htmlspecialchars($estudiante['foto_perfil']) ?>" alt="Foto"
-                            class="foto-estudiante me-3">
-                    <?php else: ?>
-                        <span class="text-muted">No se ha subido ningún perfil</span>
-                    <?php endif; ?>
-
-
-
-                    <div class="w-100">
-                        <div class="mb-2">
-                            <label class="form-label">Código de acceso:</label>
-                            <input type="text" class="form-control"
-                                value="<?= htmlspecialchars($estudiante['codigo_acceso']) ?>" disabled>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Nombre completo:</label>
-                            <input type="text" class="form-control"
-                                value="<?= htmlspecialchars($estudiante['nombre_completo']) ?>" disabled>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Fecha de nacimiento:</label>
-                            <input type="text" class="form-control"
-                                value="<?= htmlspecialchars($estudiante['fecha_nacimiento']) ?>" disabled>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">País:</label>
-                            <input type="text" class="form-control" value="<?= htmlspecialchars($estudiante['pais']) ?>"
-                                disabled>
-                        </div>
-                        <div>
-                            <label class="form-label">Registrado en:</label>
-                            <input type="text" class="form-control"
-                                value="<?= date('d/m/Y H:i', strtotime($estudiante['creado_en'])) ?>" disabled>
-                        </div>
-                        <div>
-                            <label class="form-label">Correo:</label>
-                            <input type="text" class="form-control"
-                                value="<?= htmlspecialchars($estudiante['email']) ?>" disabled>
-                        </div>
-                        <div>
-                            <label class="form-label">Telefono:</label>
-                            <input type="text" class="form-control"
-                                value="<?= htmlspecialchars($estudiante['telefono']) ?>" disabled>
-                        </div>
-                    </div>
-                </div>
+    <!-- Columna de información del estudiante -->
+    <div class="col-md-6">
+        <div class="info-box d-flex flex-column flex-md-row">
+            <!-- Imagen de perfil -->
+            <div class="mb-3 mb-md-0 me-md-3">
+                <?php if (!empty($estudiante['foto_perfil'])): ?>
+                    <img src="../php/upload/perfil/<?= htmlspecialchars($estudiante['foto_perfil']) ?>" alt="Foto" class="foto-estudiante img-fluid rounded">
+                <?php else: ?>
+                    <span class="text-muted">No se ha subido ningún perfil</span>
+                <?php endif; ?>
             </div>
-            <div class="col-md-6">
-                <div class="info-box">
-                    <?php if (!empty($archivos)): ?>
-                        <div class="shadow-sm border-0">
-                            <div class="card-header bg-white border-bottom-0">
-                                <h5 class="mb-0"><i class="bi bi-folder2-open me-2"></i>Archivos subidos</h5>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover mb-0 align-middle">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Tipo</th>
-                                                <th>Archivo</th>
-                                                <th>Fecha</th>
-                                                <th>Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($archivos as $archivo):
-                                                $ext = pathinfo($archivo['archivo_url'], PATHINFO_EXTENSION);
-                                                $esImagen = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                                                $esPDF = strtolower($ext) === 'pdf';
-                                            ?>
-                                                <tr>
-                                                    <td><span
-                                                            class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span>
-                                                    </td>
-                                                    <td>
-                                                        <?php if ($esImagen): ?>
-                                                            <img src="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= $archivo['archivo_url'] ?>"
-                                                                class="file-preview rounded border">
-                                                        <?php else: ?>
-                                                            <?= basename($archivo['archivo_url']) ?>
-                                                        <?php endif; ?>
-                                                    </td>
-                                                    <td><?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></td>
-                                                    <td>
-                                                        <!-- En pantallas grandes y medianas, mostrar el botón de modal -->
-                                                        <!--   <button class="btn btn-outline-primary btn-sm d-none d-md-inline-block"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#modalArchivo<?= $archivo['id'] ?>">
-                                                            <i class="bi bi-eye"></i> Ver
-                                                        </button> -->
-                                                        <!-- En dispositivos móviles, mostrar enlace de descarga con icono -->
-                                                        <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>"
-                                                            class="btn btn-outline-primary btn-sm " download>
-                                                            <i class="bi bi-download"></i> Descargar PDF
-                                                        </a>
-                                                    </td>
-                                                </tr>
 
-
-                                            <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    <?php else: ?>
-                        <div class="alert alert-info mt-3">
-                            <i class="bi bi-info-circle me-2"></i>No se han subido archivos aún.
-                        </div>
-                    <?php endif; ?>
+            <!-- Detalles del estudiante -->
+            <div class="w-100">
+                <div class="mb-2">
+                    <label class="form-label">Código de acceso:</label>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars($estudiante['codigo_acceso']) ?>" disabled>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Nombre completo:</label>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars($estudiante['nombre_completo']) ?>" disabled>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Fecha de nacimiento:</label>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars($estudiante['fecha_nacimiento']) ?>" disabled>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">País:</label>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars($estudiante['pais']) ?>" disabled>
+                </div>
+                <div>
+                    <label class="form-label">Registrado en:</label>
+                    <input type="text" class="form-control" value="<?= date('d/m/Y H:i', strtotime($estudiante['creado_en'])) ?>" disabled>
+                </div>
+                <div>
+                    <label class="form-label">Correo:</label>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars($estudiante['email']) ?>" disabled>
+                </div>
+                <div>
+                    <label class="form-label">Teléfono:</label>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars($estudiante['telefono']) ?>" disabled>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Columna de archivos subidos -->
+    <div class="col-md-6">
+        <div class="info-box">
+            <?php if (!empty($archivos)): ?>
+                <div class="shadow-sm border-0">
+                    <div class="card-header bg-white border-bottom-0">
+                        <h5 class="mb-0"><i class="bi bi-folder2-open me-2"></i>Archivos subidos</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Archivo</th>
+                                        <th>Fecha</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($archivos as $archivo):
+                                        $ext = pathinfo($archivo['archivo_url'], PATHINFO_EXTENSION);
+                                        $esImagen = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                        $esPDF = strtolower($ext) === 'pdf';
+                                    ?>
+                                        <tr>
+                                            <td><span class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span></td>
+                                            <td>
+                                                <?php if ($esImagen): ?>
+                                                    <img src="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= $archivo['archivo_url'] ?>" class="file-preview rounded border img-fluid">
+                                                <?php else: ?>
+                                                    <?= basename($archivo['archivo_url']) ?>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= date('d/m/Y H:i', strtotime($archivo['fecha_subida'])) ?></td>
+                                            <td>
+                                                <a href="../php/upload/<?= $archivo['tipo'] === 'Nota' ? 'notas' : 'pasaportes' ?>/<?= htmlspecialchars($archivo['archivo_url']) ?>" class="btn btn-outline-primary btn-sm" download>
+                                                    <i class="bi bi-download"></i> Descargar PDF
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>No se han subido archivos aún.
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
 
         <div class="row mt-5">
