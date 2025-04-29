@@ -10,40 +10,28 @@ $estudiante_id = intval($_GET['id']);
 try {
     // Datos personales del estudiante
     $stmt = $pdo->prepare("
-      SELECT 
-    e.id,
-    e.nombre_completo,
-    e.codigo_acceso,
-    e.fecha_nacimiento,
-    e.anio_inicio_carrera,
-    e.anio_fin_carrera,
-    e.telefono,
-    e.creado_en,
-    e.pais_id,
-    e.email,
-    e.ciudad_id,
-    e.universidad_id,
-    e.idioma_id,
-    p.nombre AS nombre_pais,
-    c.nombre AS nombre_ciudad,
-    u.nombre AS nombre_universidad,
-    i.nombre AS nombre_idioma,
-    i.meses_duracion AS meses_duracion_idioma
-FROM estudiantes e
-LEFT JOIN paises p ON e.pais_id = p.id
-LEFT JOIN ciudades c ON e.ciudad_id = c.id
-LEFT JOIN universidades u ON e.universidad_id = u.id
-LEFT JOIN idiomas i ON e.idioma_id = i.id
-WHERE e.id = ?
-
-
+        SELECT 
+            e.id, e.nombre_completo, e.codigo_acceso, e.fecha_nacimiento,
+            e.anio_inicio_carrera, e.anio_fin_carrera, e.telefono,
+            e.creado_en, e.pais_id, e.email, e.ciudad_id,
+            e.universidad_id, e.idioma_id, e.foto_perfil,
+            p.nombre AS nombre_pais,
+            c.nombre AS nombre_ciudad,
+            u.nombre AS nombre_universidad,
+            i.nombre AS nombre_idioma,
+            i.meses_duracion AS meses_duracion_idioma
+        FROM estudiantes e
+        LEFT JOIN paises p ON e.pais_id = p.id
+        LEFT JOIN ciudades c ON e.ciudad_id = c.id
+        LEFT JOIN universidades u ON e.universidad_id = u.id
+        LEFT JOIN idiomas i ON e.idioma_id = i.id
+        WHERE e.id = ?
     ");
     $stmt->execute([$estudiante_id]);
     $estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$estudiante) {
+    if (!$estudiante)
         die("Estudiante no encontrado.");
-    }
 
     // Notas académicas
     $stmt = $pdo->prepare("
@@ -71,120 +59,108 @@ WHERE e.id = ?
 }
 ?>
 
-
 <?php include_once("../componentes/sidebar.php"); ?>
 
 <main class="content" id="mainContent">
-    <div class="cv-container">
+    <div class="cv-container container py-4 bg-white shadow rounded" style="max-width: 900px; font-size: 0.95rem;">
 
-        <!-- Encabezado -->
-        <div class="cv-header text-center mb-4">
-            <h3><i class="bi bi-person-vcard me-2"></i>Ficha del Estudiante</h3>
-            <div class="mt-3 d-flex justify-content-center gap-2">
-                <a href="estudiantes.php" class="btn btn-secondary">
+        <!-- ENCABEZADO -->
+        <div class="cv-header text-center mb-4 border-bottom pb-3 position-relative">
+            <h3 class="fw-bold text-primary"><i class="bi bi-person-vcard me-2"></i>Ficha del Estudiante</h3>
+            <div class="mt-3 d-flex justify-content-center gap-2 flex-wrap">
+                <a href="estudiantes.php" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Volver al Listado
                 </a>
-
+                <button onclick="window.print()" class="btn btn-primary">
+                    <i class="bi bi-printer-fill"></i> Imprimir CV
+                </button>
             </div>
         </div>
 
-        <!-- Información Personal -->
-        <div class="cv-section">
-            <h5><i class="bi bi-person-circle me-2"></i>Datos Personales</h5>
-            <div class="row">
-                <div class="col-md-4 text-center mb-3">
+        <!-- PERFIL Y CONTACTO -->
+        <div class="cv-section mb-4 p-3 rounded bg-light">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center mb-3 mb-md-0">
                     <?php if (!empty($estudiante['foto_perfil']) && file_exists("../php/" . $estudiante['foto_perfil'])): ?>
-                        <img src="../php/<?= htmlspecialchars($estudiante['foto_perfil']) ?>" class="cv-photo img-thumbnail" alt="Foto">
+                        <img src="../php/<?= htmlspecialchars($estudiante['foto_perfil']) ?>" class="cv-photo rounded-circle border shadow-sm" style="width: 120px; height: 120px; object-fit: cover;" alt="Foto">
                     <?php else: ?>
                         <div class="text-muted">
                             <i class="bi bi-person-circle fs-1"></i><br>Sin foto
                         </div>
                     <?php endif; ?>
                 </div>
-                <div class="col-md-8">
-                    <p class="cv-label">Código del Estudiante: <span class="cv-value"><?= $estudiante['codigo_acceso'] ?></span></p>
-                    <p class="cv-label">Nombre Completo: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_completo']) ?></span></p>
-                    <p class="cv-label">Fecha de Nacimiento: <span class="cv-value"><?= date('d/m/Y', strtotime($estudiante['fecha_nacimiento'])) ?></span></p>
-
-                    <!-- Verificación de Email -->
-                    <p class="cv-label">Correo Electronico: <span class="cv-value"><?= !empty($estudiante['email']) ? htmlspecialchars($estudiante['email']) : 'No se ha subido' ?></span></p>
-
-                    <!-- Verificación de Teléfono -->
-                    <p class="cv-label">Telefono: <span class="cv-value"><?= !empty($estudiante['telefono']) ? htmlspecialchars($estudiante['telefono']) : 'No se ha subido' ?></span></p>
-
-                    <p class="cv-label">País de Estudios: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_pais']) ?></span></p>
-                    <p class="cv-label">En la Ciudad: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_ciudad']) ?></span></p>
-                    <p class="cv-label">En la Universidad: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_universidad']) ?></span></p>
-
-                    <!-- Año de Inicio y Año de Finalización -->
-                    <p class="cv-label">Año de Inicio: <span class="cv-value"><?= htmlspecialchars($estudiante['anio_inicio_carrera']) ?></span></p>
-                    <p class="cv-label">Año de Finalización: <span class="cv-value"><?= htmlspecialchars($estudiante['anio_fin_carrera']) ?></span></p>
-
-                    <!-- Calcular años de carrera -->
-                    <?php
-                    $anio_inicio = (int)$estudiante['anio_inicio_carrera'];
-                    $anio_fin = (int)$estudiante['anio_fin_carrera'];
-                    $años_de_carrera = $anio_fin - $anio_inicio;
-                    ?>
-                    <p class="cv-label">Años de Carrera: <span class="cv-value"><?= $años_de_carrera ?></span></p>
-
-                    <!-- Idioma -->
-                    <?php if (!empty($estudiante['nombre_idioma'])): ?>
-                        <p class="cv-label">Idioma: <span class="cv-value"><?= htmlspecialchars($estudiante['nombre_idioma']) ?></span></p>
-                        <p class="cv-label">Meses de Duración: <span class="cv-value"><?= htmlspecialchars($estudiante['meses_duracion_idioma']) ?></span></p>
-
-                        <!-- Sumar meses de idioma a los años de carrera -->
-                        <?php
-                        $total_meses = (int)$estudiante['meses_duracion_idioma'];
-                        $total_años = $años_de_carrera + ($total_meses / 12);
-                        ?>
-                        <p class="cv-label">Años de Carrera + Idioma: <span class="cv-value"><?= number_format($total_años, 2) ?> años</span></p>
-                    <?php else: ?>
-                        <p class="cv-label">Idioma: <span class="cv-value">No escogió idioma</span></p>
-                    <?php endif; ?>
-
-                    <p class="cv-label">Fecha de Registro: <span class="cv-value"><?= date('d/m/Y H:i', strtotime($estudiante['creado_en'])) ?></span></p>
+                <div class="col-md-9">
+                    <h4 class="fw-bold mb-2"><?= htmlspecialchars($estudiante['nombre_completo']) ?></h4>
+                    <p class="mb-1"><i class="bi bi-key-fill me-1 text-secondary"></i><strong>Código:</strong> <?= $estudiante['codigo_acceso'] ?></p>
+                    <p class="mb-1"><i class="bi bi-envelope-fill me-1 text-secondary"></i><strong>Correo:</strong> <?= htmlspecialchars($estudiante['email']) ?: 'No registrado' ?></p>
+                    <p class="mb-0"><i class="bi bi-telephone-fill me-1 text-secondary"></i><strong>Teléfono:</strong> <?= htmlspecialchars($estudiante['telefono']) ?: 'No registrado' ?></p>
                 </div>
-
             </div>
         </div>
 
+        <!-- INFORMACIÓN ACADÉMICA Y PASAPORTE -->
+        <div class="row g-4">
 
+            <!-- INFORMACIÓN ACADÉMICA -->
+            <div class="col-lg-6">
+                <div class="cv-section border p-3 rounded shadow-sm h-100">
+                    <h5 class="text-primary"><i class="bi bi-mortarboard-fill me-2"></i>Información Académica</h5>
+                    <p><strong>Universidad:</strong> <?= htmlspecialchars($estudiante['nombre_universidad']) ?></p>
+                    <p><strong>País:</strong> <?= htmlspecialchars($estudiante['nombre_pais']) ?></p>
+                    <p><strong>Ciudad:</strong> <?= htmlspecialchars($estudiante['nombre_ciudad']) ?></p>
+                    <p><strong>Inicio:</strong> <?= $estudiante['anio_inicio_carrera'] ?></p>
+                    <p><strong>Fin:</strong> <?= $estudiante['anio_fin_carrera'] ?></p>
+                    <?php $años = (int) $estudiante['anio_fin_carrera'] - (int) $estudiante['anio_inicio_carrera']; ?>
+                    <p><strong>Duración:</strong> <?= $años ?> años</p>
 
-        <!-- Documentación Oficial -->
-        <div class="cv-section">
-            <h5><i class="bi bi-person-vcard-fill"></i>Pasaporte</h5>
-            <?php if ($pasaporte): ?>
-                <p class="cv-label">Número de Pasaporte: <span class="cv-value"><?= htmlspecialchars($pasaporte['numero_pasaporte']) ?></span></p>
-                <p class="cv-label">Fecha de Emisión: <span class="cv-value"><?= date('d/m/Y', strtotime($pasaporte['fecha_emision'])) ?></span></p>
-                <p class="cv-label">Fecha de Expiración: <span class="cv-value"><?= date('d/m/Y', strtotime($pasaporte['fecha_expiracion'])) ?></span></p>
-                <p class="cv-label">Documento:
-                    <?php if ($pasaporte['archivo_url']): ?>
-                        <a href="../php/<?= htmlspecialchars($pasaporte['archivo_url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-eye-fill me-1"></i>Ver PDF
-                        </a>
+                    <?php if (!empty($estudiante['nombre_idioma'])): ?>
+                        <p><strong>Idioma:</strong> <?= $estudiante['nombre_idioma'] ?></p>
+                        <p><strong>Duración Idioma:</strong> <?= $estudiante['meses_duracion_idioma'] ?> meses</p>
+                        <p><strong>Total (incluyendo idioma):</strong> <?= number_format($años + ($estudiante['meses_duracion_idioma'] / 12), 2) ?> años</p>
                     <?php else: ?>
-                        <span class="text-muted">No disponible</span>
+                        <p><strong>Idioma:</strong> No registrado</p>
                     <?php endif; ?>
-                </p>
-            <?php else: ?>
-                <p class="text-muted">No hay información de pasaporte disponible.</p>
-            <?php endif; ?>
+                    <p><strong>Estado:</strong> <span id="estadoCarrera" class="fw-semibold text-success"></span></p>
+                </div>
+            </div>
+
+            <!-- PASAPORTE -->
+            <div class="col-lg-6">
+                <div class="cv-section border p-3 rounded shadow-sm h-100">
+                    <h5 class="text-primary"><i class="bi bi-pass-fill me-2"></i>Pasaporte</h5>
+                    <?php if ($pasaporte): ?>
+                        <p><strong>Número:</strong> <?= htmlspecialchars($pasaporte['numero_pasaporte']) ?></p>
+                        <p><strong>Emisión:</strong> <?= date('d/m/Y', strtotime($pasaporte['fecha_emision'])) ?></p>
+                        <p><strong>Expiración:</strong> <span id="fechaExpPasaporte"><?= date('d/m/Y', strtotime($pasaporte['fecha_expiracion'])) ?></span></p>
+                        <p><strong>Archivo:</strong>
+                            <?php if (!empty($pasaporte['archivo_url'])): ?>
+                                <a href="../php/<?= htmlspecialchars($pasaporte['archivo_url']) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="bi bi-file-earmark-pdf"></i> Ver PDF
+                                </a>
+                            <?php else: ?>
+                                <span class="text-muted">No disponible</span>
+                            <?php endif; ?>
+                        </p>
+                        <p><strong>Estado:</strong> <span id="estadoPasaporte" class="fw-semibold text-success"></span></p>
+                    <?php else: ?>
+                        <p class="text-muted">No hay datos de pasaporte.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
 
-
-        <!-- Historial Académico -->
-        <div class="cv-section">
-            <h5><i class="bi bi-journal-text me-2"></i>Historial Académico</h5>
+        <!-- HISTORIAL ACADÉMICO -->
+        <div class="cv-section mt-4">
+            <h5 class="text-primary"><i class="bi bi-journal-text me-2"></i>Historial Académico</h5>
             <?php if (!empty($notas)): ?>
-                <div class="table-responsive">
-                    <table class="table table-sm table-bordered align-middle">
+                <div class="table-responsive border rounded shadow-sm">
+                    <table class="table table-bordered table-striped table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Año Académico</th>
                                 <th>Observaciones</th>
                                 <th>Documento</th>
-                                <th>Fecha de Registro</th>
+                                <th>Registro</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -194,7 +170,7 @@ WHERE e.id = ?
                                     <td><?= nl2br(htmlspecialchars($nota['observaciones'])) ?></td>
                                     <td>
                                         <?php if (!empty($nota['archivo_url'])): ?>
-                                            <a href="../php/upload/notas/<?= htmlspecialchars($nota['archivo_url']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <a href="../php/upload/notas/<?= htmlspecialchars($nota['archivo_url']) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
                                                 <i class="bi bi-file-earmark-text"></i> Ver Documento
                                             </a>
                                         <?php else: ?>
@@ -208,11 +184,156 @@ WHERE e.id = ?
                     </table>
                 </div>
             <?php else: ?>
-                <p class="text-muted">No se encontraron registros académicos.</p>
+                <p class="text-muted">Sin registros académicos.</p>
             <?php endif; ?>
+        </div>
+
+        <!-- FECHA DE REGISTRO -->
+        <div class="cv-section text-end text-muted mt-4">
+            <small><i class="bi bi-clock me-1"></i>Registro del estudiante: <?= date('d/m/Y H:i', strtotime($estudiante['creado_en'])) ?></small>
         </div>
 
     </div>
 </main>
 
+
+<script>
+    // CARRERA
+(function calcularCarrera() {
+    const inicio = parseInt(document.getElementById('inicioCarrera')?.textContent);
+    const fin = parseInt(document.getElementById('finCarrera')?.textContent);
+    const actual = new Date().getFullYear();
+    const restante = fin - actual;
+    const estado = document.getElementById('estadoCarrera');
+
+    if (!estado) return;
+
+    if (restante > 0) {
+        estado.textContent = `Faltan ${restante} año(s) para finalizar`;
+        estado.classList.add("text-info");
+    } else if (restante === 0) {
+        estado.textContent = "FINALISTA";
+        estado.classList.add("text-warning");
+    } else {
+        estado.textContent = "Carrera finalizada";
+        estado.classList.add("text-success");
+    }
+})();
+
+// PASAPORTE
+(function calcularPasaporte() {
+    const fechaExpStr = document.getElementById('fechaExpPasaporte')?.textContent;
+    if (!fechaExpStr) return;
+
+    const [dia, mes, anio] = fechaExpStr.split('/');
+    const fechaExp = new Date(anio, mes - 1, dia);
+    const hoy = new Date();
+
+    const estado = document.getElementById('estadoPasaporte');
+    if (!estado) return;
+
+    const aniosRestantes = fechaExp.getFullYear() - hoy.getFullYear();
+
+    if (fechaExp < hoy) {
+        estado.textContent = "Pasaporte expirado";
+        estado.classList.add("text-danger");
+    } else {
+        estado.textContent = `Faltan ${aniosRestantes} año(s) para expirar`;
+        estado.classList.add("text-success");
+    }
+})();
+</script>
 <?php include_once("../componentes/footer.php"); ?>
+
+
+<!--  PARA IMPRIMIR CV -->
+<style>
+ 
+
+.cv-container {
+    max-width: 900px;
+    margin: auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+/* Botón imprimir */
+#printBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+/* Encabezado */
+.cv-header {
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 15px;
+}
+
+.cv-header h3 {
+    font-weight: 700;
+}
+
+/* Foto perfil */
+.cv-photo {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #0d6efd;
+}
+
+/* Secciones */
+.cv-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-left: 5px solid #0d6efd;
+}
+
+.cv-section h5 {
+    font-weight: 600;
+    color: #0d6efd;
+    margin-bottom: 15px;
+}
+
+.cv-section p {
+    margin-bottom: 8px;
+}
+
+/* Tabla */
+table.table {
+    font-size: 0.9rem;
+}
+
+.table td, .table th {
+    vertical-align: middle !important;
+}
+
+/* Impresión */
+@media print {
+    body {
+        background: #fff !important;
+        padding: 0;
+    }
+
+    .cv-container {
+        box-shadow: none;
+        border: none;
+        padding: 20px;
+        margin: 0;
+        page-break-inside: avoid;
+    }
+
+    #printBtn,
+    .btn,
+    a.btn {
+        display: none !important;
+    }
+}
+
+</style>

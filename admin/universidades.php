@@ -1,41 +1,45 @@
 <?php
-
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
-// Configuración de paginación
 $por_pagina = 10;
-$pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-$inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
+$pagina_actual = isset($_GET['pagina']) && is_numeric($_GET['pagina']) && $_GET['pagina'] > 0 ? (int)$_GET['pagina'] : 1;
+$inicio = ($pagina_actual - 1) * $por_pagina;
 
-// Contar el total de universidades
-$total_stmt = $pdo->query("SELECT COUNT(*) as total FROM universidades");
-$total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
-$total_paginas = ceil($total_filas / $por_pagina);
-
-// Obtener universidades con ciudad, país y el número total de estudiantes
 try {
-    $stmt = $pdo->prepare("SELECT u.id, u.nombre AS universidad, 
-                                  c.nombre AS ciudad, 
-                                  p.nombre AS pais, 
-                                  COUNT(e.id) AS total_estudiantes
-                           FROM universidades u
-                           INNER JOIN ciudades c ON u.ciudad_id = c.id
-                           INNER JOIN paises p ON c.pais_id = p.id
-                           LEFT JOIN estudiantes e ON u.id = e.universidad_id
-                           GROUP BY u.id, c.id, p.id
-                           ORDER BY u.id DESC
-                           LIMIT :inicio, :por_pagina");
+    // Contar universidades que tienen al menos un estudiante
+    $conteo_stmt = $pdo->prepare("
+        SELECT COUNT(DISTINCT u.id) AS total
+        FROM universidades u
+        INNER JOIN estudiantes e ON u.id = e.universidad_id
+    ");
+    $conteo_stmt->execute();
+    $total_filas = $conteo_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    $total_paginas = ceil($total_filas / $por_pagina);
 
+    // Obtener datos paginados solo con universidades que tienen estudiantes
+    $stmt = $pdo->prepare("
+        SELECT u.id, u.nombre AS universidad, 
+               c.nombre AS ciudad, 
+               p.nombre AS pais, 
+               COUNT(e.id) AS total_estudiantes
+        FROM universidades u
+        INNER JOIN ciudades c ON u.ciudad_id = c.id
+        INNER JOIN paises p ON c.pais_id = p.id
+        INNER JOIN estudiantes e ON u.id = e.universidad_id
+        GROUP BY u.id
+        ORDER BY u.id DESC
+        LIMIT :inicio, :por_pagina
+    ");
     $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
     $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
     $stmt->execute();
     $universidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    die("Error al obtener las universidades con estudiantes: " . $e->getMessage());
+    die("Error al obtener universidades con estudiantes: " . $e->getMessage());
 }
-
 ?>
+
 
 <main class="content" id="mainContent">
     <div class="container mt-4">
