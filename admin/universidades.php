@@ -2,6 +2,7 @@
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
+
 $por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) && is_numeric($_GET['pagina']) && $_GET['pagina'] > 0 ? (int)$_GET['pagina'] : 1;
 $inicio = ($pagina_actual - 1) * $por_pagina;

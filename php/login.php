@@ -1,5 +1,6 @@
 <?php
-session_start();
+
+
 include '../config/conexion.php'; // Archivo de conexión
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -18,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
                 // Login exitoso
+                session_start();
                 $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario_nombre'] = $usuario['nombre'];
                 $_SESSION['usuario_email'] = $usuario['email'];

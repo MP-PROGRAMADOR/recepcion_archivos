@@ -1,6 +1,7 @@
 <?php
 include_once("../componentes/header.php");
 
+
 // Consulta para obtener los datos requeridos de estudiantes, idiomas, universidades, ciudades y países
 try {
     $stmt = $pdo->prepare("        SELECT 

@@ -1,5 +1,6 @@
 <?php
 include_once("../componentes/header.php");
+
 // Asegúrate de que esto esté al principio del archivo
 
 

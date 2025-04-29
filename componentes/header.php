@@ -1,6 +1,12 @@
 <?php
-// Iniciar sesión de forma segura
-// Comienza la sesión si no está ya iniciada
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../index.php"); // Ruta al login
+    exit;
+}
+
+
+
 if (session_status() == PHP_SESSION_NONE) {
   session_start();
 }

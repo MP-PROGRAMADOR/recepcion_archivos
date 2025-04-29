@@ -1,6 +1,7 @@
 <?php
 
 include_once("../componentes/header.php");
+
 //require_once '../config/conexion.php';
 
 // Consulta de estudiantes con JOIN a países

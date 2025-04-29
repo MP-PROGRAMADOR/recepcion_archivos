@@ -1,16 +1,7 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-  session_start();
-}
+
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
-
-if (!isset($_SESSION['usuario_id'])) {
-  header('Location: ../index.php');
-  exit;
-}
-
-
 
 $stmt = $pdo->query("    SELECT 
         (SELECT COUNT(*) FROM estudiantes) AS total_estudiantes,

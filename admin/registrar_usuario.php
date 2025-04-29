@@ -1,7 +1,7 @@
 <?php
-session_start();
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
+
 ?>
 
 <main class="content" id="mainContent">

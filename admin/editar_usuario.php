@@ -1,6 +1,5 @@
 <?php
-session_start(); // <-- Asegura que las sesiones funcionen
- 
+
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
