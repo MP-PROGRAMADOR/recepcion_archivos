@@ -60,6 +60,7 @@
 </head>
 
 <body class="d-flex align-items-center justify-content-center min-vh-100">
+<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
 
     <div class="container-login">
 

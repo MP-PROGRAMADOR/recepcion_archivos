@@ -151,6 +151,7 @@ try {
         }
     </style>
 <body class="bg-light">
+<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
