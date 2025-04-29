@@ -1,3 +1,8 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+  session_start();
+}
+?>
 <!-- Sidebar -->
 <aside class="sidebar d-md-block" id="sidebar">
   <!-- Botón cerrar en móvil -->
@@ -91,7 +96,47 @@
 </aside>
 
 <!-- Navbar superior -->
-<div class="navbar-top">
+<!-- <div class="navbar-top">
   <button class="menu-toggle d-md-none" onclick="toggleSidebar()">☰</button>
   <span class="fw-semibold">Bienvenido al panel</span>
+</div> -->
+
+
+<!-- Navbar superior -->
+<div class="navbar-top d-flex justify-content-between align-items-center px-4 py-2 bg-light shadow-sm">
+  <!-- Menú de navegación (para móviles) -->
+  <button class="menu-toggle d-md-none btn btn-outline-secondary" onclick="toggleSidebar()">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <!-- Título y saludo -->
+  <div class="d-flex align-items-center">
+    <span class="fw-semibold text-dark fs-5 me-3">Bienvenido al Panel</span>
+
+    <!-- Nombre de usuario logueado con avatar -->
+    <div class="d-flex align-items-center">
+      <i class="bi bi-person-circle me-2 fs-4 text-primary"></i>
+      <span class="fw-bold text-dark fs-5"><?= htmlspecialchars( $_SESSION['usuario_nombre']) ?></span>
+    </div>
+  </div>
+
+  <!-- Barra de opciones de usuario (icono de configuración y cerrar sesión) -->
+  <div class="d-flex align-items-center">
+    
+    
+    <a href="../php/logout.php" class="btn btn-outline-danger btn-sm" title="Cerrar sesión">
+        <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+      </a>
+     
+    
+  </div>
 </div>
+
+<!-- Script para inicializar los tooltips de Bootstrap -->
+<script>
+  // Inicialización de tooltips para los botones
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+</script>

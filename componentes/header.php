@@ -4,33 +4,25 @@
 if (session_status() == PHP_SESSION_NONE) {
   session_start();
 }
+ 
+require_once '../config/conexion.php';
 
-/* // Validar la variable $_SESSION['favicon']
-$favico = isset($_SESSION["config"]) ? $_SESSION["config"] : 'favicon.ico'; // Ruta predeterminada
-$favico = htmlspecialchars($favico); // Asegura que no haya inyecciones de código
+$query = "
+  SELECT p.nombre AS pais, COUNT(e.id) AS estudiantes
+  FROM paises p
+  LEFT JOIN estudiantes e ON e.pais_id = p.id
+  GROUP BY p.id
+  ORDER BY estudiantes DESC
+";
+$stmt = $pdo->prepare($query);
+$stmt->execute();
+$paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener la extensión del archivo
-$extension = strtolower(pathinfo($favico, PATHINFO_EXTENSION));
-
-// Establecer el tipo MIME según la extensión del archivo
-switch ($extension) {
-  case 'ico':
-      $mime_type = 'image/x-icon';
-      break;
-  case 'png':
-      $mime_type = 'image/png';
-      break;
-  case 'svg':
-      $mime_type = 'image/svg+xml';
-      break;
-  default:
-      // Si la extensión no es válida, usamos el favicon por defecto
-      $favico = 'favicon.ico';
-      $mime_type = 'image/x-icon';
-      break;
+// Convertir los datos para pasarlos a JavaScript
+$datos_geochart = [['Ciudad', 'Alumnos']];
+foreach ($paises as $pais) {
+  $datos_geochart[] = [$pais['pais'], (int)$pais['estudiantes']];
 }
-
-$favico = $_SESSION["config"]; */
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -42,14 +34,22 @@ $favico = $_SESSION["config"]; */
   <link href="../config/css/bootstrap.min.css" rel="stylesheet" />
   <link href="../config/css/css2.css" rel="stylesheet" />
   <link href="../config/css/bootstrap-icons.css" rel="stylesheet" />
-  <!-- Favicon clásico (.ico) -->
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
 
-  <!-- O si usas un PNG -->
-  <link rel="icon" type="image/png" href=" ">
+  <!-- Google Charts -->
+  <script type="text/javascript" src="../config/js/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', { 'packages': ['geochart'] });
+    google.charts.setOnLoadCallback(drawRegionsMap);
 
-  <!-- Para SVG (opcional) -->
-  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    function drawRegionsMap() {
+      var data = google.visualization.arrayToDataTable(<?= json_encode($datos_geochart, JSON_UNESCAPED_UNICODE) ?>);
+      var options = {};
+      var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+      chart.draw(data, options);
+    }
+  </script>  
 
   <style>
     * {
@@ -281,50 +281,7 @@ $favico = $_SESSION["config"]; */
     }
   </style>
 
-  <?php
-
-  require_once '../config/conexion.php';
-
-  // Consulta para obtener los países y la cantidad de estudiantes en cada país
-  $query = "
-    SELECT p.nombre AS pais, COUNT(e.id) AS estudiantes
-    FROM paises p
-    LEFT JOIN estudiantes e ON e.pais_id = p.id
-    GROUP BY p.id
-    ORDER BY estudiantes DESC;
-";
-
-
-  $stmt = $pdo->prepare($query);
-  $stmt->execute();
-  $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  ?>
-
-  <script type="text/javascript" src="../config/js/loader.js"></script>
-  <script type="text/javascript">
-    google.charts.load('current', {
-      'packages': ['geochart'],
-    });
-    google.charts.setOnLoadCallback(drawRegionsMap);
-
-    function drawRegionsMap() {
-      var data = google.visualization.arrayToDataTable([
-        ['Ciudad', 'Alumnos'],
-        <?php
-        // Generar el array con los países y la cantidad de estudiantes
-        foreach ($paises as $pais) {
-          echo "['" . addslashes($pais['pais']) . "', " . $pais['estudiantes'] . "],\n";
-        }
-        ?>
-      ]);
-
-      var options = {};
-
-      var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
-
-      chart.draw(data, options);
-    }
-  </script>
+ 
 
 
 
