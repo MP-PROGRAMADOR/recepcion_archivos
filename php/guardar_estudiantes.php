@@ -119,6 +119,6 @@ try {
 }
 
 // Redirigir siempre al listado de estudiantes
-header("Location: ../admin/estudiantes.php");
+header("Location: ../estudiante/panel_estudiante.php");
 exit();
 ?>

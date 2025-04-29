@@ -1,68 +1,62 @@
 <?php
 session_start();
+require_once '../config/conexion.php'; // Incluye el archivo de conexión
 
-// Validar sesión activa de estudiante
-if (!isset($_SESSION['estudiante'])) {
-    header("Location: index.php");
-    exit();
-}
+// Verificamos si se ha enviado el formulario
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Recuperamos los valores del formulario y limpiamos cualquier entrada no deseada
+    $estudiante_id = isset($_POST['estudiante_id']) ? (int) $_POST['estudiante_id'] : 0;
+    $correo = filter_var(trim($_POST['correo']), FILTER_SANITIZE_EMAIL);
+    $telefono = trim($_POST['telefono']);
 
-$estudianteSesion = $_SESSION['estudiante'];
-
-require_once '../config/conexion.php';
-
-// Validar si los datos del formulario están disponibles
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    // Filtrar y sanitizar los datos recibidos
-    $estudiante_id = filter_var($_POST['estudiante_id'], FILTER_SANITIZE_NUMBER_INT);
-    $correo = filter_var($_POST['correo'], FILTER_SANITIZE_EMAIL);
-    $telefono = filter_var($_POST['telefono'], FILTER_SANITIZE_STRING);
-
-    // Arreglo de errores
-    $errores = [];
-
-    // Validar que los campos no estén vacíos
-    if (empty($correo) || empty($telefono)) {
-        $errores[] = "Todos los campos son requeridos.";
-    }
-
-    // Validar formato de correo
+    // Validamos los campos
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        $errores[] = "Correo electrónico no válido.";
-    }
-
-    // Validar formato del teléfono (mínimo 8 dígitos)
-    if (!preg_match("/^\d{7,15}$/", $telefono)) {
-        $errores[] = "Número de teléfono no válido. Debe tener entre 7 y 15 dígitos.";
-    }
-
-    // Si hay errores, mostrar mensaje y redirigir
-    if (!empty($errores)) {
-        $_SESSION['errores'] = $errores;
-        header("Location: editar_contacto.php");
+        $_SESSION['error'] = 'Correo electrónico inválido';
+        header('Location: ../estudiante/panel_estudiante.php');
         exit();
     }
 
-    // Preparar la actualización en la base de datos
-    try {
-        $stmt = $pdo->prepare("UPDATE estudiantes SET email = ?, telefono = ? WHERE id = ?");
-        $stmt->execute([$correo, $telefono, $estudiante_id]);
-
-        // Verificar si la actualización fue exitosa
-        if ($stmt->rowCount() > 0) {
-            $_SESSION['exito'] = "Información de contacto actualizada exitosamente.";
-        } else {
-            $_SESSION['errores'] = ["No se realizaron cambios en la información de contacto."];
-        }
-
-    } catch (PDOException $e) {
-        // Manejar cualquier error en la base de datos
-        $_SESSION['errores'] = ["Error de conexión: " . htmlspecialchars($e->getMessage())];
+    // Validar teléfono (solo números y longitud entre 7 y 15)
+    if (!preg_match('/^\d{7,15}$/', $telefono)) {
+        $_SESSION['error'] = 'Número de teléfono inválido (debe tener entre 7 y 15 dígitos)';
+        header('Location: ../estudiante/panel_estudiante.php');
+        exit();
     }
 
-    // Redirigir de vuelta al formulario
-    header("Location: editar_contacto.php");
-    exit();
+    // Usamos PDO para actualizar los datos de contacto
+    try {
+        // Preparamos la consulta de actualización
+        $sql = "UPDATE estudiantes SET email = :email, telefono = :telefono WHERE id = :estudiante_id";
+        $stmt = $pdo->prepare($sql);
+
+        // Vinculamos los parámetros
+        $stmt->bindParam(':email', $correo, PDO::PARAM_STR);
+        $stmt->bindParam(':telefono', $telefono, PDO::PARAM_STR);
+        $stmt->bindParam(':estudiante_id', $estudiante_id, PDO::PARAM_INT);
+
+        // Ejecutamos la consulta
+        $stmt->execute();
+
+        // Si todo salió bien, mostramos un mensaje de éxito
+        $_SESSION['success'] = 'Datos de contacto actualizados correctamente';
+        header('Location: ../estudiante/panel_estudiante.php');
+        exit();
+    } catch (PDOException $e) {
+        // Si ocurre un error con la base de datos
+        $_SESSION['error'] = 'Error al actualizar los datos: ' . $e->getMessage();
+        header('Location: ../estudiante/panel_estudiante.php');
+        exit();
+    }
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+
