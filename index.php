@@ -182,9 +182,9 @@ if (session_status() === PHP_SESSION_DISABLED) {
                         <a href="estudiante/index.php" class="link-volver">
                             <i class="bi bi-arrow-left me-1"></i> Ver Panel de Estudiante
                         </a>
-                        <a href="register.php" class="link-volver">
+                      <!--   <a href="register.php" class="link-volver">
                             <i class="bi bi-arrow-left me-1"></i> Registrarse
-                        </a>
+                        </a> -->
                     </div>
 
                 </div>
