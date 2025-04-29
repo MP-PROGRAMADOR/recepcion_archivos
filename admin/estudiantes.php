@@ -21,7 +21,7 @@ try {
 // Obtener estudiantes con límite y offset (incluyendo país)
 try {
     $stmt = $pdo->prepare("
-        SELECT e.id, e.nombre_completo,e.anio_inicio_carrera,e.anio_fin_carrera,e.telefono, e.codigo_acceso, e.fecha_nacimiento, e.creado_en, 
+        SELECT e.id, e.nombre_completo,e.anio_inicio_carrera,e.anio_fin_carrera,e.telefono, e.codigo_acceso,e.foto_perfil, e.fecha_nacimiento, e.creado_en, 
                p.nombre AS pais, e.ruta_foto
         FROM estudiantes e
         INNER JOIN paises p ON e.pais_id = p.id
@@ -88,7 +88,7 @@ include_once("../componentes/sidebar.php");
         <div class="card shadow rounded-4">
             <div class="card-body">
                 <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label for="busqueda" class="form-label fw-bold">Buscar estudiante</label>
                         <input type="text" class="form-control" id="busqueda" placeholder="Buscar por nombre o país...">
                     </div>
@@ -126,7 +126,8 @@ include_once("../componentes/sidebar.php");
                                         <!-- Foto del perfil -->
                                         <td>
                                             <?php if (!empty($est['foto_perfil']) && file_exists('../php/upload/perfil/' . $est['foto_perfil'])): ?>
-                                                <img src="../php/upload/perfil/<?= htmlspecialchars($est['foto_perfil']) ?>" alt="Foto de Perfil" style="width: 50px; height: 50px; object-fit: cover;">
+                                                <img src="../php/upload/perfil/<?= htmlspecialchars($est['foto_perfil']) ?>" alt="Foto de Perfil"
+                                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
                                             <?php else: ?>
                                                 <span class="text-muted">NINGÚN PERFIL</span>
                                             <?php endif; ?>
