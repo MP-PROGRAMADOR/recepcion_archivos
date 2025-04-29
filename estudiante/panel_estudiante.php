@@ -13,7 +13,7 @@ include_once('../config/conexion.php');
 
 
 try {
-   
+
 
     // Consulta para verificar si ya tiene una foto de perfil
     $stmt = $pdo->prepare("SELECT foto_perfil FROM estudiantes WHERE id = ?");
@@ -32,7 +32,6 @@ try {
         header("Location: index.php");
         exit;
     }
-
 } catch (PDOException $e) {
     // Manejo de errores en caso de problemas de conexión o consulta
     echo "Error al verificar la foto de perfil: " . $e->getMessage();
@@ -45,7 +44,7 @@ try {
 
 
 
-    
+
 
 
 
@@ -55,7 +54,7 @@ try {
 
 
 // Consultar datos del estudiante
-$stmt = $pdo->prepare("SELECT e.id, e.codigo_acceso, e.nombre_completo, e.fecha_nacimiento, e.creado_en, e.ruta_foto, p.nombre AS pais 
+$stmt = $pdo->prepare("SELECT e.id, e.codigo_acceso, e.nombre_completo, e.fecha_nacimiento, e.creado_en, e.foto_perfil, p.nombre AS pais 
                        FROM estudiantes e 
                        INNER JOIN paises p ON e.pais_id = p.id 
                        WHERE e.codigo_acceso = ?");
@@ -224,7 +223,7 @@ $pasaporteExiste = $verifica->fetchColumn();
 
 
         if (isset($_SESSION['errores']) && is_array($_SESSION['errores'])):
-            ?>
+        ?>
             <div id="alerta-errores"
                 class="alert alert-danger alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-danger-subtle rounded-3"
                 role="alert" style="animation: fadeIn 0.5s ease-in-out;">
@@ -265,7 +264,7 @@ $pasaporteExiste = $verifica->fetchColumn();
                     }
                 }
             </style>
-            <?php
+        <?php
             unset($_SESSION['errores']); // Limpiar errores de la sesión
         endif;
         ?>
@@ -274,7 +273,7 @@ $pasaporteExiste = $verifica->fetchColumn();
 
 
         if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])):
-            ?>
+        ?>
             <div id="alerta-exito"
                 class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
                 role="alert" style="animation: fadeIn 0.5s ease-in-out;">
@@ -311,7 +310,7 @@ $pasaporteExiste = $verifica->fetchColumn();
                     }
                 }
             </style>
-            <?php
+        <?php
             unset($_SESSION['exito']); // Limpiar mensaje de éxito de la sesión
         endif;
         ?>
@@ -322,8 +321,18 @@ $pasaporteExiste = $verifica->fetchColumn();
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="info-box d-flex">
-                    <img src="../php/<?= htmlspecialchars($estudiante['ruta_foto']) ?>" alt="Foto"
-                        class="foto-estudiante me-3">
+
+
+
+                    <?php if (!empty($estudiante['foto_perfil'])): ?>
+                        <img src="../php/upload/perfil/<?= htmlspecialchars($estudiante['foto_perfil']) ?>" alt="Foto"
+                            class="foto-estudiante me-3">
+                    <?php else: ?>
+                        <span class="text-muted">No se ha subido ningún perfil</span>
+                    <?php endif; ?>
+
+
+
                     <div class="w-100">
                         <div class="mb-2">
                             <label class="form-label">Código de acceso:</label>
@@ -376,7 +385,7 @@ $pasaporteExiste = $verifica->fetchColumn();
                                                 $ext = pathinfo($archivo['archivo_url'], PATHINFO_EXTENSION);
                                                 $esImagen = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                                                 $esPDF = strtolower($ext) === 'pdf';
-                                                ?>
+                                            ?>
                                                 <tr>
                                                     <td><span
                                                             class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span>
@@ -486,7 +495,7 @@ $pasaporteExiste = $verifica->fetchColumn();
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("DOMContentLoaded", function() {
                 const contenedor = document.getElementById("formularioPasaporteNota");
                 const eliminarBtn = document.getElementById("eliminarBtn");
                 const btnSubirPasaporte = document.getElementById("btnSubirPasaporte");
@@ -500,7 +509,7 @@ $pasaporteExiste = $verifica->fetchColumn();
 
                 // Eliminar formulario
                 if (eliminarBtn) {
-                    eliminarBtn.addEventListener("click", function () {
+                    eliminarBtn.addEventListener("click", function() {
                         contenedor.innerHTML = "";
                         eliminarBtn.style.display = "none";
                     });
@@ -528,7 +537,7 @@ $pasaporteExiste = $verifica->fetchColumn();
 
                 // Botón subir pasaporte
                 if (btnSubirPasaporte) {
-                    btnSubirPasaporte.addEventListener("click", function () {
+                    btnSubirPasaporte.addEventListener("click", function() {
                         cargarFormulario('formulario_pasaporte.php');
 
                     });
@@ -536,13 +545,13 @@ $pasaporteExiste = $verifica->fetchColumn();
 
                 // Botón subir notas
                 if (btnSubirNotas) {
-                    btnSubirNotas.addEventListener("click", function () {
+                    btnSubirNotas.addEventListener("click", function() {
                         cargarFormulario('formulario_notas.php');
                     });
                 }
                 //boton actualizar_pasaporte
                 if (btnActualizarPasaporte) {
-                    btnActualizarPasaporte.addEventListener("click", function () {
+                    btnActualizarPasaporte.addEventListener("click", function() {
                         cargarFormulario('formulario_actualizar_pasaporte.php');
                     });
                 }
