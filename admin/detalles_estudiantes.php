@@ -81,8 +81,8 @@ try {
         <div class="cv-section mb-4 p-3 rounded bg-light">
             <div class="row align-items-center">
                 <div class="col-md-3 text-center mb-3 mb-md-0">
-                    <?php if (!empty($estudiante['foto_perfil']) && file_exists("../php/" . $estudiante['foto_perfil'])): ?>
-                        <img src="../php/<?= htmlspecialchars($estudiante['foto_perfil']) ?>" class="cv-photo rounded-circle border shadow-sm" style="width: 120px; height: 120px; object-fit: cover;" alt="Foto">
+                    <?php if (!empty($estudiante['foto_perfil']) && file_exists("../php/upload/perfil/" . $estudiante['foto_perfil'])): ?>
+                        <img src="../php/upload/perfil/<?= htmlspecialchars($estudiante['foto_perfil']) ?>" class="cv-photo rounded-circle border shadow-sm" style="width: 120px; height: 120px; object-fit: cover;" alt="Foto">
                     <?php else: ?>
                         <div class="text-muted">
                             <i class="bi bi-person-circle fs-1"></i><br>Sin foto
