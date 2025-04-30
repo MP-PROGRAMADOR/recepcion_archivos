@@ -191,9 +191,9 @@ foreach ($idiomas as $idioma) {
         $insertStmt->bindParam(':codigo_2', $idioma[1]);
         $insertStmt->bindParam(':codigo_3', $idioma[2]);
         $insertStmt->execute();
-        echo "Idioma '{$idioma[0]}' insertado exitosamente.<br>";
+        //echo "Idioma '{$idioma[0]}' insertado exitosamente.<br>";
     } else {
-        echo "El idioma '{$idioma[0]}' ya existe.<br>";
+       // echo "El idioma '{$idioma[0]}' ya existe.<br>";
     }
 }
  
@@ -204,7 +204,6 @@ foreach ($idiomas as $idioma) {
 try {
     $stmt = $pdo->prepare("        SELECT 
             e.nombre_completo AS estudiante, 
-            e.duracion_idioma AS meses, 
             i.nombre AS idioma,  
             u.nombre AS universidad, 
             c.nombre AS ciudad, 
