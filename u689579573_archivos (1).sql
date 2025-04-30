@@ -7,6 +7,13 @@
 -- Versión del servidor: 10.11.10-MariaDB
 -- Versión de PHP: 7.2.34
 
+
+drop database if exists recepcion_archivo;
+
+create DATABASE recepcion_archivo;
+use recepcion_archivo;
+
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -123,7 +130,9 @@ CREATE TABLE `estudiantes` (
   `telefono` varchar(20) DEFAULT NULL,
   `foto_perfil` varchar(255) DEFAULT NULL,
   `ruta_foto` varchar(255) DEFAULT NULL,
-  `creado_en` timestamp NULL DEFAULT current_timestamp()
+  `creado_en` timestamp NULL DEFAULT current_timestamp(),
+  `idioma` varchar(255) DEFAULT NULL,
+  `meses_idioma` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --

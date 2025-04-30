@@ -16,7 +16,7 @@ $idiomas = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h5 class="mb-0"><i class="bi bi-translate me-2"></i>Registro de Idioma</h5>
     </div>
     <div class="card-body bg-light">
-        <form action="../php/guardar_idioma.php" method="POST" class="needs-validation" novalidate>
+        <form action="../php/../php/editar_idioma.php" method="POST" class="needs-validation" novalidate>
             <div class="row g-3">
 
                 <!-- Idioma (desde base de datos) -->
@@ -24,7 +24,7 @@ $idiomas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <label for="idioma_id" class="form-label fw-semibold">Idioma</label>
                     <div class="input-group has-validation">
                         <span class="input-group-text bg-primary text-white"><i class="bi bi-flag-fill"></i></span>
-                        <select name="idioma_id" id="idioma_id" class="form-select" required>
+                        <select name="idioma" id="idioma_id" class="form-select" required>
                             <option value="" selected disabled>Seleccione un idioma</option>
                             <?php foreach ($idiomas as $idioma): ?>
                                 <option value="<?= htmlspecialchars($idioma['id']) ?>">

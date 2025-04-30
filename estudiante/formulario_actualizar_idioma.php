@@ -43,7 +43,7 @@ $idiomas = $stmtIdiomas->fetchAll(PDO::FETCH_ASSOC);
                     <label for="idioma_id" class="form-label fw-semibold">Idioma</label>
                     <div class="input-group has-validation">
                         <span class="input-group-text bg-warning text-dark"><i class="bi bi-flag-fill"></i></span>
-                        <select name="idioma_id" id="idioma_id" class="form-select" required>
+                        <select name="idioma" id="idioma_id" class="form-select" required>
                             <option value="" disabled>Seleccione un idioma</option>
                             <?php foreach ($idiomas as $idioma): ?>
                                 <option value="<?= htmlspecialchars($idioma['id']) ?>" <?= $idioma['id'] == $registro['idioma_id'] ? 'selected' : '' ?>>

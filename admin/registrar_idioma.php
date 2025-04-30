@@ -5,14 +5,12 @@ include_once("../componentes/sidebar.php");
 
 <main class="content" id="mainContent">
     <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
-    <div class="container mt-4">
+    <div class="container  col-md-6  mt-4">
 
-        <!-- INICIO DE LA ALERTA DE ERRORES -->
+        <!-- ALERTA PERSONALIZADA -->
         <?php include_once("../componentes/alerta.php"); ?>
-        <!-- FIN DE LA ALERTA -->
 
         <div class="card shadow rounded-4">
-            <!-- Encabezado con ícono alineado -->
             <div class="card-header bg-primary text-white">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-translate fs-4 me-2"></i>
@@ -20,15 +18,15 @@ include_once("../componentes/sidebar.php");
                 </div>
             </div>
 
-            <div class="card-body">
-                <form action="../php/guardar_idioma.php" method="POST" novalidate>
+            <div class="card-body ">
+                <form action="../php/guardar_idioma.php" class="p-4" method="POST" novalidate>
                     <div class="row g-3">
-                        <div class="col-md-6">
+                      
                             <label for="nombre_idioma" class="form-label fw-bold">
-                                <i class="bi bi-globe2 me-1 text-secondary"></i>Nombre del idioma
+                                <i class="bi bi-flag-fill me-1 text-secondary"></i>Nombre del idioma
                             </label>
-                            <input type="text" name="nombre" class="form-control" placeholder="Ej: Español" required>
-                        </div> 
+                            <input type="text" id="nombre_idioma" name="nombre" class="form-control" placeholder="Ej: Español" required>
+                        
                     </div>
 
                     <div class="d-flex justify-content-end mt-4">
