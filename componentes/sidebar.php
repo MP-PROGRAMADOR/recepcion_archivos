@@ -69,7 +69,7 @@
 
     <li class="nav-item mb-2">
       <a href="../admin/pasaportes.php" class="nav-link text-white">
-        <i class="bi bi-passport-fill me-2"></i> Pasaportes
+      <i class="fas fa-passport"></i> Pasaporte
       </a>
     </li>
 
