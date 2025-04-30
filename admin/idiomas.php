@@ -6,8 +6,8 @@ include_once("../componentes/header.php");
 try {
     $stmt = $pdo->prepare("        SELECT 
             e.nombre_completo AS estudiante, 
-            i.nombre AS idioma, 
-            i.meses_duracion AS duracion_idioma, 
+            e.duracion_idioma AS meses, 
+            i.nombre AS idioma,  
             u.nombre AS universidad, 
             c.nombre AS ciudad, 
             p.nombre AS pais
@@ -58,7 +58,7 @@ include_once("../componentes/sidebar.php");
                                     <tr>
                                         <td><?= htmlspecialchars($est['estudiante']) ?></td>
                                         <td><?= htmlspecialchars($est['idioma']) ?></td>
-                                        <td><?= htmlspecialchars($est['duracion_idioma']) ?> meses</td>
+                                        <td><?= htmlspecialchars($est['meses']) ?> meses</td>
                                         <td><?= htmlspecialchars($est['universidad']) ?></td>
                                         <td><?= htmlspecialchars($est['ciudad']) ?></td>
                                         <td><?= htmlspecialchars($est['pais']) ?></td>
