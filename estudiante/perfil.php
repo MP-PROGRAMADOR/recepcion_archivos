@@ -1,10 +1,13 @@
 <?php
 session_start();
-if (!isset($_SESSION['estudiante'])) {
+/* if (!isset($_SESSION['estudiante'])) {
     header("Location: index.php");
     exit();
-}
+} */
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -29,8 +32,8 @@ if (!isset($_SESSION['estudiante'])) {
       height: 100%;
       background: #f2f4f8;
       font-family: 'Outfit', sans-serif;
-      overflow: hidden;
-      position: relative;
+      overflow-x: hidden;
+      /* Evita el desbordamiento horizontal */
     }
 
     canvas {
@@ -43,7 +46,7 @@ if (!isset($_SESSION['estudiante'])) {
     .form-container {
       position: relative;
       z-index: 2;
-      max-width: 450px;
+      /* max-width: 450px; */
       width: 100%;
       background: #ffffff;
       padding: 2.2rem;
@@ -99,8 +102,13 @@ if (!isset($_SESSION['estudiante'])) {
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     label {
@@ -124,16 +132,29 @@ if (!isset($_SESSION['estudiante'])) {
       font-size: 0.9rem;
       color: #6c757d !important;
     }
+
+    @media (max-width: 768px) {
+  .container {
+    min-height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto; /* <-- Habilita scroll vertical */
+    padding: 1rem;
+  }
+
+  .form-container {
+    max-height: none; /* Evita cortar el contenido */
+  }
+}
+
   </style>
 </head>
 
-<body>
+<body >
 
   <canvas id="bgCanvas"></canvas>
 
   <div class="container min-vh-100 d-flex justify-content-center align-items-center">
     <div class="form-container">
-
       <div class="text-center mb-4">
         <i class="bi bi-person-circle fs-1 text-primary"></i>
         <h2 class="mt-2">Subir Foto de Perfil</h2>
@@ -147,7 +168,6 @@ if (!isset($_SESSION['estudiante'])) {
       </div>
 
       <form id="uploadForm" action="../php/subir_foto.php" method="POST" enctype="multipart/form-data" novalidate>
-
         <!-- Campo Correo Electrónico -->
         <div class="mb-3">
           <label for="correo" class="form-label">
@@ -210,7 +230,6 @@ if (!isset($_SESSION['estudiante'])) {
 
     </div>
   </div>
-
   <!-- Validación Bootstrap y Preview -->
   <script>
     (() => {
@@ -297,7 +316,7 @@ if (!isset($_SESSION['estudiante'])) {
   </script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const alert = document.getElementById('alert-message');
       if (alert) {
         setTimeout(() => {
