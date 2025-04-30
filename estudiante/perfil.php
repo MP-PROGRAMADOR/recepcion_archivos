@@ -46,7 +46,7 @@ session_start();
     .form-container {
       position: relative;
       z-index: 2;
-      /* max-width: 450px; */
+      max-width: 450px;
       width: 100%;
       background: #ffffff;
       padding: 2.2rem;

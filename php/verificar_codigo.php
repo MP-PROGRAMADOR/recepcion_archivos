@@ -1,5 +1,5 @@
 <?php
-require_once '../config/conexion.php'; // Conexión PDO
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $codigo = trim($_POST['codigo']);
@@ -10,16 +10,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($estudiante) {
-      session_start();
       $_SESSION['estudiante'] = $estudiante;
       $_SESSION['id'] = $estudiante['id'];
       header("Location: ../estudiante/panel_estudiante.php");
       exit();
     } else {
-      echo "<script>alert('Código inválido'); window.location.href='../estudiante/index.php';</script>";
+      $_SESSION['error'] = "El código de acceso es incorrecto.";
+      header("Location: ../estudiante/index.php");
+      exit();
     }
   } catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
+    $_SESSION['error'] = "Error del sistema: " . $e->getMessage();
+    header("Location: ../estudiante/index.php");
+    exit();
   }
 }
+
 ?>

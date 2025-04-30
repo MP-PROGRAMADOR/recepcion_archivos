@@ -185,6 +185,16 @@ try {
             <i class="bi bi-upload me-1"></i> Subir Notas
           </a>
         </li>
+        <li class="nav-item">
+          <a id="btnRegistrarIdioma" class="nav-link text-white" href="#">
+            <i class="bi bi-upload me-1"></i> Registrar Idioma
+          </a>
+        </li>
+      <!--   <li class="nav-item">
+          <a id="btnActualizarIdioma" class="nav-link text-white" href="#">
+            <i class="bi bi-upload me-1"></i> Actualizar Idioma
+          </a>
+        </li> -->
 
         <li class="nav-item">
           <a id="btnActualizarContacto" class="nav-link text-white" href="#">
@@ -446,6 +456,18 @@ try {
                 if (btnActualizarPerfil) {
                     btnActualizarPerfil.addEventListener("click", function() {
                         cargarFormulario('formulario_actualizar_perfil.php');
+                    });
+                }
+                //boton actuRegistrarIdioma
+                if (btnRegistrarIdioma) {
+                    btnRegistrarIdioma.addEventListener("click", function() {
+                        cargarFormulario('formulario_registrar_idioma.php');
+                    });
+                }
+                //boton actuActualizarIdioma
+                if (btnActualizarIdioma) {
+                    btnActualizarIdioma.addEventListener("click", function() {
+                        cargarFormulario('formulario_actualizar_idioma.php');
                     });
                 }
 
