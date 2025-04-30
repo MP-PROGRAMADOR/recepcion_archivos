@@ -1,4 +1,5 @@
 <?php
+require_once '../config/conexion.php'; // Conexión PDO
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -15,12 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       header("Location: ../estudiante/panel_estudiante.php");
       exit();
     } else {
-      $_SESSION['error'] = "El código de acceso es incorrecto.";
+      $_SESSION['errores'] = "El código de acceso es incorrecto.";
       header("Location: ../estudiante/index.php");
       exit();
     }
   } catch (Exception $e) {
-    $_SESSION['error'] = "Error del sistema: " . $e->getMessage();
+    $_SESSION['errores'] = "Error del sistema: " . $e->getMessage();
     header("Location: ../estudiante/index.php");
     exit();
   }

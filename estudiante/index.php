@@ -63,7 +63,7 @@
 <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
 
     <div class="container-login">
-
+        <?php include_once('alerta.php'); ?>
         <!-- Card de imagen superior -->
         <div class="card-img-top">
             <img src="../config/img/admin_alumno.jpg" alt="Imagen encabezado">
