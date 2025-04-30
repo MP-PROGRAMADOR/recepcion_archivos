@@ -1,16 +1,14 @@
 <?php
-// Verificar si el usuario está autenticado
+// No debe haber NADA antes de <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 if (!isset($_SESSION['usuario_id'])) {
-    header("Location: ../index.php"); // Ruta al login
+    header("Location: ../index.php");
     exit;
 }
 
-
-
-if (session_status() == PHP_SESSION_NONE) {
-  session_start();
-}
- 
 require_once '../config/conexion.php';
 
 $query = "

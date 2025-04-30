@@ -1,8 +1,4 @@
-<?php
-if (session_status() == PHP_SESSION_NONE) {
-  session_start();
-}
-?>
+
 <!-- Sidebar -->
 <aside class="sidebar d-md-block" id="sidebar">
   <!-- Botón cerrar en móvil -->
