@@ -6,6 +6,18 @@ $sql = "SELECT id, nombre FROM idiomas";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $idiomas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+session_start();
+// Validar sesión
+if (!isset($_SESSION['estudiante'], $_SESSION['id'])) {
+    header("Location: index.php");
+    exit;
+}
+
+$id_estudiante = $_SESSION['id'];
+
+
 ?>
 
 
@@ -22,9 +34,10 @@ $idiomas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <!-- Idioma (desde base de datos) -->
                 <div class="col-md-6">
                     <label for="idioma_id" class="form-label fw-semibold">Idioma</label>
+                    <input type="hidden" name="id" value="<?=    $id_estudiante;    ?>">
                     <div class="input-group has-validation">
                         <span class="input-group-text bg-primary text-white"><i class="bi bi-flag-fill"></i></span>
-                        <select name="idioma" id="idioma_id" class="form-select" required>
+                        <select name="idioma_id" id="idioma_id" class="form-select" required>
                             <option value="" selected disabled>Seleccione un idioma</option>
                             <?php foreach ($idiomas as $idioma): ?>
                                 <option value="<?= htmlspecialchars($idioma['id']) ?>">

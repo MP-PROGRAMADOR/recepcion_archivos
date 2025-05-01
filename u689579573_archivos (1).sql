@@ -150,8 +150,7 @@ INSERT INTO `estudiantes` (`id`, `nombre_completo`, `codigo_acceso`, `fecha_naci
 
 CREATE TABLE `idiomas` (
   `id` int(11) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
-  `meses_duracion` int(11) NOT NULL
+  `nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
