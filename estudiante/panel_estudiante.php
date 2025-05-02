@@ -31,11 +31,27 @@ try {
     }
 
     // Obtener datos del estudiante
-    $stmt = $pdo->prepare(" SELECT e.id, e.codigo_acceso, e.nombre_completo, e.fecha_nacimiento, e.creado_en, e.email, e.telefono, e.foto_perfil, p.nombre AS pais
-        FROM estudiantes e
-        INNER JOIN paises p ON e.pais_id = p.id
-        WHERE e.codigo_acceso = ?
+    $stmt = $pdo->prepare("SELECT 
+    e.id, 
+    e.codigo_acceso, 
+    e.nombre_completo, 
+    e.fecha_nacimiento, 
+    e.creado_en, 
+    e.email, 
+    e.telefono, 
+    e.foto_perfil, 
+    p.nombre AS pais,
+    c.nombre AS ciudad
+FROM estudiantes e
+INNER JOIN paises p ON e.pais_id = p.id
+INNER JOIN ciudades c ON e.ciudad_id = c.id
+WHERE e.codigo_acceso = ?;
     ");
+
+
+
+
+
     $stmt->execute([$codigo_acceso]);
     $estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -257,6 +273,10 @@ try {
                 <div class="mb-2">
                     <label class="form-label">País:</label>
                     <input type="text" class="form-control" value="<?= htmlspecialchars($estudiante['pais']) ?>" disabled>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Ciudad:</label>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars($estudiante['ciudad']) ?>" disabled>
                 </div>
                 <div>
                     <label class="form-label">Registrado en:</label>

@@ -13,13 +13,13 @@ try {
         SELECT 
             e.id, e.nombre_completo, e.codigo_acceso, e.fecha_nacimiento,
             e.anio_inicio_carrera, e.anio_fin_carrera, e.telefono,
-            e.creado_en, e.pais_id, e.email, e.ciudad_id,
+            e.creado_en, e.pais_id, e.email, e.ciudad_id, e.meses_idioma,
             e.universidad_id, e.idioma_id, e.foto_perfil,
             p.nombre AS nombre_pais,
             c.nombre AS nombre_ciudad,
             u.nombre AS nombre_universidad,
-            i.nombre AS nombre_idioma,
-            i.meses_duracion AS meses_duracion_idioma
+            i.nombre AS nombre_idioma
+           
         FROM estudiantes e
         LEFT JOIN paises p ON e.pais_id = p.id
         LEFT JOIN ciudades c ON e.ciudad_id = c.id
@@ -115,8 +115,8 @@ try {
 
                     <?php if (!empty($estudiante['nombre_idioma'])): ?>
                         <p><i class="bi bi-translate me-1 text-secondary"></i><strong>Idioma:</strong> <?= $estudiante['nombre_idioma'] ?></p>
-                        <p><i class="bi bi-clock-history me-1 text-secondary"></i><strong>Duración Idioma:</strong> <?= $estudiante['meses_duracion_idioma'] ?> meses</p>
-                        <p><i class="bi bi-patch-check me-1 text-secondary"></i><strong>Total (incluyendo idioma):</strong> <?= number_format($años + ($estudiante['meses_duracion_idioma'] / 12), 2) ?> años</p>
+                        <p><i class="bi bi-clock-history me-1 text-secondary"></i><strong>Duración Idioma:</strong> <?= $estudiante['meses_idioma'] ?> meses</p>
+                        <p><i class="bi bi-patch-check me-1 text-secondary"></i><strong>Total (incluyendo idioma):</strong> <?= number_format($años + ($estudiante['meses_idioma'] / 12), 2) ?> años</p>
                     <?php else: ?>
                         <p><i class="bi bi-x-circle me-1 text-secondary"></i><strong>Idioma:</strong> No registrado</p>
                     <?php endif; ?>
