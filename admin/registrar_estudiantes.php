@@ -80,7 +80,8 @@ try {
                                     <option value="" disabled selected>Selecciona tu país</option>
                                     <?php foreach ($paises as $pais): ?>
                                         <option value="<?= htmlspecialchars($pais['id']) ?>">
-                                            <?= htmlspecialchars($pais['nombre']) ?></option>
+                                            <?= htmlspecialchars($pais['nombre']) ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="valid-feedback">¡Correcto!</div>
@@ -124,8 +125,11 @@ try {
                                 <label for="tipo_cuenta" class="form-label fw-bold">Tipo de Cuenta</label>
                                 <div class="input-group has-validation">
                                     <span class="input-group-text"><i class="bi bi-wallet2"></i></span>
-                                    <input type="text" id="tipo_cuenta" name="tipo_cuenta" class="form-control" required
-                                        placeholder="Ej: Ahorros, Corriente">
+                                    <select id="tipo_cuenta" name="tipo_cuenta" class="form-select" required>
+                                        <option value="" disabled selected>Selecciona tipo de cuenta</option>
+                                        <option value="departamental"> Departamental</option>
+                                        <option value="propia"> Propia</option>
+                                    </select>
                                     <div class="valid-feedback">¡Correcto!</div>
                                     <div class="invalid-feedback">Por favor, indica el tipo de cuenta.</div>
                                 </div>
@@ -136,32 +140,28 @@ try {
                                 <label for="banco" class="form-label fw-bold">Banco</label>
                                 <div class="input-group has-validation">
                                     <span class="input-group-text"><i class="bi bi-bank2"></i></span>
-                                    <input type="text" id="banco" name="banco" class="form-control" required
-                                        placeholder="Ej: Banco Nacional">
+
+                                    <select id="banco" name="banco" class="form-select" required>
+                                        <option value="" disabled selected>Selecciona tipo de banco</option>
+                                        <option value="ecobank"> ECOBANK</option>
+                                        <option value="sgbge"> SGBGE</option>
+                                        <option value="cceibank"> CCEIBANK</option>
+                                        <option value="embajada"> EMBAJADA</option>
+                                    </select>
                                     <div class="valid-feedback">¡Correcto!</div>
                                     <div class="invalid-feedback">Por favor, ingresa el nombre del banco.</div>
                                 </div>
                             </div>
-
-                            <!-- Número de Cuenta -->
-                            <div class="col-md-6 mb-2">
-                                <label for="numero_cuenta" class="form-label fw-bold">Número de Cuenta</label>
-                                <div class="input-group has-validation">
-                                    <span class="input-group-text"><i class="bi bi-hash"></i></span>
-                                    <input type="text" id="numero_cuenta" name="numero_cuenta" class="form-control"
-                                        required placeholder="Ej: 1234567890">
-                                    <div class="valid-feedback">¡Correcto!</div>
-                                    <div class="invalid-feedback">Por favor, ingresa el número de cuenta.</div>
-                                </div>
-                            </div>
-
                             <!-- Tarjeta VISA -->
                             <div class="col-md-6 mb-2">
                                 <label for="tarjeta_visa" class="form-label fw-bold">Tarjeta VISA (opcional)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
-                                    <input type="text" id="tarjeta_visa" name="tarjeta_visa" class="form-control"
-                                        placeholder="Ej: 4111 1111 1111 1111">
+                                    <select id="tarjeta_visa" name="tarjeta_visa" class="form-select" required>
+                                        <option value="" disabled selected>¿Tiene targeta?</option>
+                                        <option value="si"> SÍ</option>
+                                        <option value="no"> No</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -174,6 +174,31 @@ try {
                                     <input type="date" id="fecha_caducidad_tarjeta" name="fecha_caducidad_tarjeta"
                                         class="form-control">
                                 </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Número de Cuenta -->
+
+                        <div class="col-md-6 mb-2">
+                            <label for="tiene_cuenta" class="form-label fw-bold">Número de Cuenta</label>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                                <select id="tiene_cuenta" name="tiene_cuenta" class="form-select" required>
+                                    <option value="" disabled selected>¿Tiene cuanta?</option>
+                                    <option value="si">SÍ</option>
+                                    <option value="no">NO</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="numero_cuenta" class="form-label fw-bold">Número de Cuenta</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-hash"></i></span>
+                                <input type="text" id="numero_cuenta" name="numero_cuenta" class="form-control"
+                                    placeholder="Ej: 1234567890" disabled style="display: none;">
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, ingresa el número de cuenta.</div>
                             </div>
                         </div>
 
@@ -252,4 +277,22 @@ try {
         })
     })()
 </script>
+
+<script>
+    document.getElementById('tiene_cuenta').addEventListener('change', function () {
+        const inputCuenta = document.getElementById('numero_cuenta');
+
+        if (this.value === 'si') {
+            inputCuenta.disabled = false;
+            inputCuenta.style.display = 'block';
+            inputCuenta.setAttribute('name', 'numero_cuenta'); // Asegura que se envíe
+        } else {
+            inputCuenta.disabled = true;
+            inputCuenta.style.display = 'none';
+            inputCuenta.removeAttribute('name'); // Así no se envía al backend
+            inputCuenta.value = ''; // Limpia el valor si hubiera algo escrito
+        }
+    });
+</script>
+
 <?php include_once("../componentes/footer.php"); ?>
