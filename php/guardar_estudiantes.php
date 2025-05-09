@@ -100,25 +100,85 @@ try {
         ':id' => $estudiante_id
     ]);
 
+/* ----------GUARDAR DATOS BANCARIOS--------------- */
+
+ 
+// Función para sanitizar
+function limpiar($dato) {
+    return htmlspecialchars(trim($dato));
+}
+
+ 
+$tiene_cuenta = $_POST['tiene_cuenta'] ?? null;
+
+if ($tiene_cuenta === 'si') {
+    $tipo_cuenta = limpiar($_POST['tipo_cuenta'] ?? '');
+    $banco = limpiar($_POST['banco'] ?? '');
+    $tiene_cuenta_numero = $_POST['tiene_cuenta_numero'] ?? '';
+
+    if (empty($tipo_cuenta) || empty($banco) || empty($tiene_cuenta_numero)) {
+        exit('Faltan campos obligatorios.');
+    }
+
+    if ($tiene_cuenta_numero === 'si') {
+        $numero_cuenta = limpiar($_POST['numero_cuenta'] ?? '');
+        if (empty($numero_cuenta)) {
+            exit('El número de cuenta es obligatorio.');
+        }
+
+        // Datos opcionales
+        $tarjeta_visa = $_POST['tarjeta_visa'] ?? null;
+        $fecha_caducidad_tarjeta = null;
+
+        if ($tarjeta_visa === 'si') {
+            $fecha_caducidad_tarjeta = $_POST['fecha_caducidad_tarjeta'] ?? null;
+            if (empty($fecha_caducidad_tarjeta)) {
+                exit('La fecha de caducidad es obligatoria si tiene tarjeta.');
+            }
+        } else {
+            $tarjeta_visa = null; // Guardar NULL explícitamente
+        }
+
+        // Ejecutar INSERT
+        $sql = "INSERT INTO cuentas_bancarias 
+                (estudiante_id, tipo_cuenta, banco, numero_cuenta, tarjeta_visa, fecha_caducidad_tarjeta)
+                VALUES (:estudiante_id, :tipo_cuenta, :banco, :numero_cuenta, :tarjeta_visa, :fecha_caducidad_tarjeta)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':estudiante_id' => $estudiante_id,
+            ':tipo_cuenta' => $tipo_cuenta,
+            ':banco' => $banco,
+            ':numero_cuenta' => $numero_cuenta,
+            ':tarjeta_visa' => $tarjeta_visa,
+            ':fecha_caducidad_tarjeta' => $fecha_caducidad_tarjeta
+        ]);
+ 
+    }
+}
+
+
     // Confirmar la transacción
     $pdo->commit();
 
     // Mensaje de éxito
     $_SESSION['mensaje'] = "¡Estudiante registrado exitosamente!";
     $_SESSION['tipo_mensaje'] = "success";
-
+    // Redirigir siempre al listado de estudiantes
+    header("Location: ../admin/estudiantes.php");
+    exit();
+    
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-
+    
     // Mensaje de error
     $_SESSION['mensaje'] = "Error: " . $e->getMessage();
     $_SESSION['tipo_mensaje'] = "danger";
+    // Redirigir siempre al listado de estudiantes
+    header("Location: ../admin/registrar_estudiantes.php");
+    exit();
 }
 
-// Redirigir siempre al listado de estudiantes
-header("Location: ../estudiante/panel_estudiante.php");
-exit();
 ?>

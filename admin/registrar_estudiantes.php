@@ -9,7 +9,7 @@ try {
     $stmt->execute();
     $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "<script>Swal.fire('Error', 'Error al cargar los países: " . $e->getMessage() . "', 'error');</script>";
+   // echo "<script>Swal.fire('Error', 'Error al cargar los países: " . $e->getMessage() . "', 'error');</script>";
     $paises = [];
 }
 ?>
@@ -119,90 +119,20 @@ try {
                     <h5 class="mb-3 text-success"><i class="bi bi-credit-card-2-front-fill me-2"></i>Información de
                         Cuenta Bancaria</h5>
 
-                    <div class="row g-3">
-                        <!-- Tipo de Cuenta -->
-                        <div class="col-md-6 mb-2">
-                            <label for="tipo_cuenta" class="form-label fw-bold">Tipo de Cuenta</label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text"><i class="bi bi-wallet2"></i></span>
-                                <select id="tipo_cuenta" name="tipo_cuenta" class="form-select" required>
-                                    <option value="" disabled selected>Selecciona tipo de cuenta</option>
-                                    <option value="departamental"> Departamental</option>
-                                    <option value="propia"> Propia</option>
-                                </select>
-                                <div class="valid-feedback">¡Correcto!</div>
-                                <div class="invalid-feedback">Por favor, indica el tipo de cuenta.</div>
-                            </div>
-                        </div>
-
-                        <!-- Banco -->
-                        <div class="col-md-6 mb-2">
-                            <label for="banco" class="form-label fw-bold">Banco</label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text"><i class="bi bi-bank2"></i></span>
-
-                                <select id="banco" name="banco" class="form-select" required>
-                                    <option value="" disabled selected>Selecciona tipo de banco</option>
-                                    <option value="ecobank"> ECOBANK</option>
-                                    <option value="sgbge"> SGBGE</option>
-                                    <option value="cceibank"> CCEIBANK</option>
-                                    <option value="embajada"> EMBAJADA</option>
-                                </select>
-                                <div class="valid-feedback">¡Correcto!</div>
-                                <div class="invalid-feedback">Por favor, ingresa el nombre del banco.</div>
-                            </div>
-                        </div>
-                        <!-- Tarjeta VISA -->
-                        <div class="col-md-6 mb-2">
-                            <label for="tarjeta_visa" class="form-label fw-bold">Tarjeta VISA (opcional)</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
-                                <select id="tarjeta_visa" name="tarjeta_visa" class="form-select" required>
-                                    <option value="" disabled selected>¿Tiene targeta?</option>
-                                    <option value="si"> SÍ</option>
-                                    <option value="no"> No</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Fecha de Caducidad de la Tarjeta -->
-                        <div class="col-md-6 mb-2">
-                            <label for="fecha_caducidad_tarjeta" class="form-label fw-bold">Fecha de Caducidad
-                                (opcional)</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-calendar-check-fill"></i></span>
-                                <input type="date" id="fecha_caducidad_tarjeta" name="fecha_caducidad_tarjeta"
-                                    class="form-control">
-                            </div>
-                        </div>
-                        <!-- Número de Cuenta -->
-                        <div class="col-md-6 mb-2">
-                            <label for="tiene_cuenta" class="form-label fw-bold">Número de Cuenta</label>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
-                                <select id="tiene_cuenta" name="tiene_cuenta" class="form-select" required>
-                                    <option value="" disabled selected>¿Tiene cuanta?</option>
-                                    <option value="si">SÍ</option>
-                                    <option value="no">NO</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label for="numero_cuenta" class="form-label fw-bold">Número de Cuenta</label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text"><i class="bi bi-hash"></i></span>
-                                <input type="text" id="numero_cuenta" name="numero_cuenta" class="form-control"
-                                    placeholder="Ej: 1234567890" disabled style="display: none;">
-                                <div class="valid-feedback">¡Correcto!</div>
-                                <div class="invalid-feedback">Por favor, ingresa el número de cuenta.</div>
-                            </div>
-                        </div>
+                    <div id="form-container" class="row g-3"> 
+                            <!-- Campo inicial: ¿Tiene cuenta? -->
+                            <div class="col-md-6 mb-2">
+                                <label for="tiene_cuenta" class="form-label fw-bold">¿Tiene cuenta?</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="bi bi-question-circle"></i></span>
+                                    <select id="tiene_cuenta" name="tiene_cuenta" class="form-select" required>
+                                        <option value="" disabled selected>¿Tiene cuenta?</option>
+                                        <option value="si">SÍ</option>
+                                        <option value="no">NO</option>
+                                    </select>
+                                </div>
+                            </div> 
                     </div>
-
-
-
-
-
                     <!-- Botones -->
                     <div class="d-flex justify-content-between mb-4 p-4">
                         <button type="submit" class="btn btn-success me-2">
@@ -237,7 +167,7 @@ try {
                 })
                 .catch(error => {
                     console.error('Error al cargar las ciudades:', error);
-                    Swal.fire('Error', 'Ocurrió un error al intentar cargar las ciudades.', 'error');
+                    Swal.fire('Error', 'No hay ciudades disponibles para este País.', 'error');
                 });
         }
     });
@@ -257,7 +187,7 @@ try {
                 })
                 .catch(error => {
                     console.error('Error al cargar las universidades:', error);
-                    Swal.fire('Error', 'Ocurrió un error al intentar cargar las universidades.', 'error');
+                    Swal.fire('Error', 'NO hay universidades disponibles para esta ciudad.', 'error');
                 });
         }
     });
@@ -278,19 +208,183 @@ try {
     })()
 </script>
 
-<script>
-    document.getElementById('tiene_cuenta').addEventListener('change', function () {
-        const inputCuenta = document.getElementById('numero_cuenta');
+<!-- informacion de la cuenta -->
 
-        if (this.value === 'si') {
-            inputCuenta.disabled = false;
-            inputCuenta.style.display = 'block';
-            inputCuenta.setAttribute('name', 'numero_cuenta'); // Asegura que se envíe
-        } else {
-            inputCuenta.disabled = true;
-            inputCuenta.style.display = 'none';
-            inputCuenta.removeAttribute('name'); // Así no se envía al backend
-            inputCuenta.value = ''; // Limpia el valor si hubiera algo escrito
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const formContainer = document.getElementById('form-container');
+
+        const icon = (className) => `<span class="input-group-text"><i class="bi ${className}"></i></span>`;
+
+        // Escucha inicial
+        document.getElementById('tiene_cuenta').addEventListener('change', function () {
+            clearFrom('tipo_cuenta');
+            if (this.value === 'si') addTipoCuenta();
+        });
+
+        function addTipoCuenta() {
+            if (document.getElementById('tipo_cuenta')) return;
+
+            const div = document.createElement('div');
+            div.className = 'col-md-6 mb-2';
+            div.id = 'grupo_tipo_cuenta';
+            div.innerHTML = `
+            <label for="tipo_cuenta" class="form-label fw-bold">Tipo de Cuenta</label>
+            <div class="input-group">
+                ${icon('bi-wallet2')}
+                <select id="tipo_cuenta" name="tipo_cuenta" class="form-select" required>
+                    <option value="" disabled selected>Selecciona tipo de cuenta</option>
+                    <option value="departamental">Departamental</option>
+                    <option value="propia">Propia</option>
+                </select>
+            </div>
+        `;
+            formContainer.appendChild(div);
+
+            document.getElementById('tipo_cuenta').addEventListener('change', function () {
+                clearFrom('banco');
+                addBanco();
+            });
+        }
+
+        function addBanco() {
+            if (document.getElementById('banco')) return;
+
+            const div = document.createElement('div');
+            div.className = 'col-md-6 mb-2';
+            div.id = 'grupo_banco';
+            div.innerHTML = `
+            <label for="banco" class="form-label fw-bold">Banco</label>
+            <div class="input-group">
+                ${icon('bi-bank2')}
+                <select id="banco" name="banco" class="form-select" required>
+                    <option value="" disabled selected>Selecciona tipo de banco</option>
+                    <option value="ecobank">ECOBANK</option>
+                    <option value="sgbge">SGBGE</option>
+                    <option value="cceibank">CCEIBANK</option>
+                    <option value="embajada">EMBAJADA</option>
+                </select>
+            </div>
+        `;
+            formContainer.appendChild(div);
+
+            document.getElementById('banco').addEventListener('change', function () {
+                clearFrom('tiene_cuenta_numero');
+                addTieneNumeroCuenta();
+            });
+        }
+
+        function addTieneNumeroCuenta() {
+            if (document.getElementById('tiene_cuenta_numero')) return;
+
+            const div = document.createElement('div');
+            div.className = 'col-md-6 mb-2';
+            div.id = 'grupo_tiene_cuenta_numero';
+            div.innerHTML = `
+            <label for="tiene_cuenta_numero" class="form-label fw-bold">¿Tiene número de cuenta?</label>
+            <div class="input-group">
+                ${icon('bi-credit-card')}
+                <select id="tiene_cuenta_numero" name="tiene_cuenta_numero" class="form-select" required>
+                    <option value="" disabled selected>¿Tiene número de cuenta?</option>
+                    <option value="si">SÍ</option>
+                    <option value="no">NO</option>
+                </select>
+            </div>
+        `;
+            formContainer.appendChild(div);
+            document.getElementById('tiene_cuenta_numero').addEventListener('change', function () {
+                clearFrom('numero_cuenta');
+                if (this.value === 'si') {
+                    addNumeroCuenta();
+                    addTarjetaVisa();
+                }
+            });
+
+/* 
+            document.getElementById('tiene_cuenta_numero').addEventListener('change', function () {
+                clearFrom('numero_cuenta');
+                if (this.value === 'si') addNumeroCuenta();
+                addTarjetaVisa();
+            }); */
+        }
+
+        function addNumeroCuenta() {
+            if (document.getElementById('numero_cuenta')) return;
+
+            const div = document.createElement('div');
+            div.className = 'col-md-6 mb-2';
+            div.id = 'grupo_numero_cuenta';
+            div.innerHTML = `
+            <label for="numero_cuenta" class="form-label fw-bold">Número de Cuenta</label>
+            <div class="input-group has-validation">
+                ${icon('bi-hash')}
+                <input type="text" id="numero_cuenta" name="numero_cuenta" class="form-control" required placeholder="Ej: 1234567890">
+            </div>
+        `;
+            formContainer.appendChild(div);
+        }
+
+        function addTarjetaVisa() {
+            if (document.getElementById('tarjeta_visa')) return;
+
+            const div = document.createElement('div');
+            div.className = 'col-md-6 mb-2';
+            div.id = 'grupo_tarjeta_visa';
+            div.innerHTML = `
+            <label for="tarjeta_visa" class="form-label fw-bold">¿Tiene tarjeta VISA?</label>
+            <div class="input-group">
+                ${icon('bi-credit-card-2-back')}
+                <select id="tarjeta_visa" name="tarjeta_visa" class="form-select" required>
+                    <option value="" disabled selected>¿Tiene tarjeta?</option>
+                    <option value="si">SÍ</option>
+                    <option value="no">NO</option>
+                </select>
+            </div>
+        `;
+            formContainer.appendChild(div);
+
+            document.getElementById('tarjeta_visa').addEventListener('change', function () {
+                clearFrom('fecha_caducidad_tarjeta');
+                if (this.value === 'si') addFechaCaducidad();
+            });
+        }
+
+        function addFechaCaducidad() {
+            if (document.getElementById('fecha_caducidad_tarjeta')) return;
+
+            const div = document.createElement('div');
+            div.className = 'col-md-6 mb-2';
+            div.id = 'grupo_fecha_caducidad_tarjeta';
+            div.innerHTML = `
+            <label for="fecha_caducidad_tarjeta" class="form-label fw-bold">Fecha de Caducidad</label>
+            <div class="input-group">
+                ${icon('bi-calendar-check-fill')}
+                <input type="date" id="fecha_caducidad_tarjeta" name="fecha_caducidad_tarjeta" class="form-control" required>
+            </div>
+        `;
+            formContainer.appendChild(div);
+        }
+
+        // 🧹 Función para eliminar campos desde cierto punto hacia adelante
+        function clearFrom(idBase) {
+            const ids = [
+                'grupo_tipo_cuenta',
+                'grupo_banco',
+                'grupo_tiene_cuenta_numero',
+                'grupo_numero_cuenta',
+                'grupo_tarjeta_visa',
+                'grupo_fecha_caducidad_tarjeta'
+            ];
+
+            let clear = false;
+            ids.forEach(id => {
+                if (id.includes(idBase)) clear = true;
+                if (clear) {
+                    const el = document.getElementById(id);
+                    if (el) el.remove();
+                }
+            });
         }
     });
 </script>

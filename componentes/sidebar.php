@@ -54,6 +54,11 @@
         <i class="bi bi-translate me-2"></i> Idiomas
       </a>
     </li>
+    <li class="nav-item mb-2">
+      <a href="../admin/cuentas_bancarias.php" class="nav-link text-white">
+        <i class="bi bi-bank me-2"></i> Cuentas Bancarias
+      </a>
+    </li>
 
     <li class="nav-item mb-2">
       <a href="../admin/estudiantes.php" class="nav-link text-white">
