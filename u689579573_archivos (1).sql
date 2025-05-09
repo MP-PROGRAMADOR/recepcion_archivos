@@ -109,6 +109,20 @@ CREATE TABLE `configuracion` (
   `fecha_creacion` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+
+-- Crear tabla cuentas_bancarias vinculada a estudiantes
+CREATE TABLE `cuentas_bancarias` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `estudiante_id` INT(11) NOT NULL,
+  `tipo_cuenta` VARCHAR(50) NOT NULL,
+  `banco` VARCHAR(100) NOT NULL,
+  `numero_cuenta` VARCHAR(30) NOT NULL,
+  `tarjeta_visa` VARCHAR(30) DEFAULT NULL,
+  `fecha_caducidad_tarjeta` DATE DEFAULT NULL,
+  PRIMARY KEY (`id`)
+ 
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -418,12 +432,16 @@ CREATE TABLE `universidades` (
   `ciudad_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+
 --
 -- Volcado de datos para la tabla `universidades`
 --
 
 INSERT INTO `universidades` (`id`, `nombre`, `ciudad_id`) VALUES
 (1, 'Juan Carlos I', 1);
+
+
+
 
 -- --------------------------------------------------------
 
@@ -449,6 +467,12 @@ INSERT INTO `usuarios` (`id`, `nombre`, `email`, `contrasena`, `creado_en`) VALU
 --
 -- Índices para tablas volcadas
 --
+
+ALTER TABLE `estudiantes`
+ADD COLUMN `cuenta_id` INT DEFAULT NULL,
+ADD CONSTRAINT `fk_estudiante_cuenta`
+  FOREIGN KEY (`cuenta_id`) REFERENCES `cuentas_bancarias`(`id`)
+  ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Indices de la tabla `anios_academicos`
