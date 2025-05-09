@@ -113,73 +113,69 @@ try {
                             </div>
                         </div>
                     </div>
+
+                    <!-- Sección de Cuenta Bancaria -->
+                    <hr class="my-4">
+                    <h5 class="mb-3 text-success"><i class="bi bi-credit-card-2-front-fill me-2"></i>Información de
+                        Cuenta Bancaria</h5>
+
                     <div class="row g-3">
-                        <!-- Sección de Cuenta Bancaria -->
-                        <hr class="my-4">
-                        <h5 class="mb-3 text-success"><i class="bi bi-credit-card-2-front-fill me-2"></i>Información de
-                            Cuenta Bancaria</h5>
-
-                        <div class="row g-3">
-                            <!-- Tipo de Cuenta -->
-                            <div class="col-md-6 mb-2">
-                                <label for="tipo_cuenta" class="form-label fw-bold">Tipo de Cuenta</label>
-                                <div class="input-group has-validation">
-                                    <span class="input-group-text"><i class="bi bi-wallet2"></i></span>
-                                    <select id="tipo_cuenta" name="tipo_cuenta" class="form-select" required>
-                                        <option value="" disabled selected>Selecciona tipo de cuenta</option>
-                                        <option value="departamental"> Departamental</option>
-                                        <option value="propia"> Propia</option>
-                                    </select>
-                                    <div class="valid-feedback">¡Correcto!</div>
-                                    <div class="invalid-feedback">Por favor, indica el tipo de cuenta.</div>
-                                </div>
-                            </div>
-
-                            <!-- Banco -->
-                            <div class="col-md-6 mb-2">
-                                <label for="banco" class="form-label fw-bold">Banco</label>
-                                <div class="input-group has-validation">
-                                    <span class="input-group-text"><i class="bi bi-bank2"></i></span>
-
-                                    <select id="banco" name="banco" class="form-select" required>
-                                        <option value="" disabled selected>Selecciona tipo de banco</option>
-                                        <option value="ecobank"> ECOBANK</option>
-                                        <option value="sgbge"> SGBGE</option>
-                                        <option value="cceibank"> CCEIBANK</option>
-                                        <option value="embajada"> EMBAJADA</option>
-                                    </select>
-                                    <div class="valid-feedback">¡Correcto!</div>
-                                    <div class="invalid-feedback">Por favor, ingresa el nombre del banco.</div>
-                                </div>
-                            </div>
-                            <!-- Tarjeta VISA -->
-                            <div class="col-md-6 mb-2">
-                                <label for="tarjeta_visa" class="form-label fw-bold">Tarjeta VISA (opcional)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
-                                    <select id="tarjeta_visa" name="tarjeta_visa" class="form-select" required>
-                                        <option value="" disabled selected>¿Tiene targeta?</option>
-                                        <option value="si"> SÍ</option>
-                                        <option value="no"> No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Fecha de Caducidad de la Tarjeta -->
-                            <div class="col-md-6 mb-2">
-                                <label for="fecha_caducidad_tarjeta" class="form-label fw-bold">Fecha de Caducidad
-                                    (opcional)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-calendar-check-fill"></i></span>
-                                    <input type="date" id="fecha_caducidad_tarjeta" name="fecha_caducidad_tarjeta"
-                                        class="form-control">
-                                </div>
+                        <!-- Tipo de Cuenta -->
+                        <div class="col-md-6 mb-2">
+                            <label for="tipo_cuenta" class="form-label fw-bold">Tipo de Cuenta</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-wallet2"></i></span>
+                                <select id="tipo_cuenta" name="tipo_cuenta" class="form-select" required>
+                                    <option value="" disabled selected>Selecciona tipo de cuenta</option>
+                                    <option value="departamental"> Departamental</option>
+                                    <option value="propia"> Propia</option>
+                                </select>
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, indica el tipo de cuenta.</div>
                             </div>
                         </div>
 
+                        <!-- Banco -->
+                        <div class="col-md-6 mb-2">
+                            <label for="banco" class="form-label fw-bold">Banco</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="bi bi-bank2"></i></span>
 
+                                <select id="banco" name="banco" class="form-select" required>
+                                    <option value="" disabled selected>Selecciona tipo de banco</option>
+                                    <option value="ecobank"> ECOBANK</option>
+                                    <option value="sgbge"> SGBGE</option>
+                                    <option value="cceibank"> CCEIBANK</option>
+                                    <option value="embajada"> EMBAJADA</option>
+                                </select>
+                                <div class="valid-feedback">¡Correcto!</div>
+                                <div class="invalid-feedback">Por favor, ingresa el nombre del banco.</div>
+                            </div>
+                        </div>
+                        <!-- Tarjeta VISA -->
+                        <div class="col-md-6 mb-2">
+                            <label for="tarjeta_visa" class="form-label fw-bold">Tarjeta VISA (opcional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                                <select id="tarjeta_visa" name="tarjeta_visa" class="form-select" required>
+                                    <option value="" disabled selected>¿Tiene targeta?</option>
+                                    <option value="si"> SÍ</option>
+                                    <option value="no"> No</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Fecha de Caducidad de la Tarjeta -->
+                        <div class="col-md-6 mb-2">
+                            <label for="fecha_caducidad_tarjeta" class="form-label fw-bold">Fecha de Caducidad
+                                (opcional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-calendar-check-fill"></i></span>
+                                <input type="date" id="fecha_caducidad_tarjeta" name="fecha_caducidad_tarjeta"
+                                    class="form-control">
+                            </div>
+                        </div>
                         <!-- Número de Cuenta -->
-
                         <div class="col-md-6 mb-2">
                             <label for="tiene_cuenta" class="form-label fw-bold">Número de Cuenta</label>
                             <div class="input-group mb-2">
@@ -201,8 +197,12 @@ try {
                                 <div class="invalid-feedback">Por favor, ingresa el número de cuenta.</div>
                             </div>
                         </div>
-
                     </div>
+
+
+
+
+
                     <!-- Botones -->
                     <div class="d-flex justify-content-between mb-4 p-4">
                         <button type="submit" class="btn btn-success me-2">
