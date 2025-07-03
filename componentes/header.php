@@ -40,6 +40,7 @@ foreach ($paises as $pais) {
   <link href="../config/css/bootstrap-icons.css" rel="stylesheet" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+  <link rel="icon" href="../config/img/logo_pais.svg" type="image/png">
 
   <!-- Google Charts -->
   <script type="text/javascript" src="../config/js/loader.js"></script>

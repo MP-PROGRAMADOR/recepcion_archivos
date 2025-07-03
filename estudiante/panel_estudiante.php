@@ -101,7 +101,6 @@ WHERE e.codigo_acceso = ?;
     $stmt = $pdo->prepare("SELECT * FROM cuentas_bancarias WHERE estudiante_id = :id LIMIT 1");
     $stmt->execute([':id' => $estudiante_id]);
     $cuenta_bancaria = $stmt->fetch(PDO::FETCH_ASSOC);
-
 } catch (Exception $e) {
     // Manejo de errores generales
     error_log("Error: " . $e->getMessage());
@@ -269,12 +268,14 @@ WHERE e.codigo_acceso = ?;
                             aria-labelledby="headingPerfil" data-bs-parent="#accordionEstudiante">
                             <div class="accordion-body">
 
-                                <?php if (!empty($estudiante['foto_perfil'])): ?>
-                                    <img src="../php/upload/perfil/<?= htmlspecialchars($estudiante['foto_perfil']) ?>"
-                                        alt="Foto" class="foto-estudiante img-fluid rounded mb-3">
+                                <?php
+                                $fotoRuta = '../php/upload/perfil/' . $estudiante['foto_perfil'];
+                                if (!empty($estudiante['foto_perfil']) && file_exists($fotoRuta)): ?>
+                                    <img src="<?= $fotoRuta ?>" alt="Foto de perfil" class="foto-estudiante img-fluid rounded mb-3">
                                 <?php else: ?>
                                     <p class="text-muted">No se ha subido ningún perfil</p>
                                 <?php endif; ?>
+
 
                                 <div class="mb-2">
                                     <label class="form-label">Código de acceso:</label>
@@ -450,7 +451,7 @@ WHERE e.codigo_acceso = ?;
                                                                 $ext = pathinfo($archivo['archivo_url'], PATHINFO_EXTENSION);
                                                                 $esImagen = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                                                                 $esPDF = strtolower($ext) === 'pdf';
-                                                                ?>
+                                                            ?>
                                                                 <tr>
                                                                     <td><span
                                                                             class="badge bg-secondary"><?= htmlspecialchars($archivo['tipo']) ?></span>
@@ -545,7 +546,7 @@ WHERE e.codigo_acceso = ?;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const contenedor = document.getElementById("formularioPasaporteNota");
             const eliminarBtn = document.getElementById("eliminarBtn");
             const btnSubirPasaporte = document.getElementById("btnSubirPasaporte");
@@ -559,7 +560,7 @@ WHERE e.codigo_acceso = ?;
 
             // Eliminar formulario
             if (eliminarBtn) {
-                eliminarBtn.addEventListener("click", function () {
+                eliminarBtn.addEventListener("click", function() {
                     contenedor.innerHTML = "";
                     eliminarBtn.style.display = "none";
                 });
@@ -587,7 +588,7 @@ WHERE e.codigo_acceso = ?;
 
             // Botón subir pasaporte
             if (btnSubirPasaporte) {
-                btnSubirPasaporte.addEventListener("click", function () {
+                btnSubirPasaporte.addEventListener("click", function() {
                     cargarFormulario('formulario_pasaporte.php');
 
                 });
@@ -595,37 +596,37 @@ WHERE e.codigo_acceso = ?;
 
             // Botón subir notas
             if (btnSubirNotas) {
-                btnSubirNotas.addEventListener("click", function () {
+                btnSubirNotas.addEventListener("click", function() {
                     cargarFormulario('formulario_notas.php');
                 });
             }
             //boton actualizar_pasaporte
             if (btnActualizarPasaporte) {
-                btnActualizarPasaporte.addEventListener("click", function () {
+                btnActualizarPasaporte.addEventListener("click", function() {
                     cargarFormulario('formulario_actualizar_pasaporte.php');
                 });
             }
             //boton actualizar_pasaporte
             if (btnActualizarContacto) {
-                btnActualizarContacto.addEventListener("click", function () {
+                btnActualizarContacto.addEventListener("click", function() {
                     cargarFormulario('formulario_actualizar_contacto.php');
                 });
             }
             //boton actualizar_pasaporte
             if (btnActualizarPerfil) {
-                btnActualizarPerfil.addEventListener("click", function () {
+                btnActualizarPerfil.addEventListener("click", function() {
                     cargarFormulario('formulario_actualizar_perfil.php');
                 });
             }
             //boton actuRegistrarIdioma
             if (btnRegistrarIdioma) {
-                btnRegistrarIdioma.addEventListener("click", function () {
+                btnRegistrarIdioma.addEventListener("click", function() {
                     cargarFormulario('formulario_registrar_idioma.php');
                 });
             }
             //boton actuActualizarIdioma
             if (btnActualizarIdioma) {
-                btnActualizarIdioma.addEventListener("click", function () {
+                btnActualizarIdioma.addEventListener("click", function() {
                     cargarFormulario('formulario_actualizar_idioma.php');
                 });
             }
