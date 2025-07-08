@@ -9,9 +9,10 @@ try {
     $stmt->execute();
     $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-   // echo "<script>Swal.fire('Error', 'Error al cargar los países: " . $e->getMessage() . "', 'error');</script>";
+    // echo "<script>Swal.fire('Error', 'Error al cargar los países: " . $e->getMessage() . "', 'error');</script>";
     $paises = [];
 }
+
 ?>
 <main class="content" id="mainContentGuin">
     <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
@@ -49,6 +50,8 @@ try {
                                 <div class="invalid-feedback">Por favor, selecciona tu fecha de nacimiento.</div>
                             </div>
                         </div>
+
+
                         <!-- Año de Inicio de Carrera -->
                         <div class="col-md-6 mb-2">
                             <label for="anio_inicio_carrera" class="form-label fw-bold">Año de Inicio de Carrera</label>
@@ -71,6 +74,7 @@ try {
                                 <div class="invalid-feedback">Por favor, ingresa el año de fin de carrera.</div>
                             </div>
                         </div>
+
                         <!-- País de Estudios -->
                         <div class="col-md-6 mb-2">
                             <label for="pais" class="form-label fw-bold">País de Estudios</label>
@@ -112,6 +116,13 @@ try {
                                 <div class="invalid-feedback">Por favor, selecciona una universidad.</div>
                             </div>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="beca_file" class="form-label fw-bold">Adjuntar adjudicación de Beca (PDF)</label>
+                            <input type="file" class="form-control" name="beca_file" id="beca_file"
+                                accept=".pdf,.jpg,.jpeg,.png" required>
+                            <div class="valid-feedback">Archivo válido.</div>
+                            <div class="invalid-feedback">Por favor, adjunta el archivo de la beca.</div>
+                        </div>
                     </div>
 
                     <!-- Sección de Cuenta Bancaria -->
@@ -119,19 +130,19 @@ try {
                     <h5 class="mb-3 text-success"><i class="bi bi-credit-card-2-front-fill me-2"></i>Información de
                         Cuenta Bancaria</h5>
 
-                    <div id="form-container" class="row g-3"> 
-                            <!-- Campo inicial: ¿Tiene cuenta? -->
-                            <div class="col-md-6 mb-2">
-                                <label for="tiene_cuenta" class="form-label fw-bold">¿Tiene cuenta?</label>
-                                <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="bi bi-question-circle"></i></span>
-                                    <select id="tiene_cuenta" name="tiene_cuenta" class="form-select" required>
-                                        <option value="" disabled selected>¿Tiene cuenta?</option>
-                                        <option value="si">SÍ</option>
-                                        <option value="no">NO</option>
-                                    </select>
-                                </div>
-                            </div> 
+                    <div id="form-container" class="row g-3">
+                        <!-- Campo inicial: ¿Tiene cuenta? -->
+                        <div class="col-md-6 mb-2">
+                            <label for="tiene_cuenta" class="form-label fw-bold">¿Tiene cuenta?</label>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="bi bi-question-circle"></i></span>
+                                <select id="tiene_cuenta" name="tiene_cuenta" class="form-select" required>
+                                    <option value="" disabled selected>¿Tiene cuenta?</option>
+                                    <option value="si">SÍ</option>
+                                    <option value="no">NO</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <!-- Botones -->
                     <div class="d-flex justify-content-between mb-4 p-4">
@@ -301,12 +312,12 @@ try {
                 }
             });
 
-/* 
-            document.getElementById('tiene_cuenta_numero').addEventListener('change', function () {
-                clearFrom('numero_cuenta');
-                if (this.value === 'si') addNumeroCuenta();
-                addTarjetaVisa();
-            }); */
+            /* 
+                        document.getElementById('tiene_cuenta_numero').addEventListener('change', function () {
+                            clearFrom('numero_cuenta');
+                            if (this.value === 'si') addNumeroCuenta();
+                            addTarjetaVisa();
+                        }); */
         }
 
         function addNumeroCuenta() {

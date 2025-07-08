@@ -22,7 +22,14 @@ try {
 
 // Usuarios paginados
 try {
-    $stmt = $pdo->prepare("SELECT id, nombre, email, creado_en FROM usuarios ORDER BY id DESC LIMIT :inicio, :limite");
+   $stmt = $pdo->prepare("
+    SELECT u.id, u.nombre, u.email, u.creado_en, r.nombre AS rol 
+    FROM usuarios u
+    INNER JOIN rol r ON u.rol_id = r.id
+    ORDER BY u.id DESC
+    LIMIT :inicio, :limite
+");
+
     $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
     $stmt->bindValue(':limite', $por_pagina, PDO::PARAM_INT);
     $stmt->execute();
@@ -31,6 +38,8 @@ try {
     die("Error al obtener los usuarios: " . $e->getMessage());
 }
 
+
+$rol =  $_SESSION['usuario_rol'];
 ?>
 
 <main class="content" id="mainContent">
@@ -101,23 +110,30 @@ try {
 
             <div class="table-responsive">
                 <table class="table table-striped table-hover align-middle text-center" id="tablaUsuarios">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Fecha de Creación</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
+                   <thead class="table-dark">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Fecha de Creación</th>
+         <?php if(strtolower($rol) === 'administrador'): ?>  
+        <th>Acciones</th>
+        <?php endif; ?>
+    </tr>
+</thead>
+
                     <tbody id="contenidoTabla">
                         <?php if (!empty($usuarios)): ?>
                             <?php foreach ($usuarios as $usuario): ?>
                                 <tr>
                                     <td><?= htmlspecialchars($usuario['id']) ?></td>
                                     <td><?= htmlspecialchars($usuario['nombre']) ?></td>
-                                    <td><?= htmlspecialchars($usuario['email']) ?></td>
-                                    <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($usuario['creado_en']))) ?></td>
+                                   <td><?= htmlspecialchars($usuario['email']) ?></td>
+<td><?= htmlspecialchars($usuario['rol']) ?></td>
+<td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($usuario['creado_en']))) ?></td>
+
+ <?php if(strtolower($rol) === 'administrador'): ?>  
                                     <td>
                                         <a href="editar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-warning me-1" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
@@ -126,6 +142,7 @@ try {
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
                                     </td>
+                                    <?php endif; ?>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>

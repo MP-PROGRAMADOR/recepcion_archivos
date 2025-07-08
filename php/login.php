@@ -1,34 +1,41 @@
 <?php
-
-
 include '../config/conexion.php'; // Archivo de conexión
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    session_start();
+
     $email = trim($_POST['email']);
     $contrasena = $_POST['contrasena'];
 
-    
     if (!empty($email) && !empty($contrasena)) {
         try {
-            $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email");
+            // Consulta con JOIN para obtener el nombre del rol
+            $stmt = $pdo->prepare("
+                SELECT u.*, r.nombre AS rol_nombre 
+                FROM usuarios u 
+                INNER JOIN rol r ON u.rol_id = r.id 
+                WHERE u.email = :email
+            ");
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
                 // Login exitoso
-                session_start();
                 $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario_nombre'] = $usuario['nombre'];
                 $_SESSION['usuario_email'] = $usuario['email'];
+                $_SESSION['usuario_rol'] = $usuario['rol_nombre']; // Guardamos el nombre del rol
 
-                header("Location: ../admin/index.php");
-                exit;
+                // Puedes hacer redirecciones según el rol si deseas:
+                 if ( (strtolower($usuario['rol_nombre']) === 'administrador') || ( strtolower($usuario['rol_nombre']) === 'tecnico')) { 
+                     header("Location: ../admin/index.php");
+                     exit;
+                    
+                  } 
+
             } else {
-
-                
-
-                $_SESSION['error'] = 'Error de Email.';
+                $_SESSION['error'] = 'Correo o contraseña incorrectos.';
                 header('Location: ../index.php');
                 exit;
             }

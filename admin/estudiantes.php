@@ -21,14 +21,16 @@ try {
 
 // Obtener estudiantes con límite y offset (incluyendo país)
 try {
-    $stmt = $pdo->prepare("
-        SELECT e.id, e.nombre_completo,e.anio_inicio_carrera,e.anio_fin_carrera,e.telefono, e.codigo_acceso,e.foto_perfil, e.fecha_nacimiento, e.creado_en, 
-               p.nombre AS pais, e.ruta_foto
-        FROM estudiantes e
-        INNER JOIN paises p ON e.pais_id = p.id
-        ORDER BY e.creado_en DESC
-        LIMIT :inicio, :por_pagina
-    ");
+   $stmt = $pdo->prepare("
+    SELECT e.id, e.nombre_completo, e.anio_inicio_carrera, e.anio_fin_carrera, e.telefono, 
+           e.codigo_acceso, e.foto_perfil, e.fecha_nacimiento, e.creado_en, 
+           p.nombre AS pais, e.ruta_foto, e.archivo_beca
+    FROM estudiantes e
+    INNER JOIN paises p ON e.pais_id = p.id
+    ORDER BY e.creado_en DESC
+    LIMIT :inicio, :por_pagina
+");
+
     $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
     $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
     $stmt->execute();
@@ -41,6 +43,9 @@ try {
 
 // Layout común
 include_once("../componentes/sidebar.php");
+
+$rol =  $_SESSION['usuario_rol'];
+
 ?>
 
 <main class="content" id="mainContent">
@@ -103,6 +108,7 @@ include_once("../componentes/sidebar.php");
                                 <th>ID</th>
                                 <th>Nombre</th>
                                 <th>Código de Acceso</th>
+                                <th>Beca</th>
                                 <th>Fecha de Nacimiento</th>
                                 <th>Pais</th>
                                 <th>Fecha De Inicio</th>
@@ -118,6 +124,16 @@ include_once("../componentes/sidebar.php");
                                     <tr>
                                         <td><?= htmlspecialchars($est['id']) ?></td>
                                         <td><?= htmlspecialchars($est['nombre_completo']) ?></td>
+                                        <td>
+    <?php if (!empty($est['archivo_beca']) && file_exists('../php/' . $est['archivo_beca'])): ?>
+        <a href="../php/<?= htmlspecialchars($est['archivo_beca']) ?>" target="_blank" class="btn btn-outline-info btn-sm">
+            <i class="bi bi-file-earmark-arrow-down"></i> Ver
+        </a>
+    <?php else: ?>
+        <span class="text-muted">No disponible</span>
+    <?php endif; ?>
+</td>
+
                                         <td><?= htmlspecialchars($est['codigo_acceso']) ?></td>
                                         <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
                                         <td><?= htmlspecialchars($est['pais']) ?></td>
@@ -136,11 +152,13 @@ include_once("../componentes/sidebar.php");
                                         </td>
 
                                         <td>
-                                            <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-warning btn-sm" title="Editar">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </a>
-                                            <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-success btn-sm" title="Detalles">
-                                                <i class="bi bi-eye"></i>
+                                             <?php if(strtolower($rol) === 'administrador'): ?>  
+                                                <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-warning btn-sm" title="Editar">
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                </a>
+                                              <?php endif; ?>
+                                                <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-success btn-sm" title="Detalles">
+                                                    <i class="bi bi-eye"></i>
                                             </a>
                                         </td>
                                     </tr>

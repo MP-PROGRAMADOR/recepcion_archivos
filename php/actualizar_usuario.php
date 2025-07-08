@@ -9,53 +9,71 @@ require_once '../config/conexion.php';
 // Validar y sanitizar datos
 $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
 $nombre = trim($_POST['nombre'] ?? '');
-$email = trim($_POST['email'] ?? '');
+$email = strtolower(trim($_POST['email'] ?? ''));
+$rol_id = isset($_POST['rol_id']) ? (int) $_POST['rol_id'] : 0;
 $password = $_POST['password'] ?? '';
 $contrasena_confirmada = $_POST['contrasena_confirmada'] ?? '';
 
+$errores = [];
+
 // Validaciones básicas
-if ($id <= 0 || empty($nombre) || empty($email)) {
-    $_SESSION['error'] = "Datos inválidos para actualizar el usuario.";
-    header("Location: ../admin/editar_usuario.php?id=$id");
-    exit;
+if ($id <= 0 || empty($nombre) || empty($email) || $rol_id <= 0) {
+    $errores[] = "Todos los campos son obligatorios.";
 }
 
 // Validar email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $_SESSION['error'] = "Correo electrónico no válido.";
-    header("Location: ../admin/editar_usuario.php?id=$id");
-    exit;
+    $errores[] = "Correo electrónico no válido.";
 }
 
 // Validar contraseña (si aplica)
 $cambiar_password = false;
 if (!empty($password)) {
     if ($password !== $contrasena_confirmada) {
-        $_SESSION['error'] = "Las contraseñas no coinciden.";
-        header("Location: ../admin/editar_usuario.php?id=$id");
-        exit;
+        $errores[] = "Las contraseñas no coinciden.";
+    } else {
+        $cambiar_password = true;
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
     }
-    $cambiar_password = true;
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+}
+
+// Validar que el rol exista
+try {
+    $stmt = $pdo->prepare("SELECT id FROM rol WHERE id = :id");
+    $stmt->bindParam(':id', $rol_id, PDO::PARAM_INT);
+    $stmt->execute();
+    if ($stmt->rowCount() === 0) {
+        $errores[] = "El rol seleccionado no existe.";
+    }
+} catch (PDOException $e) {
+    $errores[] = "Error al verificar el rol: " . $e->getMessage();
+}
+
+if (!empty($errores)) {
+    $_SESSION['errores'] = $errores;
+    header("Location: ../admin/editar_usuario.php?id=$id");
+    exit;
 }
 
 // Actualizar en la base de datos
 try {
     if ($cambiar_password) {
-        $sql = "UPDATE usuarios SET nombre = :nombre, email = :email, password = :password WHERE id = :id";
+        $sql = "UPDATE usuarios SET nombre = :nombre, email = :email, contrasena = :password, rol_id = :rol_id WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':nombre' => $nombre,
             ':email' => $email,
             ':password' => $password_hash,
+            ':rol_id' => $rol_id,
             ':id' => $id
         ]);
     } else {
-        $sql = "UPDATE usuarios SET nombre = :nombre, email = :email WHERE id = :id";
+        $sql = "UPDATE usuarios SET nombre = :nombre, email = :email, rol_id = :rol_id WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':nombre' => $nombre,
             ':email' => $email,
+            ':rol_id' => $rol_id,
             ':id' => $id
         ]);
     }
@@ -64,7 +82,7 @@ try {
     header("Location: ../admin/usuario.php");
     exit;
 } catch (PDOException $e) {
-    $_SESSION['error'] = "Error al actualizar el usuario: " . $e->getMessage();
+    $_SESSION['errores'] = ["Error al actualizar el usuario: " . $e->getMessage()];
     header("Location: ../admin/editar_usuario.php?id=$id");
     exit;
 }

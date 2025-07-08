@@ -16,7 +16,7 @@ $universidad_id = intval($_POST['universidad'] ?? 0);
 $anio_inicio = intval($_POST['anio_inicio_carrera'] ?? 0);
 $anio_fin = intval($_POST['anio_fin_carrera'] ?? 0);
 
-// Validaciones básicas
+// Validaciones
 if ($nombre === '') $errores[] = "El nombre es obligatorio.";
 if ($fecha === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
     $errores[] = "Fecha inválida.";
@@ -29,7 +29,7 @@ if ($universidad_id <= 0) $errores[] = "Universidad no válida.";
 if ($anio_inicio <= 1900 || $anio_inicio > date('Y')) $errores[] = "Año de inicio no válido.";
 if ($anio_fin < $anio_inicio || $anio_fin > date('Y') + 10) $errores[] = "Año de fin no válido.";
 
-// Validar duplicado (ignorando el estudiante actual)
+// Duplicado
 $nombre_normalizado = strtolower(preg_replace('/\s+/', ' ', $nombre));
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM estudiantes WHERE LOWER(TRIM(REPLACE(nombre_completo, '  ', ' '))) = ? AND id != ?");
 $stmt->execute([$nombre_normalizado, $id]);
@@ -37,7 +37,12 @@ if ($stmt->fetchColumn() > 0) {
     $errores[] = "Ya existe otro estudiante con ese nombre.";
 }
 
-// Procesar imagen si se subió
+// Obtener código de acceso
+$stmt = $pdo->prepare("SELECT codigo_acceso FROM estudiantes WHERE id = ?");
+$stmt->execute([$id]);
+$codigo = $stmt->fetchColumn();
+
+// ----------------- PROCESAR FOTO PERFIL ------------------
 $ruta_foto = null;
 if (!empty($_FILES['foto']['name'])) {
     $permitidos = ['image/jpeg', 'image/png', 'image/webp'];
@@ -51,10 +56,6 @@ if (!empty($_FILES['foto']['name'])) {
         $extension = pathinfo($foto['name'], PATHINFO_EXTENSION);
         $directorio = __DIR__ . '/upload/perfil/';
         if (!is_dir($directorio)) mkdir($directorio, 0777, true);
-
-        $stmt = $pdo->prepare("SELECT codigo_acceso FROM estudiantes WHERE id = ?");
-        $stmt->execute([$id]);
-        $codigo = $stmt->fetchColumn();
 
         if (!$codigo) {
             $iniciales_nombre = implode('', array_map(fn($w) => strtoupper($w[0]), explode(' ', $nombre)));
@@ -75,14 +76,42 @@ if (!empty($_FILES['foto']['name'])) {
     }
 }
 
-// Si hay errores, redirigir
+// ----------------- PROCESAR ARCHIVO DE BECA ------------------
+$ruta_beca = null;
+if (!empty($_FILES['archivo_beca']['name'])) {
+    $permitidos_beca = [
+        'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'image/jpeg', 'image/png'
+    ];
+    $beca = $_FILES['archivo_beca'];
+
+    if (!in_array($beca['type'], $permitidos_beca)) $errores[] = "Archivo de beca no permitido.";
+    if ($beca['size'] > 3 * 1024 * 1024) $errores[] = "El archivo de beca no debe superar los 3MB.";
+    if (!is_uploaded_file($beca['tmp_name'])) $errores[] = "Error al cargar el archivo de beca.";
+
+    if (empty($errores)) {
+        $extension = pathinfo($beca['name'], PATHINFO_EXTENSION);
+        $directorio_beca = __DIR__ . '/upload/becas/';
+        if (!is_dir($directorio_beca)) mkdir($directorio_beca, 0777, true);
+
+        $nombre_beca = "beca-$codigo.$extension";
+        $ruta_beca_relativa = "upload/becas/$nombre_beca";
+        $ruta_beca_completa = $directorio_beca . $nombre_beca;
+
+        if (move_uploaded_file($beca['tmp_name'], $ruta_beca_completa)) {
+            $ruta_beca = $ruta_beca_relativa;
+        }
+    }
+}
+
+// ----------------- ERRORES ------------------
 if (!empty($errores)) {
     $_SESSION['errores'] = $errores;
     header("Location: ../admin/editar_estudiante.php?id=$id");
     exit;
 }
 
-// Actualizar en la base de datos
+// ----------------- ACTUALIZAR BD ------------------
 try {
     $query = "UPDATE estudiantes SET nombre_completo = ?, fecha_nacimiento = ?, pais_id = ?, ciudad_id = ?, universidad_id = ?, anio_inicio_carrera = ?, anio_fin_carrera = ?";
     $params = [$nombre, $fecha, $pais_id, $ciudad_id, $universidad_id, $anio_inicio, $anio_fin];
@@ -90,6 +119,11 @@ try {
     if ($ruta_foto !== null) {
         $query .= ", ruta_foto = ?";
         $params[] = $ruta_foto;
+    }
+
+    if ($ruta_beca !== null) {
+        $query .= ", archivo_beca = ?";
+        $params[] = $ruta_beca;
     }
 
     $query .= " WHERE id = ?";

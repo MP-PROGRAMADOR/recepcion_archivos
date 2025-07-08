@@ -2,6 +2,18 @@
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
+ 
+// Obtener los roles desde la base de datos
+require_once '../config/conexion.php';
+
+try {
+    $stmt_roles = $pdo->query("SELECT id, nombre FROM rol ORDER BY nombre ASC");
+    $roles = $stmt_roles->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error al obtener roles: " . $e->getMessage());
+}
+?>
+
 ?>
 
 <main class="content" id="mainContent">
@@ -89,6 +101,18 @@ endif;
                             <label for="contrasena_confirmada" class="form-label fw-bold">Repetir contraseña</label>
                             <input type="password" name="contrasena_confirmada" class="form-control" placeholder="********" required>
                         </div>
+                        <div class="col-md-6">
+    <label for="rol_id" class="form-label fw-bold">Rol del Usuario</label>
+    <select name="rol_id" class="form-select" required>
+        <option value="" selected disabled>Seleccione un rol</option>
+        <?php foreach ($roles as $rol): ?>
+            <option value="<?= htmlspecialchars($rol['id']) ?>">
+                <?= htmlspecialchars($rol['nombre']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
+
                     </div>
 
                     <div class="d-flex justify-content-end mt-4">

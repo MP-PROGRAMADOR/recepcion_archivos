@@ -22,6 +22,15 @@ try {
 } catch (PDOException $e) {
     die("Error al obtener datos del usuario: " . $e->getMessage());
 }
+
+// Obtener roles disponibles
+try {
+    $stmt_roles = $pdo->query("SELECT id, nombre FROM rol ORDER BY nombre ASC");
+    $roles = $stmt_roles->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error al obtener roles: " . $e->getMessage());
+}
+
 ?>
 
 <main class="content" id="mainContent">
@@ -111,6 +120,18 @@ endif;
                             <label class="form-label fw-bold">Confirmar nueva contraseña</label>
                             <input type="password" name="contrasena_confirmada" class="form-control" placeholder="Repetir contraseña">
                         </div>
+                        <div class="col-md-6">
+    <label class="form-label fw-bold">Rol</label>
+    <select name="rol_id" class="form-select" required>
+        <option value="" disabled>Seleccione un rol</option>
+        <?php foreach ($roles as $rol): ?>
+            <option value="<?= htmlspecialchars($rol['id']) ?>" <?= $rol['id'] == $usuario['rol_id'] ? 'selected' : '' ?>>
+                <?= htmlspecialchars($rol['nombre']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
+
                     </div>
 
                     <div class="d-flex justify-content-end mt-4">

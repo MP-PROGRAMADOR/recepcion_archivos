@@ -23,6 +23,8 @@ $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
 $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
 $stmt->execute();
 $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$rol = $_SESSION['usuario_rol'];
 ?>
 
 <main class="content" id="mainContent">
@@ -60,8 +62,10 @@ $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <th><i class="bi bi-wallet2 me-1"></i>Tipo Cuenta</th>
                                 <th><i class="bi bi-credit-card me-1"></i>Tarjeta Visa</th>
                                 <th><i class="bi bi-calendar-check me-1"></i>Caducidad de Visa</th>
+                                 <?php if(strtolower($rol) === 'administrador'): ?>  
                                 <th><i class="bi bi-gear me-1"></i>Acciones</th>
 
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
@@ -83,12 +87,13 @@ $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td><i
                                                 class="bi bi-calendar-check me-1"></i><?= !empty($cuenta['fecha_caducidad_tarjeta']) ? date('d/m/Y', strtotime($cuenta['fecha_caducidad_tarjeta'])) : 'No definida' ?>
                                         </td>
+                                        <?php if(strtolower($rol) === 'administrador'): ?>  
                                         <td>
                                             <a href="editar_cuenta.php?id=<?= $cuenta['id'] ?>" class="btn btn-sm btn-warning">
                                                 <i class="bi bi-pencil-square"></i> Editar
                                             </a>
                                         </td>
-
+<?php endif; ?>
 
                                     </tr>
                                 <?php endforeach; ?>

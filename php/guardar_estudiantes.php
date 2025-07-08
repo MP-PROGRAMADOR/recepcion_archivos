@@ -50,36 +50,58 @@ try {
     // Recoger y limpiar datos del formulario
     $nombre_completo = trim($_POST['nombre_completo']);
     $fecha_nacimiento = $_POST['fecha_nacimiento'];
-    $fecha_inicio_carrera = (int)$_POST['anio_inicio_carrera'];
-    $fecha_fin_carrera = (int)$_POST['anio_fin_carrera'];
-    $pais_id = (int)$_POST['pais'];
-    $ciudad_id = (int)$_POST['ciudad'];
-    $universidad_id = (int)$_POST['universidad'];
+    $fecha_inicio_carrera = (int) $_POST['anio_inicio_carrera'];
+    $fecha_fin_carrera = (int) $_POST['anio_fin_carrera'];
+    $pais_id = (int) $_POST['pais'];
+    $ciudad_id = (int) $_POST['ciudad'];
+    $universidad_id = (int) $_POST['universidad'];
 
     // Validar que el año de inicio de carrera sea menor que el año de finalización
     if ($fecha_inicio_carrera >= $fecha_fin_carrera) {
         throw new Exception("El año de inicio de carrera debe ser menor que el año de finalización.");
     }
+    // Validar archivo
+    if (isset($_FILES['beca_file']) && $_FILES['beca_file']['error'] === UPLOAD_ERR_OK) {
+        $nombre_original = $_FILES['beca_file']['name'];
+        $tmp_path = $_FILES['beca_file']['tmp_name'];
+        $extension = pathinfo($nombre_original, PATHINFO_EXTENSION);
+        $nombre_nuevo = 'beca_' . time() . '_' . uniqid() . '.' . $extension;
 
-    // Iniciar la transacción
-    $pdo->beginTransaction();
+        $ruta_destino = 'upload/becas/' . $nombre_nuevo;
 
-    // Preparar la consulta de inserción
-    $sql = "INSERT INTO estudiantes 
-            (nombre_completo, fecha_nacimiento, anio_inicio_carrera, anio_fin_carrera, pais_id, ciudad_id, universidad_id) 
-            VALUES 
-            (:nombre_completo, :fecha_nacimiento, :anio_inicio_carrera, :anio_fin_carrera, :pais_id, :ciudad_id, :universidad_id)";
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        ':nombre_completo' => $nombre_completo,
-        ':fecha_nacimiento' => $fecha_nacimiento,
-        ':anio_inicio_carrera' => $fecha_inicio_carrera,
-        ':anio_fin_carrera' => $fecha_fin_carrera,
-        ':pais_id' => $pais_id,
-        ':ciudad_id' => $ciudad_id,
-        ':universidad_id' => $universidad_id
-    ]);
+        // Asegúrate que exista la carpeta
+        if (!file_exists('upload/becas/')) {
+            mkdir('upload/becas/', 0777, true);
+        }
+        if (move_uploaded_file($tmp_path, $ruta_destino)) {
+            // Iniciar la transacción
+            $pdo->beginTransaction();
+
+            // Preparar la consulta de inserción
+            $sql = "INSERT INTO estudiantes 
+             (nombre_completo, fecha_nacimiento, anio_inicio_carrera, anio_fin_carrera, pais_id, ciudad_id, universidad_id,archivo_beca ) 
+             VALUES 
+             (:nombre_completo, :fecha_nacimiento, :anio_inicio_carrera, :anio_fin_carrera, :pais_id, :ciudad_id, :universidad_id, :archivo_beca )";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':nombre_completo' => $nombre_completo,
+                ':fecha_nacimiento' => $fecha_nacimiento,
+                ':anio_inicio_carrera' => $fecha_inicio_carrera,
+                ':anio_fin_carrera' => $fecha_fin_carrera,
+                ':pais_id' => $pais_id,
+                ':ciudad_id' => $ciudad_id,
+                ':universidad_id' => $universidad_id,
+                ':archivo_beca' => $ruta_destino ?? null
+            ]);
+        } else {
+            throw new Exception('No se pudo registrar al estudiante. Intente nuevamente.');
+
+        }
+
+    }
+
+
 
     // Verificar si la inserción fue exitosa
     if ($stmt->rowCount() === 0) {
@@ -100,61 +122,62 @@ try {
         ':id' => $estudiante_id
     ]);
 
-/* ----------GUARDAR DATOS BANCARIOS--------------- */
+    /* ----------GUARDAR DATOS BANCARIOS--------------- */
 
- 
-// Función para sanitizar
-function limpiar($dato) {
-    return htmlspecialchars(trim($dato));
-}
 
- 
-$tiene_cuenta = $_POST['tiene_cuenta'] ?? null;
-
-if ($tiene_cuenta === 'si') {
-    $tipo_cuenta = limpiar($_POST['tipo_cuenta'] ?? '');
-    $banco = limpiar($_POST['banco'] ?? '');
-    $tiene_cuenta_numero = $_POST['tiene_cuenta_numero'] ?? '';
-
-    if (empty($tipo_cuenta) || empty($banco) || empty($tiene_cuenta_numero)) {
-        exit('Faltan campos obligatorios.');
+    // Función para sanitizar
+    function limpiar($dato)
+    {
+        return htmlspecialchars(trim($dato));
     }
 
-    if ($tiene_cuenta_numero === 'si') {
-        $numero_cuenta = limpiar($_POST['numero_cuenta'] ?? '');
-        if (empty($numero_cuenta)) {
-            exit('El número de cuenta es obligatorio.');
+
+    $tiene_cuenta = $_POST['tiene_cuenta'] ?? null;
+
+    if ($tiene_cuenta === 'si') {
+        $tipo_cuenta = limpiar($_POST['tipo_cuenta'] ?? '');
+        $banco = limpiar($_POST['banco'] ?? '');
+        $tiene_cuenta_numero = $_POST['tiene_cuenta_numero'] ?? '';
+
+        if (empty($tipo_cuenta) || empty($banco) || empty($tiene_cuenta_numero)) {
+            exit('Faltan campos obligatorios.');
         }
 
-        // Datos opcionales
-        $tarjeta_visa = $_POST['tarjeta_visa'] ?? null;
-        $fecha_caducidad_tarjeta = null;
-
-        if ($tarjeta_visa === 'si') {
-            $fecha_caducidad_tarjeta = $_POST['fecha_caducidad_tarjeta'] ?? null;
-            if (empty($fecha_caducidad_tarjeta)) {
-                exit('La fecha de caducidad es obligatoria si tiene tarjeta.');
+        if ($tiene_cuenta_numero === 'si') {
+            $numero_cuenta = limpiar($_POST['numero_cuenta'] ?? '');
+            if (empty($numero_cuenta)) {
+                exit('El número de cuenta es obligatorio.');
             }
-        } else {
-            $tarjeta_visa = null; // Guardar NULL explícitamente
-        }
 
-        // Ejecutar INSERT
-        $sql = "INSERT INTO cuentas_bancarias 
+            // Datos opcionales
+            $tarjeta_visa = $_POST['tarjeta_visa'] ?? null;
+            $fecha_caducidad_tarjeta = null;
+
+            if ($tarjeta_visa === 'si') {
+                $fecha_caducidad_tarjeta = $_POST['fecha_caducidad_tarjeta'] ?? null;
+                if (empty($fecha_caducidad_tarjeta)) {
+                    exit('La fecha de caducidad es obligatoria si tiene tarjeta.');
+                }
+            } else {
+                $tarjeta_visa = null; // Guardar NULL explícitamente
+            }
+
+            // Ejecutar INSERT
+            $sql = "INSERT INTO cuentas_bancarias 
                 (estudiante_id, tipo_cuenta, banco, numero_cuenta, tarjeta_visa, fecha_caducidad_tarjeta)
                 VALUES (:estudiante_id, :tipo_cuenta, :banco, :numero_cuenta, :tarjeta_visa, :fecha_caducidad_tarjeta)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            ':estudiante_id' => $estudiante_id,
-            ':tipo_cuenta' => $tipo_cuenta,
-            ':banco' => $banco,
-            ':numero_cuenta' => $numero_cuenta,
-            ':tarjeta_visa' => $tarjeta_visa,
-            ':fecha_caducidad_tarjeta' => $fecha_caducidad_tarjeta
-        ]);
- 
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':estudiante_id' => $estudiante_id,
+                ':tipo_cuenta' => $tipo_cuenta,
+                ':banco' => $banco,
+                ':numero_cuenta' => $numero_cuenta,
+                ':tarjeta_visa' => $tarjeta_visa,
+                ':fecha_caducidad_tarjeta' => $fecha_caducidad_tarjeta
+            ]);
+
+        }
     }
-}
 
 
     // Confirmar la transacción
@@ -166,13 +189,13 @@ if ($tiene_cuenta === 'si') {
     // Redirigir siempre al listado de estudiantes
     header("Location: ../admin/estudiantes.php");
     exit();
-    
+
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    
+
     // Mensaje de error
     $_SESSION['mensaje'] = "Error: " . $e->getMessage();
     $_SESSION['tipo_mensaje'] = "danger";

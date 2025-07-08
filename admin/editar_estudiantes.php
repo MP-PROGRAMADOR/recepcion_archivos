@@ -33,10 +33,13 @@ $ciudades = $ciudades->fetchAll(PDO::FETCH_ASSOC);
 $universidades = $pdo->prepare("SELECT id, nombre FROM universidades WHERE ciudad_id = ?");
 $universidades->execute([$estudiante['ciudad_id']]);
 $universidades = $universidades->fetchAll(PDO::FETCH_ASSOC);
+
+
+$rol = $_SESSION['usuario_rol'];
 ?>
 
 <main class="content" id="mainContentGuin">
-<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
+    <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container mt-4">
 
         <!-- INICIO DE LA ALERTA DE ERRORRES -->
@@ -44,7 +47,7 @@ $universidades = $universidades->fetchAll(PDO::FETCH_ASSOC);
 
 
         if (isset($_SESSION['errores']) && is_array($_SESSION['errores'])):
-        ?>
+            ?>
             <div id="alerta-errores"
                 class="alert alert-danger alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-danger-subtle rounded-3"
                 role="alert" style="animation: fadeIn 0.5s ease-in-out;">
@@ -85,7 +88,7 @@ $universidades = $universidades->fetchAll(PDO::FETCH_ASSOC);
                     }
                 }
             </style>
-        <?php
+            <?php
             unset($_SESSION['errores']); // Limpiar errores de la sesión
         endif;
         ?>
@@ -101,29 +104,62 @@ $universidades = $universidades->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="card-body">
-                <form action="../php/actualizar_estudiante.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <form action="../php/actualizar_estudiante.php" method="POST" enctype="multipart/form-data"
+                    class="needs-validation" novalidate>
                     <input type="hidden" name="id" value="<?= $estudiante['id'] ?>">
 
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="nombre_completo" class="form-label">Nombre Completo</label>
-                            <input type="text" id="nombre_completo" name="nombre_completo" class="form-control" value="<?= htmlspecialchars($estudiante['nombre_completo']) ?>" required>
+                            <input type="text" id="nombre_completo" name="nombre_completo" class="form-control"
+                                value="<?= htmlspecialchars($estudiante['nombre_completo']) ?>" required>
                         </div>
 
                         <div class="col-md-6">
                             <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
-                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="<?= $estudiante['fecha_nacimiento'] ?>" required>
+                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control"
+                                value="<?= $estudiante['fecha_nacimiento'] ?>" required>
                         </div>
+                     
+                        <?php if (strtolower($rol) === 'tecnico'): ?>
+                            <div class="col-md-6">
+                                <label for="anio_inicio_carrera" class="form-label">Año de Inicio</label>
 
-                        <div class="col-md-6">
-                            <label for="anio_inicio_carrera" class="form-label">Año de Inicio</label>
-                            <input type="number" id="anio_inicio_carrera" name="anio_inicio_carrera" class="form-control" value="<?= $estudiante['anio_inicio_carrera'] ?>" required>
-                        </div>
+                                <input type="number" id="anio_inicio_carrera" class="form-control"
+                                    value="<?= $estudiante['anio_inicio_carrera'] ?>">
 
-                        <div class="col-md-6">
-                            <label for="anio_fin_carrera" class="form-label">Año de Fin</label>
-                            <input type="number" id="anio_fin_carrera" name="anio_fin_carrera" class="form-control" value="<?= $estudiante['anio_fin_carrera'] ?>" required>
-                        </div>
+                                <input type="hidden" id="anio_inicio_carrera" name="anio_inicio_carrera"
+                                    class="form-control" value="<?= $estudiante['anio_inicio_carrera'] ?>" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="anio_fin_carrera" class="form-label">Año de Fin</label>
+                                
+                                <input type="number" id="anio_fin_carrera" class="form-control"
+                                    value="<?= $estudiante['anio_fin_carrera'] ?>">
+
+                                <input type="hidden" id="anio_fin_carrera" name="anio_fin_carrera" class="form-control"
+                                    value="<?= $estudiante['anio_fin_carrera'] ?>" required>
+                            </div>
+
+                        <?php elseif(strtolower($rol) === 'administrador'): ?>
+                             <div class="col-md-6">
+                                <label for="anio_inicio_carrera" class="form-label">Año de Inicio</label>
+
+                                 
+
+                                <input type="number" id="anio_inicio_carrera" name="anio_inicio_carrera"
+                                    class="form-control" value="<?= $estudiante['anio_inicio_carrera'] ?>" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="anio_fin_carrera" class="form-label">Año de Fin</label>
+                                 
+
+                                <input type="number" id="anio_fin_carrera" name="anio_fin_carrera" class="form-control"
+                                    value="<?= $estudiante['anio_fin_carrera'] ?>" required>
+                            </div>
+                        <?php endif; ?>
 
                         <div class="col-md-6">
                             <label for="pais" class="form-label">País</label>
@@ -158,6 +194,22 @@ $universidades = $universidades->fetchAll(PDO::FETCH_ASSOC);
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <div class="col-md-6">
+    <label for="archivo_beca" class="form-label fw-bold">Archivo de Adjudicación de Beca (PDF, DOCX, JPG)</label>
+    <input class="form-control" type="file" name="archivo_beca" id="archivo_beca" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+
+    <?php if (!empty($estudiante['archivo_beca']) && file_exists('../php/' . $estudiante['archivo_beca'])): ?>
+        <div class="mt-2">
+            <a href="../php/<?= htmlspecialchars($estudiante['archivo_beca']) ?>" target="_blank" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-eye"></i> Ver archivo actual
+            </a>
+            <p class="text-muted small mb-0 mt-1">Archivo actual: <?= htmlspecialchars($estudiante['archivo_beca']) ?></p>
+        </div>
+    <?php else: ?>
+        <div class="text-muted mt-2 small">No hay archivo de beca adjudicado</div>
+    <?php endif; ?>
+</div>
+
                     </div>
 
                     <div class="d-flex justify-content-between mb-4 p-4">
@@ -190,7 +242,7 @@ $universidades = $universidades->fetchAll(PDO::FETCH_ASSOC);
         if (input.files && input.files[0]) {
             const reader = new FileReader();
 
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 preview.src = e.target.result;
                 preview.style.display = 'block';
             };
@@ -202,31 +254,31 @@ $universidades = $universidades->fetchAll(PDO::FETCH_ASSOC);
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $("#pais").on("change", function() {
+    $(document).ready(function () {
+        $("#pais").on("change", function () {
             const paisId = $(this).val();
 
             if (paisId) {
                 $.get("../php/obtener_ciudades.php", {
                     pais_id: paisId
-                }, function(data) {
+                }, function (data) {
                     $("#ciudad").html(data);
                     $("#universidad").html('<option value="">Selecciona una ciudad primero</option>');
-                }).fail(function() {
+                }).fail(function () {
                     alert("Error al cargar ciudades");
                 });
             }
         });
 
-        $("#ciudad").on("change", function() {
+        $("#ciudad").on("change", function () {
             const ciudadId = $(this).val();
 
             if (ciudadId) {
                 $.get("../php/obtener_universidades.php", {
                     ciudad_id: ciudadId
-                }, function(data) {
+                }, function (data) {
                     $("#universidad").html(data);
-                }).fail(function() {
+                }).fail(function () {
                     alert("Error al cargar universidades");
                 });
             }

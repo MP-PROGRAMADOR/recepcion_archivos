@@ -1,4 +1,11 @@
-
+<?php
+// Iniciar sesión de forma segura
+ 
+ if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$rol =   $_SESSION['usuario_rol'];
+    ?>
 <!-- Sidebar -->
 <aside class="sidebar d-md-block" id="sidebar">
   <!-- Botón cerrar en móvil -->
@@ -24,12 +31,13 @@
 
     <!-- Sección Administración -->
     <li class="text-uppercase text-secondary small fw-bold mt-2 mb-2">Administración</li>
-
-    <li class="nav-item mb-2">
-      <a href="../admin/usuario.php" class="nav-link text-white">
-        <i class="bi bi-person-lines-fill me-2"></i> Usuarios
-      </a>
-    </li>
+<?php if(strtolower($rol) === 'administrador'): ?>
+<li class="nav-item mb-2">
+  <a href="../admin/usuario.php" class="nav-link text-white">
+    <i class="bi bi-person-lines-fill me-2"></i> Usuarios
+  </a>
+</li>
+<?php endif;?>
 
     <li class="nav-item mb-2">
       <a href="../admin/pais.php" class="nav-link text-white">
