@@ -8,8 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contrasena = $_POST['contrasena'];
 
     
-
-
     if (!empty($email) && !empty($contrasena)) {
         try {
             $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email");
