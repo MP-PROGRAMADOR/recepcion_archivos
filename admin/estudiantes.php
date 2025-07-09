@@ -21,7 +21,7 @@ try {
 
 // Obtener estudiantes con límite y offset (incluyendo país)
 try {
-   $stmt = $pdo->prepare("
+    $stmt = $pdo->prepare("
     SELECT e.id, e.nombre_completo, e.anio_inicio_carrera, e.anio_fin_carrera, e.telefono, 
            e.codigo_acceso, e.foto_perfil, e.fecha_nacimiento, e.creado_en, 
            p.nombre AS pais, e.ruta_foto, e.archivo_beca
@@ -49,7 +49,7 @@ $rol =  $_SESSION['usuario_rol'];
 ?>
 
 <main class="content" id="mainContent">
-<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
+    <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container-fluid">
 
 
@@ -108,12 +108,13 @@ $rol =  $_SESSION['usuario_rol'];
                                 <th>ID</th>
                                 <th>Nombre</th>
                                 <th>Código de Acceso</th>
-                                <th>Beca</th>
+
                                 <th>Fecha de Nacimiento</th>
                                 <th>Pais</th>
                                 <th>Fecha De Inicio</th>
                                 <th>Fecha De Fin</th>
                                 <th>Telefono</th>
+                                <th>Adjudicacion</th>
                                 <th>Foto</th> <!-- Columna Foto ahora después del Teléfono -->
                                 <th>Acciones</th>
                             </tr>
@@ -124,15 +125,7 @@ $rol =  $_SESSION['usuario_rol'];
                                     <tr>
                                         <td><?= htmlspecialchars($est['id']) ?></td>
                                         <td><?= htmlspecialchars($est['nombre_completo']) ?></td>
-                                        <td>
-    <?php if (!empty($est['archivo_beca']) && file_exists('../php/' . $est['archivo_beca'])): ?>
-        <a href="../php/<?= htmlspecialchars($est['archivo_beca']) ?>" target="_blank" class="btn btn-outline-info btn-sm">
-            <i class="bi bi-file-earmark-arrow-down"></i> Ver
-        </a>
-    <?php else: ?>
-        <span class="text-muted">No disponible</span>
-    <?php endif; ?>
-</td>
+
 
                                         <td><?= htmlspecialchars($est['codigo_acceso']) ?></td>
                                         <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
@@ -140,6 +133,16 @@ $rol =  $_SESSION['usuario_rol'];
                                         <td><?= htmlspecialchars($est['anio_inicio_carrera']) ?></td>
                                         <td><?= htmlspecialchars($est['anio_fin_carrera']) ?></td>
                                         <td><?= htmlspecialchars($est['telefono']) ?></td>
+
+                                        <td>
+                                            <?php if (!empty($est['archivo_beca']) && file_exists('../php/' . $est['archivo_beca'])): ?>
+                                                <a href="../php/<?= htmlspecialchars($est['archivo_beca']) ?>" target="_blank" class="btn btn-outline-info btn-sm">
+                                                    <i class="bi bi-file-earmark-arrow-down"></i> Ver
+                                                </a>
+                                            <?php else: ?>
+                                                <span class="text-muted">No disponible</span>
+                                            <?php endif; ?>
+                                        </td>
 
                                         <!-- Foto del perfil -->
                                         <td>
@@ -152,13 +155,13 @@ $rol =  $_SESSION['usuario_rol'];
                                         </td>
 
                                         <td>
-                                             <?php if(strtolower($rol) === 'administrador'): ?>  
+                                            <?php if (strtolower($rol) === 'administrador'): ?>
                                                 <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-warning btn-sm" title="Editar">
                                                     <i class="bi bi-pencil-fill"></i>
                                                 </a>
-                                              <?php endif; ?>
-                                                <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-success btn-sm" title="Detalles">
-                                                    <i class="bi bi-eye"></i>
+                                            <?php endif; ?>
+                                            <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-success btn-sm" title="Detalles">
+                                                <i class="bi bi-eye"></i>
                                             </a>
                                         </td>
                                     </tr>
