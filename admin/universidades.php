@@ -90,7 +90,7 @@ try {
         <!-- FIN DE LA ALERTA -->
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3><i class="bi bi-university me-2"></i>Listado de Universidades</h3>
+            <h3><i class="bi bi-university me-2"></i>Listado de Universidades Con estudiantes</h3>
             <a href="registrar_universidades.php" class="btn btn-primary">
             <i class="bi bi-person-plus-fill me-1"></i> Nueva Universidad
         </a>

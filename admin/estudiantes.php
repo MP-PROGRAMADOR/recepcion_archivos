@@ -44,29 +44,59 @@ try {
 // Layout común
 include_once("../componentes/sidebar.php");
 
-$rol =  $_SESSION['usuario_rol'];
+
+$rol = $_SESSION['usuario_rol'];
 
 ?>
 
+
 <main class="content" id="mainContent">
+    <?php if (isset($_SESSION['mensaje'])): ?>
+        <div id="alerta-sesion" class="alert alert-<?= $_SESSION['tipo_mensaje'] ?> alert-dismissible fade show mt-3"
+            role="alert">
+            <?= $_SESSION['mensaje'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+
+        <script>
+            // Espera 6 segundos y luego cierra la alerta automáticamente
+            setTimeout(function () {
+                var alerta = document.getElementById('alerta-sesion');
+                if (alerta) {
+                    alerta.classList.remove('show');
+                    alerta.classList.add('fade');
+                    setTimeout(function () {
+                        alerta.remove();
+                    }, 500); // Dar tiempo a la animación de Bootstrap
+                }
+            }, 6000);
+        </script>
+
+        <?php
+        unset($_SESSION['mensaje']);
+        unset($_SESSION['tipo_mensaje']);
+        ?>
+    <?php endif; ?>
+
     <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container-fluid">
 
 
         <?php if (isset($_SESSION['mensaje'])): ?>
-            <div id="alerta-sesion" class="alert alert-<?= $_SESSION['tipo_mensaje'] ?> alert-dismissible fade show mt-3" role="alert">
+            <div id="alerta-sesion" class="alert alert-<?= $_SESSION['tipo_mensaje'] ?> alert-dismissible fade show mt-3"
+                role="alert">
                 <?= $_SESSION['mensaje'] ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
 
             <script>
                 // Espera 6 segundos y luego cierra la alerta automáticamente
-                setTimeout(function() {
+                setTimeout(function () {
                     var alerta = document.getElementById('alerta-sesion');
                     if (alerta) {
                         alerta.classList.remove('show');
                         alerta.classList.add('fade');
-                        setTimeout(function() {
+                        setTimeout(function () {
                             alerta.remove();
                         }, 500); // Dar tiempo a la animación de Bootstrap
                     }
@@ -78,7 +108,6 @@ $rol =  $_SESSION['usuario_rol'];
             unset($_SESSION['tipo_mensaje']);
             ?>
         <?php endif; ?>
-
 
 
 
@@ -136,7 +165,8 @@ $rol =  $_SESSION['usuario_rol'];
 
                                         <td>
                                             <?php if (!empty($est['archivo_beca']) && file_exists('../php/' . $est['archivo_beca'])): ?>
-                                                <a href="../php/<?= htmlspecialchars($est['archivo_beca']) ?>" target="_blank" class="btn btn-outline-info btn-sm">
+                                                <a href="../php/<?= htmlspecialchars($est['archivo_beca']) ?>" target="_blank"
+                                                    class="btn btn-outline-info btn-sm">
                                                     <i class="bi bi-file-earmark-arrow-down"></i> Ver
                                                 </a>
                                             <?php else: ?>
@@ -147,22 +177,108 @@ $rol =  $_SESSION['usuario_rol'];
                                         <!-- Foto del perfil -->
                                         <td>
                                             <?php if (!empty($est['foto_perfil']) && file_exists('../php/upload/perfil/' . $est['foto_perfil'])): ?>
-                                                <img src="../php/upload/perfil/<?= htmlspecialchars($est['foto_perfil']) ?>" alt="Foto de Perfil"
+                                                <img src="../php/upload/perfil/<?= htmlspecialchars($est['foto_perfil']) ?>"
+                                                    alt="Foto de Perfil"
                                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
                                             <?php else: ?>
                                                 <span class="text-muted">NINGÚN PERFIL</span>
                                             <?php endif; ?>
                                         </td>
 
+                                        <!-- Acciones -->
                                         <td>
                                             <?php if (strtolower($rol) === 'administrador'): ?>
-                                                <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-warning btn-sm" title="Editar">
+                                                <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>"
+                                                    class="btn btn-warning btn-sm" title="Editar">
                                                     <i class="bi bi-pencil-fill"></i>
                                                 </a>
                                             <?php endif; ?>
-                                            <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>" class="btn btn-success btn-sm" title="Detalles">
+                                            <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>"
+                                                class="btn btn-success btn-sm" title="Detalles">
                                                 <i class="bi bi-eye"></i>
                                             </a>
+
+
+                                            <!-- Botón de eliminación -->
+                                            <button type="button" class="btn btn-danger btn-sm eliminar-btn bi bi-trash"
+                                                data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal"
+                                                data-id="<?= htmlspecialchars($est['id']); ?>"
+                                                data-nombre="<?= htmlspecialchars($est['nombre_completo'] ?? ''); ?>">
+                                            </button>
+
+                                            <!-- Modal de eliminación -->
+                                            <div class="modal fade" id="confirmarEliminarModal" tabindex="-1"
+                                                aria-labelledby="modalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content border-danger border-4 shadow-lg rounded-lg">
+
+                                                        <!-- Header -->
+                                                        <div
+                                                            class="modal-header bg-danger text-white border-bottom border-danger">
+                                                            <h5 class="modal-title fw-bold" id="modalLabel">
+                                                                ⚠️ Confirmar Eliminación Definitiva
+                                                            </h5>
+                                                            <button type="button" class="btn-close btn-close-white"
+                                                                data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                                        </div>
+
+                                                        <!-- Body -->
+                                                        <div class="modal-body p-4">
+                                                            <p id="modal-mensaje" class="fs-5 text-dark"></p>
+                                                            <p class="text-danger mt-5">
+                                                                ¡Esta acción es irreversible y eliminará el registro de la base
+                                                                de datos!
+                                                            </p>
+                                                        </div>
+
+                                                        <!-- Footer -->
+                                                        <div class="modal-footer p-3 bg-light d-flex justify-content-between">
+                                                            <button type="button"
+                                                                class="btn btn-secondary shadow-sm bi bi-x-circle text-white"
+                                                                data-bs-dismiss="modal">
+                                                                Cancelar
+                                                            </button>
+                                                            <a id="btn-eliminar-final" href="#"
+                                                                class="btn btn-danger shadow-md bi bi-trash">
+                                                                Sí, Eliminar
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <script
+                                                src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+                                            <script>
+                                                document.addEventListener('DOMContentLoaded', function () {
+                                                    const modal = document.getElementById('confirmarEliminarModal');
+
+                                                    modal.addEventListener('show.bs.modal', function (event) {
+                                                        const button = event.relatedTarget;
+                                                        const estudianteId = button.getAttribute('data-id');
+                                                        const estudianteNombre = button.getAttribute('data-nombre');
+
+                                                        const modalMensaje = modal.querySelector('#modal-mensaje');
+                                                        const btnEliminar = modal.querySelector('#btn-eliminar-final');
+
+                                                        // Mostrar nombre si existe, sino solo el ID
+                                                        const nombreDestacado = estudianteNombre
+                                                            ? `<span class="text-primary fw-bold">${estudianteNombre}</span>`
+                                                            : `ID: ${estudianteId}`;
+
+                                                        modalMensaje.innerHTML = `¿Está seguro que desea eliminar al estudiante ${nombreDestacado}?`;
+
+                                                        // Actualizar href del botón eliminar
+                                                        btnEliminar.href = `eliminar_estudiante.php?id=${estudianteId}`;
+                                                    });
+                                                });
+                                            </script>
+
+
+
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -176,6 +292,17 @@ $rol =  $_SESSION['usuario_rol'];
 
 
                 </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
                 <!-- PAGINACION -->
@@ -215,12 +342,13 @@ $rol =  $_SESSION['usuario_rol'];
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+
 <!-- Buscador en tiempo real -->
 <script>
-    $(document).ready(function() {
-        $("#busqueda").on("keyup", function() {
+    $(document).ready(function () {
+        $("#busqueda").on("keyup", function () {
             let valor = $(this).val().toLowerCase();
-            $("#contenidoTabla tr").filter(function() {
+            $("#contenidoTabla tr").filter(function () {
                 $(this).toggle($(this).text().toLowerCase().includes(valor));
             });
         });
