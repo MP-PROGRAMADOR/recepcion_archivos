@@ -2,17 +2,14 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 30-04-2025 a las 14:45:43
--- Versión del servidor: 10.11.10-MariaDB
--- Versión de PHP: 7.2.34
-
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 08-07-2025 a las 16:50:23
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.0.30
 
 drop database if exists recepcion_archivo;
-
-create DATABASE recepcion_archivo;
+create recepcion_archivo;
 use recepcion_archivo;
-
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -25,7 +22,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `u689579573_archivos`
+-- Base de datos: `recepcion_archivo`
 --
 
 -- --------------------------------------------------------
@@ -109,18 +106,20 @@ CREATE TABLE `configuracion` (
   `fecha_creacion` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+-- --------------------------------------------------------
 
--- Crear tabla cuentas_bancarias vinculada a estudiantes
+--
+-- Estructura de tabla para la tabla `cuentas_bancarias`
+--
+
 CREATE TABLE `cuentas_bancarias` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `estudiante_id` INT(11) NOT NULL,
-  `tipo_cuenta` VARCHAR(50) NOT NULL,
-  `banco` VARCHAR(100) NOT NULL,
-  `numero_cuenta` VARCHAR(30) NOT NULL,
-  `tarjeta_visa` VARCHAR(30) DEFAULT NULL,
-  `fecha_caducidad_tarjeta` DATE DEFAULT NULL,
-  PRIMARY KEY (`id`)
- 
+  `id` int(11) NOT NULL,
+  `estudiante_id` int(11) NOT NULL,
+  `tipo_cuenta` varchar(50) NOT NULL,
+  `banco` varchar(100) NOT NULL,
+  `numero_cuenta` varchar(30) NOT NULL,
+  `tarjeta_visa` varchar(30) DEFAULT NULL,
+  `fecha_caducidad_tarjeta` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
@@ -146,15 +145,18 @@ CREATE TABLE `estudiantes` (
   `ruta_foto` varchar(255) DEFAULT NULL,
   `creado_en` timestamp NULL DEFAULT current_timestamp(),
   `idioma` varchar(255) DEFAULT NULL,
-  `meses_idioma` int(11) DEFAULT NULL
+  `meses_idioma` int(11) DEFAULT NULL,
+  `cuenta_id` int(11) DEFAULT NULL,
+  `archivo_beca` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `estudiantes`
 --
 
-INSERT INTO `estudiantes` (`id`, `nombre_completo`, `codigo_acceso`, `fecha_nacimiento`, `pais_id`, `ciudad_id`, `universidad_id`, `idioma_id`, `anio_inicio_carrera`, `anio_fin_carrera`, `email`, `telefono`, `foto_perfil`, `ruta_foto`, `creado_en`) VALUES
-(1, 'Veneralda Jimenez Rodrigo', 'VJR-200400-1I', '2000-04-20', 160, 1, 1, NULL, '2020', '2027', 'salvadormete2@gmail.com', '222478702', 'foto_perfil_1_1745998174.jpg', NULL, '2025-04-29 17:21:02');
+INSERT INTO `estudiantes` (`id`, `nombre_completo`, `codigo_acceso`, `fecha_nacimiento`, `pais_id`, `ciudad_id`, `universidad_id`, `idioma_id`, `anio_inicio_carrera`, `anio_fin_carrera`, `email`, `telefono`, `foto_perfil`, `ruta_foto`, `creado_en`, `idioma`, `meses_idioma`, `cuenta_id`, `archivo_beca`) VALUES
+(1, 'Veneralda Jimenez Rodriga', 'VJR-200400-1I', '2000-04-20', 160, 1, 1, NULL, '2020', '2028', 'salvadormete2@gmail.com', '222478702', 'foto_perfil_1_1745998174.jpg', NULL, '2025-04-29 17:21:02', NULL, NULL, NULL, 'upload/becas/beca-VJR-200400-1I.pdf'),
+(2, 'ana maria boko', 'AMB-070617-2E', '2017-06-07', 160, 1, 1, NULL, '2025', '2028', NULL, NULL, NULL, NULL, '2025-07-08 14:29:50', NULL, NULL, NULL, 'uploads/becas/beca_1751984990_686d2b5e81a94.pdf');
 
 -- --------------------------------------------------------
 
@@ -169,6 +171,9 @@ CREATE TABLE `idiomas` (
   `codigo_3` char(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+--
+-- Volcado de datos para la tabla `idiomas`
+--
 
 INSERT INTO `idiomas` (`id`, `nombre`, `codigo_2`, `codigo_3`) VALUES
 (1, 'Español', '', ''),
@@ -330,8 +335,21 @@ INSERT INTO `idiomas` (`id`, `nombre`, `codigo_2`, `codigo_3`) VALUES
 (157, 'Cebuano', 'ce', 'ceb'),
 (158, 'Hmong', 'hm', 'hmn'),
 (159, 'Cebuano', 'ce', 'ceb'),
-(160, 'Hmong', 'hm', 'hmn');
-
+(160, 'Hmong', 'hm', 'hmn'),
+(161, 'Cebuano', 'ce', 'ceb'),
+(162, 'Hmong', 'hm', 'hmn'),
+(163, 'Cebuano', 'ce', 'ceb'),
+(164, 'Hmong', 'hm', 'hmn'),
+(165, 'Cebuano', 'ce', 'ceb'),
+(166, 'Hmong', 'hm', 'hmn'),
+(167, 'Cebuano', 'ce', 'ceb'),
+(168, 'Hmong', 'hm', 'hmn'),
+(169, 'Cebuano', 'ce', 'ceb'),
+(170, 'Hmong', 'hm', 'hmn'),
+(171, 'Cebuano', 'ce', 'ceb'),
+(172, 'Hmong', 'hm', 'hmn'),
+(173, 'Cebuano', 'ce', 'ceb'),
+(174, 'Hmong', 'hm', 'hmn');
 
 -- --------------------------------------------------------
 
@@ -589,6 +607,25 @@ INSERT INTO `pasaportes` (`id`, `estudiante_id`, `numero_pasaporte`, `fecha_emis
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `rol`
+--
+
+CREATE TABLE `rol` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `rol`
+--
+
+INSERT INTO `rol` (`id`, `nombre`) VALUES
+(1, 'administrador'),
+(2, 'tecnico');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `universidades`
 --
 
@@ -598,16 +635,12 @@ CREATE TABLE `universidades` (
   `ciudad_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
-
 --
 -- Volcado de datos para la tabla `universidades`
 --
 
 INSERT INTO `universidades` (`id`, `nombre`, `ciudad_id`) VALUES
 (1, 'Juan Carlos I', 1);
-
-
-
 
 -- --------------------------------------------------------
 
@@ -620,6 +653,7 @@ CREATE TABLE `usuarios` (
   `nombre` varchar(100) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `contrasena` varchar(255) DEFAULT NULL,
+  `rol_id` int(11) DEFAULT NULL,
   `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -627,18 +661,13 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nombre`, `email`, `contrasena`, `creado_en`) VALUES
-(1, 'MINERVA GIMENEZ', 'minerva@prueba.com', '$2y$10$duVZG93NwcxWRv4WGhY0mOjE8R5EhIuvAnt6nSgyUbbYrD/Z8p.OW', '2025-04-10 16:43:30');
+INSERT INTO `usuarios` (`id`, `nombre`, `email`, `contrasena`, `rol_id`, `creado_en`) VALUES
+(1, 'MINERVA GIMENEZ', 'minerva@prueba.com', '$2y$10$duVZG93NwcxWRv4WGhY0mOjE8R5EhIuvAnt6nSgyUbbYrD/Z8p.OW', 1, '2025-04-10 16:43:30'),
+(2, 'SALVADOR METE BUJERI', 'salva@prueba.com', '$2y$10$Q0/t9mz9lGJA6lKLimy5GOQiMkmFM3wGkeRmOFe71dJcoxqJo83m6', 2, '2025-07-08 13:32:17');
 
 --
 -- Índices para tablas volcadas
 --
-
-ALTER TABLE `estudiantes`
-ADD COLUMN `cuenta_id` INT DEFAULT NULL,
-ADD CONSTRAINT `fk_estudiante_cuenta`
-  FOREIGN KEY (`cuenta_id`) REFERENCES `cuentas_bancarias`(`id`)
-  ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Indices de la tabla `anios_academicos`
@@ -661,11 +690,18 @@ ALTER TABLE `configuracion`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `cuentas_bancarias`
+--
+ALTER TABLE `cuentas_bancarias`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `estudiantes`
 --
 ALTER TABLE `estudiantes`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `codigo_acceso` (`codigo_acceso`),
+  ADD KEY `fk_estudiante_cuenta` (`cuenta_id`),
   ADD KEY `fk_estudiantes_pais` (`pais_id`),
   ADD KEY `fk_estudiantes_ciudad` (`ciudad_id`),
   ADD KEY `fk_estudiantes_universidad` (`universidad_id`),
@@ -700,6 +736,12 @@ ALTER TABLE `pasaportes`
   ADD KEY `fk_pasaporte_estudiante` (`estudiante_id`);
 
 --
+-- Indices de la tabla `rol`
+--
+ALTER TABLE `rol`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `universidades`
 --
 ALTER TABLE `universidades`
@@ -711,7 +753,8 @@ ALTER TABLE `universidades`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `fk_usuarios_rol` (`rol_id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -736,16 +779,22 @@ ALTER TABLE `configuracion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `cuentas_bancarias`
+--
+ALTER TABLE `cuentas_bancarias`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `estudiantes`
 --
 ALTER TABLE `estudiantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `idiomas`
 --
 ALTER TABLE `idiomas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=175;
 
 --
 -- AUTO_INCREMENT de la tabla `notas`
@@ -766,6 +815,12 @@ ALTER TABLE `pasaportes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT de la tabla `rol`
+--
+ALTER TABLE `rol`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `universidades`
 --
 ALTER TABLE `universidades`
@@ -775,7 +830,7 @@ ALTER TABLE `universidades`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
@@ -794,7 +849,8 @@ ALTER TABLE `estudiantes`
   ADD CONSTRAINT `estudiantes_ibfk_1` FOREIGN KEY (`pais_id`) REFERENCES `paises` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `estudiantes_ibfk_2` FOREIGN KEY (`ciudad_id`) REFERENCES `ciudades` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `estudiantes_ibfk_3` FOREIGN KEY (`universidad_id`) REFERENCES `universidades` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `estudiantes_ibfk_4` FOREIGN KEY (`idioma_id`) REFERENCES `idiomas` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `estudiantes_ibfk_4` FOREIGN KEY (`idioma_id`) REFERENCES `idiomas` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_estudiante_cuenta` FOREIGN KEY (`cuenta_id`) REFERENCES `cuentas_bancarias` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `notas`
@@ -814,6 +870,12 @@ ALTER TABLE `pasaportes`
 --
 ALTER TABLE `universidades`
   ADD CONSTRAINT `universidades_ibfk_1` FOREIGN KEY (`ciudad_id`) REFERENCES `ciudades` (`id`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD CONSTRAINT `fk_usuarios_rol` FOREIGN KEY (`rol_id`) REFERENCES `rol` (`id`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

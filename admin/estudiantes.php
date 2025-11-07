@@ -6,7 +6,7 @@ include_once("../componentes/header.php");
 
 // Consulta de estudiantes con JOIN a países
 // Configuración de paginación
-$por_pagina = 4;
+$por_pagina = 20;
 $pagina_actual = isset($_GET['pagina']) ? (int) $_GET['pagina'] : 1;
 $inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
 
