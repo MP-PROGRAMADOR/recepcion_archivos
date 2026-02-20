@@ -2,7 +2,7 @@
 
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
- 
+
 
 // Configuración de paginación
 $por_pagina = 10;
@@ -34,7 +34,7 @@ try {
 ?>
 
 <main class="content" id="mainContent">
-<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
+    <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container mt-4">
         <!-- INICIO DE LA ALERTA -->
         <?php
@@ -86,14 +86,39 @@ try {
 
         <div class="card shadow rounded-4">
             <div class="card-body">
-                <div class="row mb-3">
+
+
+
+                <div class="row mb-4 align-items-end">
                     <div class="col-md-6">
                         <label for="busqueda" class="form-label fw-bold">
                             <i class="bi bi-search me-1"></i>Buscar País
                         </label>
                         <input type="text" class="form-control" id="busqueda" placeholder="Buscar por ID o nombre...">
                     </div>
+
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-primary btn-sm" onclick="aplicarFiltro()">
+                            <i class="bi bi-funnel-fill"></i> Filtrar
+                        </button>
+                    </div>
+
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-danger btn-sm" onclick="limpiarFiltros()" title="Limpiar Filtros">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-success btn-sm" onclick="imprimirFiltrado()">
+                            <i class="bi bi-printer-fill"></i> Imprimir
+                        </button>
+                    </div>
                 </div>
+
+
+
+
 
                 <div class="table-responsive">
                     <table class="table table-striped table-hover align-middle text-center" id="tablaPais">
@@ -167,5 +192,13 @@ try {
         });
     });
 </script>
+
+
+
+
+
+
+
+
 
 <?php include_once("../componentes/footer.php"); ?>
