@@ -2,11 +2,10 @@
 session_start();
 include_once('../config/conexion.php');
 
-// Verificar si el formulario fue enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errores = [];
 
-    // Validación del nombre de la ciudad
+    // Validar nombre
     if (empty($_POST['nombre'])) {
         $errores[] = 'El nombre de la ciudad es obligatorio.';
     } else {
@@ -16,12 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Validación del país
+    // Validar país
     if (empty($_POST['pais_id'])) {
         $errores[] = 'El país es obligatorio.';
     } else {
         $pais_id = (int) $_POST['pais_id'];
-        // Verificar si el país existe en la base de datos
+
         $query = "SELECT id FROM paises WHERE id = :pais_id";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':pais_id', $pais_id, PDO::PARAM_INT);
@@ -32,14 +31,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Si hay errores, redirigir y mostrar los mensajes
     if (count($errores) > 0) {
         $_SESSION['errores'] = $errores;
-        header('Location: ../admin/registrar_ciudad.php'); // Redirigir al formulario
+        header('Location: ../admin/registrar_ciudades.php');
         exit;
     }
 
-    // Si todo es válido, guardar la ciudad
+    // 🔍 Verificar duplicados (misma ciudad + mismo país)
+    $query = "SELECT id FROM ciudades 
+              WHERE LOWER(TRIM(nombre)) = LOWER(TRIM(:nombre)) 
+              AND pais_id = :pais_id
+              LIMIT 1";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':nombre', $nombre_ciudad, PDO::PARAM_STR);
+    $stmt->bindParam(':pais_id', $pais_id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $_SESSION['errores'] = ['Esta ciudad ya existe para el país seleccionado.'];
+        header('Location: ../admin/registrar_ciudades.php');
+        exit;
+    }
+
+    // Guardar ciudad
     $query = "INSERT INTO ciudades (nombre, pais_id) VALUES (:nombre, :pais_id)";
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':nombre', $nombre_ciudad, PDO::PARAM_STR);
@@ -51,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     } else {
         $_SESSION['errores'] = ['Hubo un error al registrar la ciudad.'];
-        header('Location: ../admin/registrar_ciudad.php');
+        header('Location: ../admin/registrar_ciudades.php');
         exit;
     }
 }

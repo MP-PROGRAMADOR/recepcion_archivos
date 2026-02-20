@@ -1,4 +1,3 @@
-
 <?php
 
 include_once("../componentes/header.php");
@@ -33,50 +32,53 @@ try {
 ?>
 
 <main class="content" id="mainContent">
-<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
+    <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container mt-4">
 
         <!-- INICIO DE LA ALERTA -->
         <?php if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])): ?>
-            <div id="alerta-exito" class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3" role="alert" style="animation: fadeIn 0.5s ease-in-out;">
-                <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
-                <div>
-                    <strong>¡Éxito!</strong>
-                    <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
-                </div>
-                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        <div id="alerta-exito"
+            class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
+            role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+            <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
+            <div>
+                <strong>¡Éxito!</strong>
+                <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
             </div>
-            <script>
-                setTimeout(() => {
-                    const alerta = document.getElementById('alerta-exito');
-                    if (alerta) {
-                        alerta.classList.remove('show');
-                        alerta.classList.add('fade');
-                        setTimeout(() => alerta.remove(), 500);
-                    }
-                }, 6000);
-            </script>
-            <style>
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-10px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            </style>
-            <?php unset($_SESSION['exito']); ?>
+            <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        <script>
+        setTimeout(() => {
+            const alerta = document.getElementById('alerta-exito');
+            if (alerta) {
+                alerta.classList.remove('show');
+                alerta.classList.add('fade');
+                setTimeout(() => alerta.remove(), 500);
+            }
+        }, 6000);
+        </script>
+        <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        </style>
+        <?php unset($_SESSION['exito']); ?>
         <?php endif; ?>
         <!-- FIN DE LA ALERTA -->
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3><i class="bi bi-buildings-fill me-2"></i>Listado de Ciudades con Estudiantes Inscritos</h3>
             <a href="registrar_ciudades.php" class="btn btn-primary">
-            <i class="bi bi-person-plus-fill me-1"></i> Nueva ciudad
-        </a>
+                <i class="bi bi-person-plus-fill me-1"></i> Nueva ciudad
+            </a>
         </div>
 
         <div class="card shadow rounded-4">
@@ -97,49 +99,60 @@ try {
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
                                 <th><i class="bi bi-geo-alt-fill me-1"></i>Nombre</th>
                                 <th><i class="bi bi-person-fill me-1"></i>Estudiantes</th>
+                                 <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
                             <?php if (!empty($ciudades)): ?>
-                                <?php foreach ($ciudades as $ciudad): ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars($ciudad['id']) ?></td>
-                                        <td><?= htmlspecialchars($ciudad['nombre']) ?></td>
-                                        <td><?= htmlspecialchars($ciudad['estudiantes']) ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
+                            <?php foreach ($ciudades as $ciudad): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($ciudad['id']) ?></td>
+                                <td><?= htmlspecialchars($ciudad['nombre']) ?></td>
+                                <td><?= htmlspecialchars($ciudad['estudiantes']) ?></td>
+                                <td>
+                                    <!-- Botón Editar -->
+                                    <a href="editar_ciudad.php?id=<?= htmlspecialchars($ciudad['id']) ?>"
+                                        class="btn btn-warning btn-sm" title="Editar ciudad">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
                             <?php else: ?>
-                                <tr>
-                                    <td colspan="3" class="text-center text-muted">No hay ciudades con estudiantes registrados</td>
-                                </tr>
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">
+                                    No hay ciudades con estudiantes registrados
+                                </td>
+                            </tr>
                             <?php endif; ?>
                         </tbody>
+
                     </table>
                 </div>
 
                 <!-- Paginación -->
                 <?php if ($total_paginas > 1): ?>
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <?php if ($pagina_actual > 1): ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
-                                </li>
-                            <?php endif; ?>
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <?php if ($pagina_actual > 1): ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
+                        </li>
+                        <?php endif; ?>
 
-                            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                                <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                                    <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
-                                </li>
-                            <?php endfor; ?>
+                        <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
+                        <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
+                            <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
+                        </li>
+                        <?php endfor; ?>
 
-                            <?php if ($pagina_actual < $total_paginas): ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
-                                </li>
-                            <?php endif; ?>
-                        </ul>
-                    </nav>
+                        <?php if ($pagina_actual < $total_paginas): ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
+                        </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
                 <?php endif; ?>
 
             </div>
@@ -153,14 +166,14 @@ try {
 
 <!-- Buscador funcional -->
 <script>
-    $(document).ready(function() {
-        $('#busqueda').on('keyup', function() {
-            let valor = $(this).val().toLowerCase();
-            $('#contenidoTabla tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().includes(valor));
-            });
+$(document).ready(function() {
+    $('#busqueda').on('keyup', function() {
+        let valor = $(this).val().toLowerCase();
+        $('#contenidoTabla tr').filter(function() {
+            $(this).toggle($(this).text().toLowerCase().includes(valor));
         });
     });
+});
 </script>
 
 <?php include_once("../componentes/footer.php"); ?>
