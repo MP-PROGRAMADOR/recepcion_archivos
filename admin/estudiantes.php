@@ -202,49 +202,49 @@ $rol = $_SESSION['usuario_rol'];
             <div class="card-body">
 
 
-               <div class="row mb-3 align-items-end">
+                <div class="row mb-3 align-items-end">
 
-    <div class="col-md-3">
-        <label class="form-label fw-bold">Filtrar por</label>
-        <select id="tipoFiltro" class="form-select" onchange="controlFiltroUI()">
-            <option value="nombre">Nombre</option>
-            <option value="pais">País</option>
-            <option value="ciudad">Ciudad</option>
-            <option value="fecha_fin">Fecha Finalización</option>
-            <option value="orden_az">Orden Alfabético (A-Z)</option>
-            <option value="orden_za">Orden Alfabético (Z-A)</option>
-        </select>
-    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Filtrar por</label>
+                        <select id="tipoFiltro" class="form-select" onchange="controlFiltroUI()">
+                            <option value="nombre">Nombre</option>
+                            <option value="pais">País</option>
+                            <option value="ciudad">Ciudad</option>
+                            <option value="fecha_fin">Fecha Finalización</option>
+                            <option value="orden_az">Orden Alfabético (A-Z)</option>
+                            <option value="orden_za">Orden Alfabético (Z-A)</option>
+                        </select>
+                    </div>
 
-    <div class="col-md-4">
-        <label class="form-label fw-bold">Valor</label>
-        <input type="text" id="valorFiltro" class="form-control"
-               placeholder="Escribe el valor a filtrar">
-    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Valor</label>
+                        <input type="text" id="valorFiltro" class="form-control"
+                            placeholder="Escribe el valor a filtrar">
+                    </div>
 
-    <!-- BOTÓN FILTRAR -->
-    <div class="col-md-2 d-grid">
-        <button class="btn btn-primary" onclick="aplicarFiltro()">
-            <i class="bi bi-funnel-fill"></i> Filtrar
-        </button>
-    </div>
+                    <!-- BOTÓN FILTRAR -->
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-primary btn-sm" onclick="aplicarFiltro()">
+                            <i class="bi bi-funnel-fill"></i> Filtrar
+                        </button>
+                    </div>
 
-    <!-- BOTÓN LIMPIAR -->
-    <div class="col-md-1 d-grid">
-        <button class="btn btn-secondary" onclick="limpiarFiltros()">
-            <i class="bi bi-x-circle"></i>
-        </button>
-    </div>
+                    <!-- BOTÓN LIMPIAR -->
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-danger btn-sm" onclick="limpiarFiltros()">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
 
-    <!-- BOTÓN IMPRIMIR -->
- <div class="col-md-2 d-grid">
-    <button class="btn btn-success" onclick="imprimirFiltrado()">
-        <i class="bi bi-printer-fill"></i> Imprimir
-    </button>
-</div>
+                    <!-- BOTÓN IMPRIMIR -->
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-success btn-sm" onclick="imprimirFiltrado()">
+                            <i class="bi bi-printer-fill"></i> Imprimir
+                        </button>
+                    </div>
 
 
-</div>
+                </div>
 
 
 
@@ -438,29 +438,29 @@ $rol = $_SESSION['usuario_rol'];
 
 
                 <!-- PAGINACION -->
-              <!-- PAGINACIÓN -->
-<?php if ($total_paginas > 1): ?>
+                <!-- PAGINACIÓN -->
+                <?php if ($total_paginas > 1): ?>
 
-<?php
+                <?php
 // construir query manteniendo filtros
 $queryParams = $_GET;
 ?>
 
-<nav aria-label="Paginación de estudiantes">
-    <ul class="pagination justify-content-center flex-wrap">
+                <nav aria-label="Paginación de estudiantes">
+                    <ul class="pagination justify-content-center flex-wrap">
 
-        <!-- BOTÓN ANTERIOR -->
-        <?php if ($pagina_actual > 1): 
+                        <!-- BOTÓN ANTERIOR -->
+                        <?php if ($pagina_actual > 1): 
             $queryParams['pagina'] = $pagina_actual - 1;
         ?>
-        <li class="page-item">
-            <a class="page-link" href="?<?= http_build_query($queryParams) ?>">
-                &laquo;
-            </a>
-        </li>
-        <?php endif; ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?<?= http_build_query($queryParams) ?>">
+                                &laquo;
+                            </a>
+                        </li>
+                        <?php endif; ?>
 
-        <?php
+                        <?php
         // limitar número de páginas visibles
         $rango = 2;
         $inicio = max(1, $pagina_actual - $rango);
@@ -480,14 +480,14 @@ $queryParams = $_GET;
         for ($i = $inicio; $i <= $fin; $i++):
             $queryParams['pagina'] = $i;
         ?>
-            <li class="page-item <?= ($i == $pagina_actual) ? 'active' : '' ?>">
-                <a class="page-link" href="?<?= http_build_query($queryParams) ?>">
-                    <?= $i ?>
-                </a>
-            </li>
-        <?php endfor; ?>
+                        <li class="page-item <?= ($i == $pagina_actual) ? 'active' : '' ?>">
+                            <a class="page-link" href="?<?= http_build_query($queryParams) ?>">
+                                <?= $i ?>
+                            </a>
+                        </li>
+                        <?php endfor; ?>
 
-        <?php
+                        <?php
         // última página
         if ($fin < $total_paginas) {
 
@@ -500,21 +500,21 @@ $queryParams = $_GET;
         }
         ?>
 
-        <!-- BOTÓN SIGUIENTE -->
-        <?php if ($pagina_actual < $total_paginas): 
+                        <!-- BOTÓN SIGUIENTE -->
+                        <?php if ($pagina_actual < $total_paginas): 
             $queryParams['pagina'] = $pagina_actual + 1;
         ?>
-        <li class="page-item">
-            <a class="page-link" href="?<?= http_build_query($queryParams) ?>">
-                &raquo;
-            </a>
-        </li>
-        <?php endif; ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?<?= http_build_query($queryParams) ?>">
+                                &raquo;
+                            </a>
+                        </li>
+                        <?php endif; ?>
 
-    </ul>
-</nav>
+                    </ul>
+                </nav>
 
-<?php endif; ?>
+                <?php endif; ?>
 
 
                 <!-- FIN DE LA PAGINACION -->
@@ -610,7 +610,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 <script>
-    //limpiar filtros
+//limpiar filtros
 function limpiarFiltros() {
     const url = new URL(window.location);
     url.searchParams.delete("tipo");
@@ -622,7 +622,7 @@ function limpiarFiltros() {
 
 
 <script>
-    // imprimir segun filtro
+// imprimir segun filtro
 function imprimirFiltrado() {
     const tipo = document.getElementById("tipoFiltro").value;
     const valor = document.getElementById("valorFiltro").value.trim();

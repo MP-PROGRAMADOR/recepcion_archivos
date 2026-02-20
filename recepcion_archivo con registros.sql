@@ -1,15 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 08-07-2025 a las 16:50:23
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
-
-drop database if exists recepcion_archivo;
-create recepcion_archivo;
-use recepcion_archivo;
+-- Servidor: localhost:3306
+-- Tiempo de generación: 20-02-2026 a las 11:29:30
+-- Versión del servidor: 10.4.25-MariaDB
+-- Versión de PHP: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -34,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `anios_academicos` (
   `id` int(11) NOT NULL,
   `nombre` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `anios_academicos`
@@ -68,7 +64,8 @@ INSERT INTO `anios_academicos` (`id`, `nombre`) VALUES
 (1, '2023-2024'),
 (27, '2024 - 2025'),
 (2, '2024-2025'),
-(28, '2025 - 2026');
+(28, '2025 - 2026'),
+(29, '2026 - 2027');
 
 -- --------------------------------------------------------
 
@@ -80,14 +77,15 @@ CREATE TABLE `ciudades` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `pais_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `ciudades`
 --
 
 INSERT INTO `ciudades` (`id`, `nombre`, `pais_id`) VALUES
-(1, 'Madrid', 160);
+(1, 'Madrid', 160),
+(2, 'Mexicana', 109);
 
 -- --------------------------------------------------------
 
@@ -104,7 +102,7 @@ CREATE TABLE `configuracion` (
   `img_estudiante` varchar(255) DEFAULT NULL,
   `img_admin` varchar(255) DEFAULT NULL,
   `fecha_creacion` timestamp NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -120,7 +118,7 @@ CREATE TABLE `cuentas_bancarias` (
   `numero_cuenta` varchar(30) NOT NULL,
   `tarjeta_visa` varchar(30) DEFAULT NULL,
   `fecha_caducidad_tarjeta` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -148,15 +146,49 @@ CREATE TABLE `estudiantes` (
   `meses_idioma` int(11) DEFAULT NULL,
   `cuenta_id` int(11) DEFAULT NULL,
   `archivo_beca` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `estudiantes`
 --
 
 INSERT INTO `estudiantes` (`id`, `nombre_completo`, `codigo_acceso`, `fecha_nacimiento`, `pais_id`, `ciudad_id`, `universidad_id`, `idioma_id`, `anio_inicio_carrera`, `anio_fin_carrera`, `email`, `telefono`, `foto_perfil`, `ruta_foto`, `creado_en`, `idioma`, `meses_idioma`, `cuenta_id`, `archivo_beca`) VALUES
-(1, 'Veneralda Jimenez Rodriga', 'VJR-200400-1I', '2000-04-20', 160, 1, 1, NULL, '2020', '2028', 'salvadormete2@gmail.com', '222478702', 'foto_perfil_1_1745998174.jpg', NULL, '2025-04-29 17:21:02', NULL, NULL, NULL, 'upload/becas/beca-VJR-200400-1I.pdf'),
-(2, 'ana maria boko', 'AMB-070617-2E', '2017-06-07', 160, 1, 1, NULL, '2025', '2028', NULL, NULL, NULL, NULL, '2025-07-08 14:29:50', NULL, NULL, NULL, 'uploads/becas/beca_1751984990_686d2b5e81a94.pdf');
+(1, 'Veneralda Jimenez Rodriga', 'VJR-200400-1I', '2000-04-20', 160, 1, 1, NULL, 2020, 2028, 'salvadormete2@gmail.com', '222478702', 'foto_perfil_1_1745998174.jpg', NULL, '2025-04-29 17:21:02', NULL, NULL, NULL, 'upload/becas/beca-VJR-200400-1I.pdf'),
+(2, 'ana maria boko', 'AMB-070617-2E', '2017-06-07', 160, 1, 1, NULL, 2025, 2028, NULL, NULL, NULL, NULL, '2025-07-08 14:29:50', NULL, NULL, NULL, 'uploads/becas/beca_1751984990_686d2b5e81a94.pdf'),
+(3, 'Bartolome Yamal', 'BY-070694-3A', '1994-06-07', 160, 1, 1, NULL, 2020, 2025, NULL, NULL, NULL, NULL, '2025-11-07 09:54:37', NULL, NULL, NULL, 'upload/becas/beca_1762509277_690dc1ddd155b.png'),
+(4, 'Beatriz EFUA EPESI', 'BEE-040504-4O', '2004-05-04', 160, 1, 1, NULL, 2021, 2027, NULL, NULL, NULL, NULL, '2025-11-07 09:58:45', NULL, NULL, NULL, 'upload/becas/beca_1762509525_690dc2d5282d8.png'),
+(5, 'Maripaz Eyanga', 'ME-070201-5M', '2001-02-07', 160, 1, 1, NULL, 2024, 2028, NULL, NULL, NULL, NULL, '2025-11-07 10:00:44', NULL, NULL, NULL, 'upload/becas/beca_1762509644_690dc34cf140e.png'),
+(6, 'Manuel mecheba', 'MM-100299-6K', '1999-02-10', 109, 2, 2, NULL, 2023, 2028, NULL, NULL, NULL, NULL, '2026-02-19 12:10:45', NULL, NULL, NULL, 'upload/becas/beca_1771503045_6996fdc58dc37.pdf'),
+(7, 'Pedro Nguema Mba', 'PNM-120398-7P', '1998-03-12', 160, 1, 1, NULL, 2022, 2026, NULL, NULL, NULL, NULL, '2026-02-19 11:15:01', NULL, NULL, NULL, 'upload/becas/beca-PNM-120398-7P.pdf'),
+(8, 'Lucia Ondo Esono', 'LOE-230801-8L', '2001-08-23', 160, 1, 1, NULL, 2021, 2027, NULL, NULL, NULL, NULL, '2026-02-19 11:15:02', NULL, NULL, NULL, 'upload/becas/beca-LOE.pdf'),
+(9, 'Carlos Obama Ela', 'COE-010500-9C', '2000-05-01', 160, 1, 1, NULL, 2019, 2025, NULL, NULL, NULL, NULL, '2026-02-19 11:15:03', NULL, NULL, NULL, 'upload/becas/beca-COE.pdf'),
+(10, 'Maria Nsue Nkogo', 'MNN-150902-10M', '2002-09-15', 160, 1, 1, NULL, 2023, 2027, NULL, NULL, NULL, NULL, '2026-02-19 11:15:04', NULL, NULL, NULL, 'upload/becas/beca-MNN.pdf'),
+(11, 'Javier Ekong Abaga', 'JEA-020796-11J', '1996-07-02', 160, 1, 1, NULL, 2018, 2024, NULL, NULL, NULL, NULL, '2026-02-19 11:15:05', NULL, NULL, NULL, 'upload/becas/beca-JEA.pdf'),
+(12, 'Sandra Nchama Nguema', 'SNN-110300-12S', '2000-03-11', 160, 1, 1, NULL, 2020, 2026, NULL, NULL, NULL, NULL, '2026-02-19 11:15:06', NULL, NULL, NULL, 'upload/becas/beca-SNN.pdf'),
+(13, 'Miguel Ndong Oyono', 'MNO-300198-13M', '1998-01-30', 160, 1, 1, NULL, 2019, 2025, NULL, NULL, NULL, NULL, '2026-02-19 11:15:07', NULL, NULL, NULL, 'upload/becas/beca-MNO.pdf'),
+(14, 'Teresa Abeso Esono', 'TAE-140603-14T', '2003-06-14', 160, 1, 1, NULL, 2022, 2028, NULL, NULL, NULL, NULL, '2026-02-19 11:15:08', NULL, NULL, NULL, 'upload/becas/beca-TAE.pdf'),
+(15, 'Josefa Obama Biyogo', 'JOB-221299-15J', '1999-12-22', 160, 1, 1, NULL, 2021, 2027, NULL, NULL, NULL, NULL, '2026-02-19 11:15:09', NULL, NULL, NULL, 'upload/becas/beca-JOB.pdf'),
+(16, 'Antonio Mba Evuna', 'AME-080197-16A', '1997-01-08', 160, 1, 1, NULL, 2018, 2024, NULL, NULL, NULL, NULL, '2026-02-19 11:15:10', NULL, NULL, NULL, 'upload/becas/beca-AME.pdf'),
+(17, 'Rosa Ela Nsue', 'REN-170701-17R', '2001-07-17', 160, 1, 1, NULL, 2023, 2027, NULL, NULL, NULL, NULL, '2026-02-19 11:15:11', NULL, NULL, NULL, 'upload/becas/beca-REN.pdf'),
+(18, 'Victor Ondo Mba', 'VOM-090499-18V', '1999-04-09', 160, 1, 1, NULL, 2020, 2026, NULL, NULL, NULL, NULL, '2026-02-19 11:15:12', NULL, NULL, NULL, 'upload/becas/beca-VOM.pdf'),
+(19, 'Gloria Nguema Eyama', 'GNE-050502-19G', '2002-05-05', 160, 1, 1, NULL, 2024, 2028, NULL, NULL, NULL, NULL, '2026-02-19 11:15:13', NULL, NULL, NULL, 'upload/becas/beca-GNE.pdf'),
+(20, 'Samuel Ndong Asumu', 'SNA-270698-20S', '1998-06-27', 160, 1, 1, NULL, 2019, 2025, NULL, NULL, NULL, NULL, '2026-02-19 11:15:14', NULL, NULL, NULL, 'upload/becas/beca-SNA.pdf'),
+(21, 'Patricia Esono Abeso', 'PEA-031203-21P', '2003-12-03', 160, 1, 1, NULL, 2022, 2028, NULL, NULL, NULL, NULL, '2026-02-19 11:15:15', NULL, NULL, NULL, 'upload/becas/beca-PEA.pdf'),
+(22, 'Felix Obama Ndong', 'FON-210497-22F', '1997-04-21', 160, 1, 1, NULL, 2017, 2023, NULL, NULL, NULL, NULL, '2026-02-19 11:15:16', NULL, NULL, NULL, 'upload/becas/beca-FON.pdf'),
+(23, 'Angela Mba Eyene', 'AME-101000-23A', '2000-10-10', 160, 1, 1, NULL, 2021, 2027, NULL, NULL, NULL, NULL, '2026-02-19 11:15:17', NULL, NULL, NULL, 'upload/becas/beca-AME23.pdf'),
+(24, 'Domingo Nsue Biyogo', 'DNB-181196-24D', '1996-11-18', 160, 1, 1, NULL, 2016, 2022, NULL, NULL, NULL, NULL, '2026-02-19 11:15:18', NULL, NULL, NULL, 'upload/becas/beca-DNB.pdf'),
+(25, 'Isabel Nchama Ela', 'INE-260802-25I', '2002-08-26', 160, 1, 1, NULL, 2023, 2027, NULL, NULL, NULL, NULL, '2026-02-19 11:15:19', NULL, NULL, NULL, 'upload/becas/beca-INE.pdf'),
+(26, 'Mateo Ondo Evuna', 'MOE-300399-26M', '1999-03-30', 160, 1, 1, NULL, 2019, 2025, NULL, NULL, NULL, NULL, '2026-02-19 11:15:20', NULL, NULL, NULL, 'upload/becas/beca-MOE.pdf'),
+(27, 'Leticia Obama Esono', 'LOE-050604-27L', '2004-06-05', 160, 1, 1, NULL, 2024, 2028, NULL, NULL, NULL, NULL, '2026-02-19 11:15:21', NULL, NULL, NULL, 'upload/becas/beca-LOE27.pdf'),
+(28, 'Francisco Ndong Nsue', 'FNN-121298-28F', '1998-12-12', 160, 1, 1, NULL, 2020, 2026, NULL, NULL, NULL, NULL, '2026-02-19 11:15:22', NULL, NULL, NULL, 'upload/becas/beca-FNN.pdf'),
+(29, 'Raquel Mba Nkogo', 'RMN-070901-29R', '2001-09-07', 160, 1, 1, NULL, 2022, 2028, NULL, NULL, NULL, NULL, '2026-02-19 11:15:23', NULL, NULL, NULL, 'upload/becas/beca-RMN.pdf'),
+(30, 'Esteban Eyama Nguema', 'EEN-190497-30E', '1997-04-19', 160, 1, 1, NULL, 2018, 2024, NULL, NULL, NULL, NULL, '2026-02-19 11:15:24', NULL, NULL, NULL, 'upload/becas/beca-EEN.pdf'),
+(31, 'Claudia Nsue Obama', 'CNO-011103-31C', '2003-11-01', 160, 1, 1, NULL, 2024, 2028, NULL, NULL, NULL, NULL, '2026-02-19 11:15:25', NULL, NULL, NULL, 'upload/becas/beca-CNO.pdf'),
+(32, 'Bernardo Ondo Ela', 'BOE-150698-32B', '1998-06-15', 160, 1, 1, NULL, 2019, 2025, NULL, NULL, NULL, NULL, '2026-02-19 11:15:26', NULL, NULL, NULL, 'upload/becas/beca-BOE.pdf'),
+(33, 'Nuria Mba Abaga', 'NMA-040801-33N', '2001-08-04', 160, 1, 1, NULL, 2022, 2028, NULL, NULL, NULL, NULL, '2026-02-19 11:15:27', NULL, NULL, NULL, 'upload/becas/beca-NMA.pdf'),
+(34, 'Julian Nchama Nsue', 'JNN-290597-34J', '1997-05-29', 160, 1, 1, NULL, 2018, 2024, NULL, NULL, NULL, NULL, '2026-02-19 11:15:28', NULL, NULL, NULL, 'upload/becas/beca-JNN.pdf'),
+(35, 'Silvia Obama Eyene', 'SOE-020402-35S', '2002-04-02', 160, 1, 1, NULL, 2023, 2027, NULL, NULL, NULL, NULL, '2026-02-19 11:15:29', NULL, NULL, NULL, 'upload/becas/beca-SOE.pdf'),
+(36, 'Hector Ndong Mba', 'HNM-080699-36H', '1999-06-08', 160, 1, 1, NULL, 2020, 2026, NULL, NULL, NULL, NULL, '2026-02-19 11:15:30', NULL, NULL, NULL, 'upload/becas/beca-HNM.pdf');
 
 -- --------------------------------------------------------
 
@@ -169,7 +201,7 @@ CREATE TABLE `idiomas` (
   `nombre` varchar(50) NOT NULL,
   `codigo_2` char(2) NOT NULL,
   `codigo_3` char(3) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `idiomas`
@@ -231,7 +263,7 @@ INSERT INTO `idiomas` (`id`, `nombre`, `codigo_2`, `codigo_3`) VALUES
 (53, 'Azerí', 'az', 'aze'),
 (54, 'Bambara', 'bm', 'bam'),
 (55, 'Bashkir', 'ba', 'bak'),
-(56, 'orrusBielo', 'be', 'bel'),
+(56, 'Bielorruso', 'be', 'bel'),
 (57, 'Bengalí', 'bn', 'ben'),
 (58, 'Bislama', 'bi', 'bis'),
 (59, 'Bosnio', 'bs', 'bos'),
@@ -349,7 +381,17 @@ INSERT INTO `idiomas` (`id`, `nombre`, `codigo_2`, `codigo_3`) VALUES
 (171, 'Cebuano', 'ce', 'ceb'),
 (172, 'Hmong', 'hm', 'hmn'),
 (173, 'Cebuano', 'ce', 'ceb'),
-(174, 'Hmong', 'hm', 'hmn');
+(174, 'Hmong', 'hm', 'hmn'),
+(175, 'Cebuano', 'ce', 'ceb'),
+(176, 'Hmong', 'hm', 'hmn'),
+(177, 'Cebuano', 'ce', 'ceb'),
+(178, 'Hmong', 'hm', 'hmn'),
+(179, 'Cebuano', 'ce', 'ceb'),
+(180, 'Hmong', 'hm', 'hmn'),
+(181, 'Cebuano', 'ce', 'ceb'),
+(182, 'Hmong', 'hm', 'hmn'),
+(183, 'Cebuano', 'ce', 'ceb'),
+(184, 'Hmong', 'hm', 'hmn');
 
 -- --------------------------------------------------------
 
@@ -364,7 +406,7 @@ CREATE TABLE `notas` (
   `observaciones` text DEFAULT NULL,
   `archivo_url` varchar(255) DEFAULT NULL,
   `fecha_subida` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `notas`
@@ -382,7 +424,7 @@ INSERT INTO `notas` (`id`, `estudiante_id`, `anio_academico_id`, `observaciones`
 CREATE TABLE `paises` (
   `id` int(11) NOT NULL,
   `nombre` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `paises`
@@ -408,6 +450,7 @@ INSERT INTO `paises` (`id`, `nombre`) VALUES
 (17, 'Belize'),
 (18, 'Benin'),
 (19, 'Bhutan'),
+(192, 'Bielorrusia'),
 (20, 'Bolivia'),
 (21, 'Bosnia and Herzegovina'),
 (22, 'Botswana'),
@@ -595,7 +638,7 @@ CREATE TABLE `pasaportes` (
   `fecha_expiracion` date DEFAULT NULL,
   `archivo_url` varchar(255) DEFAULT NULL,
   `fecha_subida` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `pasaportes`
@@ -613,7 +656,7 @@ INSERT INTO `pasaportes` (`id`, `estudiante_id`, `numero_pasaporte`, `fecha_emis
 CREATE TABLE `rol` (
   `id` int(11) NOT NULL,
   `nombre` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `rol`
@@ -633,14 +676,15 @@ CREATE TABLE `universidades` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `ciudad_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `universidades`
 --
 
 INSERT INTO `universidades` (`id`, `nombre`, `ciudad_id`) VALUES
-(1, 'Juan Carlos I', 1);
+(1, 'Juan Carlos I', 1),
+(2, 'universidad Nacional de Mexico', 2);
 
 -- --------------------------------------------------------
 
@@ -655,7 +699,7 @@ CREATE TABLE `usuarios` (
   `contrasena` varchar(255) DEFAULT NULL,
   `rol_id` int(11) DEFAULT NULL,
   `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `usuarios`
@@ -764,13 +808,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `anios_academicos`
 --
 ALTER TABLE `anios_academicos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `ciudades`
 --
 ALTER TABLE `ciudades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `configuracion`
@@ -788,13 +832,13 @@ ALTER TABLE `cuentas_bancarias`
 -- AUTO_INCREMENT de la tabla `estudiantes`
 --
 ALTER TABLE `estudiantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `idiomas`
 --
 ALTER TABLE `idiomas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=175;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=185;
 
 --
 -- AUTO_INCREMENT de la tabla `notas`
@@ -806,7 +850,7 @@ ALTER TABLE `notas`
 -- AUTO_INCREMENT de la tabla `paises`
 --
 ALTER TABLE `paises`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=192;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
 
 --
 -- AUTO_INCREMENT de la tabla `pasaportes`
@@ -824,7 +868,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `universidades`
 --
 ALTER TABLE `universidades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`

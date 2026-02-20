@@ -65,10 +65,10 @@ class PDF extends FPDF {
 
         $this->SetFont('Arial','',11);
         $this->Cell(30);
-        $this->Cell(0,6, mb_convert_encoding('TESORERIA GENERAL DEL ESTADO','ISO-8859-1','UTF-8'),0,1);
+        $this->Cell(0,6, mb_convert_encoding('TESORERIA Y PATRIMONIO DEL ESTADO','ISO-8859-1','UTF-8'),0,1);
 
         $this->Cell(30);
-        $this->Cell(0,6, mb_convert_encoding('Departamento de Control Financiero','ISO-8859-1','UTF-8'),0,1);
+        $this->Cell(0,6, mb_convert_encoding('','ISO-8859-1','UTF-8'),0,1);
 
         // Líneas institucionales
         $this->Ln(2);
@@ -138,8 +138,8 @@ $pdf->SetFillColor(30,70,140);
 $pdf->SetTextColor(255);
 $pdf->SetFont('Arial','B',9);
 
-$w = [10, 50, 30, 30, 40, 40, 30, 25, 25];
-$headers = ['ID','Nombre','Código','Nacimiento','País','Ciudad','Teléfono','Inicio','Final'];
+$w = [10, 65, 30, 30, 40, 35, 30, 20, 20];
+$headers = ['N°','Nombre','Código','Nacimiento','País','Ciudad','Teléfono','Inicio','Final'];
 
 foreach($headers as $i=>$col){
     $pdf->Cell($w[$i],9,mb_convert_encoding($col,'ISO-8859-1','UTF-8'),1,0,'C',true);
@@ -152,11 +152,14 @@ $pdf->SetFont('Arial','',9);
 $pdf->SetTextColor(40);
 $pdf->SetFillColor(245,249,252);
 
-$fill=false;
+$fill = false;
+$contador = 1; // ← numeración consecutiva
 
 foreach($estudiantes as $e){
 
-    $pdf->Cell($w[0],8,$e['id'],1,0,'C',$fill);
+    // número consecutivo
+    $pdf->Cell($w[0],8,$contador++,1,0,'C',$fill);
+
     $pdf->Cell($w[1],8,mb_convert_encoding($e['nombre_completo'],'ISO-8859-1','UTF-8'),1,0,'L',$fill);
     $pdf->Cell($w[2],8,$e['codigo_acceso'],1,0,'C',$fill);
     $pdf->Cell($w[3],8,date('d/m/Y',strtotime($e['fecha_nacimiento'])),1,0,'C',$fill);
