@@ -280,10 +280,8 @@ $rol = $_SESSION['usuario_rol'];
                             <?php foreach ($estudiantes as $est): ?>
                             <tr>
                                 <td><?= htmlspecialchars($est['id']) ?></td>
-                                <td><?= htmlspecialchars($est['nombre_completo']) ?></td>
-
-
-                                <td><?= htmlspecialchars($est['codigo_acceso']) ?></td>
+                              <td class="text-start"><?= htmlspecialchars($est['nombre_completo']) ?></td>
+                                <td class="text-start"><?= htmlspecialchars($est['codigo_acceso']) ?></td>
                                 <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
                                 <td><?= htmlspecialchars($est['pais']) ?></td>
                                 <td><?= htmlspecialchars($est['ciudad']) ?></td>

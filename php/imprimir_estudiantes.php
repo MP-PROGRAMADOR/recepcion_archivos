@@ -179,8 +179,8 @@ $pdf->Ln(12);
 
 $pdf->SetFont('Arial','',10);
 $pdf->Cell(0,6,'____________________________________',0,1,'R');
-$pdf->Cell(0,6,mb_convert_encoding('Director General de Tesorería','ISO-8859-1','UTF-8'),0,1,'R');
-$pdf->Cell(0,6,'Tesoreria General del Estado',0,1,'R');
+$pdf->Cell(0,6,mb_convert_encoding('Negociado de Misiones Diplomaticas','ISO-8859-1','UTF-8'),0,1,'R');
+$pdf->Cell(0,6,'Tesoreria General y Patrimonio del  Estado',0,1,'R');
 
 
 $pdf->Output('I','Reporte_Estudiantes_Becados.pdf');
