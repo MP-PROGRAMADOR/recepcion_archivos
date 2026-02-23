@@ -115,10 +115,6 @@ include_once("../componentes/sidebar.php");
             <div class="card-body">
 
 
-
-
-
-
                 <div class="row mb-3 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label fw-bold">Filtrar por</label>
@@ -236,7 +232,6 @@ include_once("../componentes/sidebar.php");
                             <?php endif; ?>
                         </tbody>
                     </table>
-
                 </div>
                 <!-- Paginación -->
                 <?php if ($total_paginas > 1): ?>

@@ -1,9 +1,9 @@
 <?php
 
 include_once("../componentes/header.php");
-  // Asegúrate de que esto esté al principio del archivo
+// Asegúrate de que esto esté al principio del archivo
 // Conexión
- 
+
 
 // Consulta de estudiantes con JOIN a países
 // Configuración de paginación
@@ -55,7 +55,7 @@ include_once("../componentes/sidebar.php");
 ?>
 
 <main class="content" id="mainContent">
-<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
+    <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container-fluid">
         <!-- INICIO DE LA ALERTA -->
         <?php
@@ -112,6 +112,45 @@ include_once("../componentes/sidebar.php");
 
         <div class="card shadow rounded-4">
             <div class="card-body">
+
+
+                <div class="row mb-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Filtrar por</label>
+                        <select id="tipoFiltro" class="form-select" onchange="controlFiltroUI()">
+                            <option value="" disabled selected>Seleccione filtro</option>
+                            <option value="estudiante">Nombre del Estudiante</option>
+                            <option value="pasaporte">Número de Pasaporte</option>
+                            <option value="orden_nombre_az">Nombre (A-Z)</option>
+                            <option value="orden_fecha_expiracion">Próximos a vencer</option>
+                            <option value="orden_fecha_reciente">Subidos recientemente</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Valor</label>
+                        <input type="text" id="valorFiltro" class="form-control" placeholder="Escribe el valor a filtrar">
+                    </div>
+
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-primary btn-sm px-3" onclick="aplicarFiltro()">
+                            <i class="bi bi-funnel-fill"></i> Filtrar
+                        </button>
+                    </div>
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-danger btn-sm px-2" onclick="limpiarFiltros()">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-success d-flex btn-sm px-3" onclick="imprimirFiltrado()">
+                            <i class="bi bi-printer-fill me-2"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+
+
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="busqueda" class="form-label fw-bold">Buscar Pasaporte</label>
@@ -187,8 +226,6 @@ include_once("../componentes/sidebar.php");
 
                                         </td>
 
-
-
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
@@ -236,6 +273,81 @@ include_once("../componentes/sidebar.php");
 <!-- Bootstrap Icons & jQuery -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+<script>
+    // Deshabilitar input de valor si se elige una opción de ordenamiento
+    function controlFiltroUI() {
+        const filtro = document.getElementById('tipoFiltro').value;
+        const inputValor = document.getElementById('valorFiltro');
+        inputValor.disabled = filtro.startsWith('orden_');
+        if (inputValor.disabled) inputValor.value = "";
+    }
+
+    function aplicarFiltro() {
+        const tipo = document.getElementById('tipoFiltro').value;
+        const valor = document.getElementById('valorFiltro').value.toLowerCase();
+        const tabla = document.getElementById('contenidoTabla');
+        const filas = Array.from(tabla.getElementsByTagName('tr')).filter(f => !f.id.includes('msg'));
+        let coincidencias = 0;
+
+        // Remover mensaje previo si existe
+        const msgPrevio = document.getElementById('sin-resultados-msg');
+        if (msgPrevio) msgPrevio.remove();
+
+        if (!tipo.startsWith('orden_')) {
+            filas.forEach(fila => {
+                let textoCelda = "";
+                // Columna 1: Nombre, Columna 2: Numero Pasaporte
+                if (tipo === "estudiante" || tipo === "") textoCelda = fila.cells[1].textContent.toLowerCase();
+                else if (tipo === "pasaporte") textoCelda = fila.cells[2].textContent.toLowerCase();
+
+                if (textoCelda.includes(valor)) {
+                    fila.style.display = "";
+                    coincidencias++;
+                } else {
+                    fila.style.display = "none";
+                }
+            });
+
+            if (coincidencias === 0) mostrarMensajeVacio();
+
+        } else {
+            // Si es ordenamiento, mostramos todo y ordenamos
+            filas.forEach(f => f.style.display = "");
+            ordenarTabla(metodo);
+        }
+    }
+
+    function mostrarMensajeVacio() {
+        const tabla = document.getElementById('contenidoTabla');
+        const filaVacia = document.createElement('tr');
+        filaVacia.id = 'sin-resultados-msg';
+        filaVacia.innerHTML = `
+        <td colspan="8" class="text-center text-muted py-4">
+            <i class="bi bi-search me-2"></i> No se encontraron coincidencias para la búsqueda.
+        </td>`;
+        tabla.appendChild(filaVacia);
+    }
+
+    function limpiarFiltros() {
+        document.getElementById('tipoFiltro').value = "";
+        document.getElementById('valorFiltro').value = "";
+        document.getElementById('valorFiltro').disabled = false;
+        const filas = document.querySelectorAll('#contenidoTabla tr');
+        filas.forEach(f => f.style.display = "");
+        const msg = document.getElementById('sin-resultados-msg');
+        if (msg) msg.remove();
+    }
+
+    function imprimirFiltrado() {
+        const tipo = document.getElementById('tipoFiltro').value;
+        const valor = document.getElementById('valorFiltro').value;
+        // Redirige al archivo PHP que genera el FPDF
+        window.open(`../php/imprimir_pasaportes.php?tipo=${tipo}&valor=${encodeURIComponent(valor)}`, '_blank');
+    }
+</script>
 
 <!-- Buscador en tiempo real -->
 <script>
