@@ -122,6 +122,7 @@ include_once("../componentes/sidebar.php");
                             <option value="estudiante">Nombre del Estudiante</option>
                             <option value="pasaporte">Número de Pasaporte</option>
                             <option value="orden_nombre_az">Nombre (A-Z)</option>
+                            <option value="orden_nombre_za">Nombre (Z-A)</option>
                             <option value="orden_fecha_expiracion">Próximos a vencer</option>
                             <option value="orden_fecha_reciente">Subidos recientemente</option>
                         </select>
@@ -163,7 +164,7 @@ include_once("../componentes/sidebar.php");
                         <thead class="table-dark">
                             <tr>
                                 <th>ID</th>
-                                <th>Nombre</th>
+                                <th class="text-start">Nombre</th>
                                 <th>Código de Pasaporte</th>
                                 <th>Fecha de Emision</th>
                                 <th>Fecha de Expiracion</th>
@@ -177,7 +178,7 @@ include_once("../componentes/sidebar.php");
                                 <?php foreach ($estudiantes as $est): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($est['id']) ?></td>
-                                        <td><?= htmlspecialchars($est['nombre_completo']) ?></td>
+                                        <td class="text-start"><?= htmlspecialchars($est['nombre_completo']) ?></td>
                                         <td><?= htmlspecialchars($est['numero_pasaporte']) ?></td>
                                         <td><?= date('d/m/Y', strtotime($est['fecha_emision'])) ?></td>
                                         <td><?= date('d/m/Y H:i', strtotime($est['fecha_expiracion'])) ?></td>
@@ -221,9 +222,6 @@ include_once("../componentes/sidebar.php");
                                                     </a>
                                                 <?php endif; ?>
                                             <?php endif; ?>
-
-
-
                                         </td>
 
                                     </tr>
@@ -238,7 +236,6 @@ include_once("../componentes/sidebar.php");
 
                 </div>
                 <!-- PAGINACION -->
-                <!-- Paginación -->
                 <?php if ($total_paginas > 1): ?>
                     <nav>
                         <ul class="pagination justify-content-center">
@@ -262,9 +259,7 @@ include_once("../componentes/sidebar.php");
                         </ul>
                     </nav>
                 <?php endif; ?>
-
                 <!-- FIN DE LA PAGINACION -->
-
             </div>
         </div>
     </div>
@@ -277,7 +272,6 @@ include_once("../componentes/sidebar.php");
 
 
 <script>
-    // Deshabilitar input de valor si se elige una opción de ordenamiento
     function controlFiltroUI() {
         const filtro = document.getElementById('tipoFiltro').value;
         const inputValor = document.getElementById('valorFiltro');
@@ -292,14 +286,13 @@ include_once("../componentes/sidebar.php");
         const filas = Array.from(tabla.getElementsByTagName('tr')).filter(f => !f.id.includes('msg'));
         let coincidencias = 0;
 
-        // Remover mensaje previo si existe
         const msgPrevio = document.getElementById('sin-resultados-msg');
         if (msgPrevio) msgPrevio.remove();
 
         if (!tipo.startsWith('orden_')) {
+            // LÓGICA DE FILTRADO
             filas.forEach(fila => {
                 let textoCelda = "";
-                // Columna 1: Nombre, Columna 2: Numero Pasaporte
                 if (tipo === "estudiante" || tipo === "") textoCelda = fila.cells[1].textContent.toLowerCase();
                 else if (tipo === "pasaporte") textoCelda = fila.cells[2].textContent.toLowerCase();
 
@@ -310,14 +303,61 @@ include_once("../componentes/sidebar.php");
                     fila.style.display = "none";
                 }
             });
-
             if (coincidencias === 0) mostrarMensajeVacio();
-
         } else {
-            // Si es ordenamiento, mostramos todo y ordenamos
+            // LÓGICA DE ORDENAMIENTO (Corregido: pasamos 'tipo')
             filas.forEach(f => f.style.display = "");
-            ordenarTabla(metodo);
+            ordenarTabla(tipo);
         }
+    }
+
+    function ordenarTabla(metodo) {
+        const tabla = document.getElementById('contenidoTabla');
+        const filas = Array.from(tabla.getElementsByTagName('tr')).filter(f => !f.id.includes('msg'));
+
+        const filasOrdenadas = filas.sort((a, b) => {
+            let valorA, valorB;
+
+            switch (metodo) {
+                case 'orden_nombre_az':
+                    valorA = a.cells[1].textContent.trim().toLowerCase();
+                    valorB = b.cells[1].textContent.trim().toLowerCase();
+                    return valorA.localeCompare(valorB);
+
+                case 'orden_nombre_za': // Nueva lógica Z-A
+                    valorA = a.cells[1].textContent.trim().toLowerCase();
+                    valorB = b.cells[1].textContent.trim().toLowerCase();
+                    // Comparamos B contra A para invertir el orden
+                    return valorB.localeCompare(valorA);
+
+                case 'orden_fecha_expiracion':
+                    // Columna 4: Fecha Expiración. Usamos parseFecha para comparar
+                    valorA = parseFecha(a.cells[4].textContent);
+                    valorB = parseFecha(b.cells[4].textContent);
+                    return valorA - valorB; // El que vence antes, primero
+
+                case 'orden_fecha_reciente':
+                    // Columna 5: Fecha Subida. 
+                    valorA = parseFecha(a.cells[5].textContent);
+                    valorB = parseFecha(b.cells[5].textContent);
+                    return valorB - valorA; // El más nuevo, primero
+
+                default:
+                    return 0;
+            }
+        });
+
+        // Re-insertar las filas en el nuevo orden
+        filasOrdenadas.forEach(fila => tabla.appendChild(fila));
+    }
+
+    // Función auxiliar para convertir "dd/mm/yyyy" a objeto Date de JS
+    function parseFecha(cadena) {
+        // Limpiamos espacios y posibles horas (si las hay como en "d/m/Y H:i")
+        const soloFecha = cadena.trim().split(' ')[0];
+        const partes = soloFecha.split('/');
+        // Formato JS: new Date(año, mes-1, día)
+        return new Date(partes[2], partes[1] - 1, partes[0]);
     }
 
     function mostrarMensajeVacio() {
@@ -326,7 +366,7 @@ include_once("../componentes/sidebar.php");
         filaVacia.id = 'sin-resultados-msg';
         filaVacia.innerHTML = `
         <td colspan="8" class="text-center text-muted py-4">
-            <i class="bi bi-search me-2"></i> No se encontraron coincidencias para la búsqueda.
+            <i class="bi bi-search me-2"></i> No se encontraron coincidencias.
         </td>`;
         tabla.appendChild(filaVacia);
     }
@@ -340,13 +380,6 @@ include_once("../componentes/sidebar.php");
         const msg = document.getElementById('sin-resultados-msg');
         if (msg) msg.remove();
     }
-
-    function imprimirFiltrado() {
-        const tipo = document.getElementById('tipoFiltro').value;
-        const valor = document.getElementById('valorFiltro').value;
-        // Redirige al archivo PHP que genera el FPDF
-        window.open(`../php/imprimir_pasaportes.php?tipo=${tipo}&valor=${encodeURIComponent(valor)}`, '_blank');
-    }
 </script>
 
 <!-- Buscador en tiempo real -->
@@ -354,9 +387,34 @@ include_once("../componentes/sidebar.php");
     $(document).ready(function() {
         $("#busqueda").on("keyup", function() {
             let valor = $(this).val().toLowerCase();
-            $("#contenidoTabla tr").filter(function() {
+
+            // Filtramos las filas omitiendo la fila de mensaje si ya existe
+            let filas = $("#contenidoTabla tr").not("#sin-resultados-busqueda");
+
+            filas.filter(function() {
+                // Alternar visibilidad basado en la coincidencia del texto
                 $(this).toggle($(this).text().toLowerCase().includes(valor));
             });
+
+            // Contamos cuántas filas quedaron visibles
+            let coincidencias = filas.filter(":visible").length;
+
+            // Manejo del mensaje de "No encontrado"
+            if (coincidencias === 0) {
+                // Si no hay mensaje previo, lo creamos
+                if ($("#sin-resultados-busqueda").length === 0) {
+                    $("#contenidoTabla").append(
+                        `<tr id="sin-resultados-busqueda">
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="bi bi-search me-2"></i> No se encontraron coincidencias para "${$(this).val()}"
+                            </td>
+                        </tr>`
+                    );
+                }
+            } else {
+                // Si hay coincidencias, eliminamos el mensaje de error
+                $("#sin-resultados-busqueda").remove();
+            }
         });
     });
 </script>
