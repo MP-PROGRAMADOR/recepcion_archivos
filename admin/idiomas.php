@@ -203,7 +203,8 @@ foreach ($idiomas as $idioma) {
 // Consulta para obtener los datos requeridos de estudiantes, idiomas, universidades, ciudades y países
 try {
     $stmt = $pdo->prepare("        SELECT 
-            e.nombre_completo AS estudiante, 
+            e.nombre_completo,
+            e.meses_idioma, 
             i.nombre AS idioma,  
             u.nombre AS universidad, 
             c.nombre AS ciudad, 
@@ -253,9 +254,9 @@ include_once("../componentes/sidebar.php");
                             <?php if (!empty($estudiantes)): ?>
                                 <?php foreach ($estudiantes as $est): ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($est['estudiante']) ?></td>
+                                        <td><?= htmlspecialchars($est['nombre_completo']) ?></td>
                                         <td><?= htmlspecialchars($est['idioma']) ?></td>
-                                        <td><?= htmlspecialchars($est['meses']) ?> meses</td>
+                                        <td><?= htmlspecialchars($est['meses_idioma']) ?> meses</td>
                                         <td><?= htmlspecialchars($est['universidad']) ?></td>
                                         <td><?= htmlspecialchars($est['ciudad']) ?></td>
                                         <td><?= htmlspecialchars($est['pais']) ?></td>

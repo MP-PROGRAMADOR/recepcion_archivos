@@ -1,5 +1,4 @@
 <?php
-
 include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
@@ -8,24 +7,65 @@ $por_pagina = 10;
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
 
-// Contar el total de ciudades con estudiantes inscritos
-$total_stmt = $pdo->query("SELECT COUNT(DISTINCT ciudad_id) as total FROM estudiantes");
-$total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
-$total_paginas = ceil($total_filas / $por_pagina);
+// Filtros
+$tipo  = $_GET['tipo'] ?? '';
+$valor = trim($_GET['valor'] ?? '');
 
-// Obtener ciudades con estudiantes y el total de estudiantes
+// Consulta base
+$sql = "SELECT c.id, c.nombre, COUNT(e.id) as estudiantes
+        FROM ciudades c
+        LEFT JOIN estudiantes e ON c.id = e.ciudad_id
+        WHERE 1=1";
+
+$params = [];
+
+// Columnas filtrables
+$columnas = [
+    'nombre' => 'c.nombre'
+];
+
+// Aplicar filtro por valor
+if ($valor !== '' && isset($columnas[$tipo])) {
+    $sql .= " AND {$columnas[$tipo]} LIKE :valor";
+    $params[':valor'] = "%$valor%";
+}
+
+// Agrupar y ordenar
+$sql .= " GROUP BY c.id";
+
+if ($tipo === 'orden_az') {
+    $sql .= " ORDER BY c.nombre ASC";
+} elseif ($tipo === 'orden_za') {
+    $sql .= " ORDER BY c.nombre DESC";
+} else {
+    $sql .= " ORDER BY c.id DESC";
+}
+
+// Paginación
+$sql .= " LIMIT :inicio, :por_pagina";
+
 try {
-    $stmt = $pdo->prepare("SELECT c.id, c.nombre, COUNT(e.id) as estudiantes
-                           FROM ciudades c
-                           LEFT JOIN estudiantes e ON c.id = e.ciudad_id
-                           GROUP BY c.id
-                           HAVING estudiantes > 0
-                           ORDER BY c.id DESC
-                           LIMIT :inicio, :por_pagina");
+    $stmt = $pdo->prepare($sql);
+    foreach ($params as $key => $val) {
+        $stmt->bindValue($key, $val);
+    }
     $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
     $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
     $stmt->execute();
     $ciudades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Contar total de filas filtradas
+    $total_stmt = $pdo->prepare("SELECT COUNT(DISTINCT c.id) as total
+                                 FROM ciudades c
+                                 LEFT JOIN estudiantes e ON c.id = e.ciudad_id
+                                 WHERE 1=1" . ($valor !== '' && isset($columnas[$tipo]) ? " AND {$columnas[$tipo]} LIKE :valor" : ""));
+    if ($valor !== '' && isset($columnas[$tipo])) {
+        $total_stmt->bindValue(':valor', "%$valor%");
+    }
+    $total_stmt->execute();
+    $total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    $total_paginas = ceil($total_filas / $por_pagina);
+
 } catch (PDOException $e) {
     die("Error al obtener las ciudades: " . $e->getMessage());
 }
@@ -83,6 +123,46 @@ try {
 
         <div class="card shadow rounded-4">
             <div class="card-body">
+
+                <div class="row mb-3 align-items-end">
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Filtrar por</label>
+                        <select id="tipoFiltro" class="form-select" onchange="controlFiltroUI()">
+                            <option value="nombre">Nombre de ciudad</option>
+                            <option value="orden_az">Orden Alfabético (A-Z)</option>
+                            <option value="orden_za">Orden Alfabético (Z-A)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Valor</label>
+                        <input type="text" id="valorFiltro" class="form-control"
+                            placeholder="Escribe el valor a filtrar">
+                    </div>
+
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-primary btn-sm" onclick="aplicarFiltro()">
+                            <i class="bi bi-funnel-fill"></i> Filtrar
+                        </button>
+                    </div>
+
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-danger btn-sm" onclick="limpiarFiltros()">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-success btn-sm" onclick="imprimirFiltrado()">
+                            <i class="bi bi-printer-fill"></i> Imprimir
+                        </button>
+                    </div>
+
+                </div>
+
+
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="busqueda" class="form-label fw-bold">
@@ -99,7 +179,7 @@ try {
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
                                 <th><i class="bi bi-geo-alt-fill me-1"></i>Nombre</th>
                                 <th><i class="bi bi-person-fill me-1"></i>Estudiantes</th>
-                                 <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
+                                <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
@@ -174,6 +254,70 @@ $(document).ready(function() {
         });
     });
 });
+</script>
+
+<script>
+// Aplica el filtro y recarga la página con parámetros GET
+function aplicarFiltro() {
+    const tipo = document.getElementById("tipoFiltro").value;
+    const valor = document.getElementById("valorFiltro").value.trim();
+
+    const url = new URL(window.location);
+
+    if (tipo) url.searchParams.set("tipo", tipo);
+
+    if (valor && tipo !== "orden_az" && tipo !== "orden_za") {
+        url.searchParams.set("valor", valor);
+    } else {
+        url.searchParams.delete("valor");
+    }
+
+    url.searchParams.set("pagina", 1);
+    window.location.href = url.toString();
+}
+
+// Mostrar/ocultar input según tipo de filtro
+function controlFiltroUI() {
+    const tipo = document.getElementById("tipoFiltro").value;
+    const input = document.getElementById("valorFiltro");
+
+    if (tipo === "orden_az" || tipo === "orden_za") {
+        input.style.display = "none";
+        input.value = "";
+    } else {
+        input.style.display = "block";
+        input.focus();
+    }
+}
+
+// Cargar valores del filtro al cargar la página
+window.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const tipo = params.get("tipo");
+    const valor = params.get("valor");
+
+    if (tipo) document.getElementById("tipoFiltro").value = tipo;
+    if (valor) document.getElementById("valorFiltro").value = valor;
+
+    controlFiltroUI();
+});
+
+// Limpiar filtros
+function limpiarFiltros() {
+    const url = new URL(window.location);
+    url.searchParams.delete("tipo");
+    url.searchParams.delete("valor");
+    url.searchParams.set("pagina", 1);
+    window.location.href = url.toString();
+}
+
+// Imprimir filtrado
+function imprimirFiltrado() {
+    const tipo = document.getElementById("tipoFiltro").value;
+    const valor = document.getElementById("valorFiltro").value.trim();
+    const url = `../php/imprimir_ciudades.php?tipo=${encodeURIComponent(tipo)}&valor=${encodeURIComponent(valor)}`;
+    window.open(url, "_blank");
+}
 </script>
 
 <?php include_once("../componentes/footer.php"); ?>

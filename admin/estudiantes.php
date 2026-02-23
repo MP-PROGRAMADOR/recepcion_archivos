@@ -261,8 +261,8 @@ $rol = $_SESSION['usuario_rol'];
                         <thead class="table-dark">
                             <tr>
                                 <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Código de Acceso</th>
+                                <th class="text-start">Nombre</th>
+                                <th class="text-start">Código de Acceso</th>
 
                                 <th>Fecha de Nacimiento</th>
                                 <th>Pais</th>
