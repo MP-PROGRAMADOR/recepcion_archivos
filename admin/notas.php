@@ -56,7 +56,7 @@ include_once("../componentes/sidebar.php");
 ?>
 
 <main class="content" id="mainContent">
-<canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
+    <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container-fluid">
         <!-- INICIO DE LA ALERTA -->
         <?php
@@ -113,6 +113,49 @@ include_once("../componentes/sidebar.php");
 
         <div class="card shadow rounded-4">
             <div class="card-body">
+
+
+
+
+
+
+                <div class="row mb-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Filtrar por</label>
+                        <select id="tipoFiltro" class="form-select" onchange="controlFiltroUI()">
+                            <option value="" disabled selected>Seleccione filtro</option>
+                            <option value="estudiante">Nombre del Estudiante</option>
+                            <option value="anio">Año Académico</option>
+                            <option value="observaciones">Observaciones</option>
+                            <option value="orden_nombre_az">Nombre (A-Z)</option>
+                            <option value="orden_fecha_reciente">Más recientes primero</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Valor</label>
+                        <input type="text" id="valorFiltro" class="form-control" placeholder="Escribe el valor a filtrar">
+                    </div>
+
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-primary btn-sm px-3" onclick="aplicarFiltro()">
+                            <i class="bi bi-funnel-fill"></i> Filtrar
+                        </button>
+                    </div>
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-danger btn-sm px-2" onclick="limpiarFiltros()">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-success d-flex btn-sm px-3" onclick="imprimirFiltrado()">
+                            <i class="bi bi-printer-fill me-2"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+
+
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="busqueda" class="form-label fw-bold">Buscar Notas</label>
@@ -125,9 +168,9 @@ include_once("../componentes/sidebar.php");
                         <thead class="table-dark">
                             <tr>
                                 <th>ID</th>
-                                <th>Nombre Completo</th>
+                                <th class="text-start">Nombre Completo</th>
                                 <th>Año Academico</th>
-                                <th>Observaciones</th>
+                                <th class="text-start">Observaciones</th>
                                 <th>Fecha de Subida</th>
                                 <th>Archivo</th>
                                 <th>Acciones</th>
@@ -138,9 +181,9 @@ include_once("../componentes/sidebar.php");
                                 <?php foreach ($estudiantes as $est): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($est['id']) ?></td>
-                                        <td><?= htmlspecialchars($est['nombre_completo']) ?></td>
+                                        <td class="text-start"><?= htmlspecialchars($est['nombre_completo']) ?></td>
                                         <td><?= htmlspecialchars($est['nombre']) ?></td>
-                                        <td><?= htmlspecialchars(mb_strimwidth($est['observaciones'], 0, 50, '...')) ?></td>
+                                        <td class="text-start"><?= htmlspecialchars(mb_strimwidth($est['observaciones'], 0, 50, '...')) ?></td>
                                         <td><?= date('d/m/Y H:i', strtotime($est['fecha_subida'])) ?></td>
                                         <td>
 
@@ -182,12 +225,7 @@ include_once("../componentes/sidebar.php");
                                                     </a>
                                                 <?php endif; ?>
                                             <?php endif; ?>
-
-
-
                                         </td>
-
-
 
                                     </tr>
                                 <?php endforeach; ?>
@@ -200,7 +238,6 @@ include_once("../componentes/sidebar.php");
                     </table>
 
                 </div>
-                <!-- PAGINACION -->
                 <!-- Paginación -->
                 <?php if ($total_paginas > 1): ?>
                     <nav>
@@ -237,14 +274,126 @@ include_once("../componentes/sidebar.php");
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<script>
+    function controlFiltroUI() {
+        const filtro = document.getElementById('tipoFiltro').value;
+        const inputValor = document.getElementById('valorFiltro');
+        inputValor.disabled = filtro.startsWith('orden_');
+        if (inputValor.disabled) inputValor.value = "";
+    }
+
+    function aplicarFiltro() {
+        const tipo = document.getElementById('tipoFiltro').value;
+        const valor = document.getElementById('valorFiltro').value.toLowerCase();
+        const tabla = document.getElementById('contenidoTabla');
+        const filas = Array.from(tabla.getElementsByTagName('tr'));
+        let coincidencias = 0;
+
+        if (!tipo.startsWith('orden_')) {
+            filas.forEach(fila => {
+                if (fila.cells.length < 2) return; // Saltar fila de "no hay datos"
+
+                let textoCelda = "";
+                // Mapeo de columnas: 0:ID, 1:Nombre, 2:Año, 3:Observaciones
+                if (tipo === "id") textoCelda = fila.cells[0].textContent.toLowerCase();
+                else if (tipo === "estudiante" || tipo === "") textoCelda = fila.cells[1].textContent.toLowerCase();
+                else if (tipo === "anio") textoCelda = fila.cells[2].textContent.toLowerCase();
+                else if (tipo === "observaciones") textoCelda = fila.cells[3].textContent.toLowerCase();
+
+                if (textoCelda.includes(valor)) {
+                    fila.style.display = "";
+                    coincidencias++;
+                } else {
+                    fila.style.display = "none";
+                }
+            });
+        } else {
+            filas.forEach(f => f.style.display = "");
+            coincidencias = filas.length;
+            ordenarTabla(tipo);
+        }
+        manejarMensajeVacio(coincidencias);
+    }
+
+    function ordenarTabla(metodo) {
+        const tabla = document.getElementById('contenidoTabla');
+        const filas = Array.from(tabla.querySelectorAll('tr')).filter(f => f.cells.length > 1);
+
+        const sortedRows = filas.sort((a, b) => {
+            if (metodo === 'orden_nombre_az') {
+                return a.cells[1].textContent.trim().localeCompare(b.cells[1].textContent.trim());
+            } else if (metodo === 'orden_fecha_reciente') {
+                // Compara las fechas (columna 4) convirtiéndolas a formato comparable
+                return new Date(b.cells[4].textContent) - new Date(a.cells[4].textContent);
+            }
+            return 0;
+        });
+
+        sortedRows.forEach(row => tabla.appendChild(row));
+    }
+
+    function manejarMensajeVacio(count) {
+        const tabla = document.getElementById('contenidoTabla');
+        let filaVacia = document.getElementById('sin-resultados-msg');
+        if (count === 0) {
+            if (!filaVacia) {
+                filaVacia = document.createElement('tr');
+                filaVacia.id = 'sin-resultados-msg';
+                filaVacia.innerHTML = `<td colspan="8" class="text-center text-muted py-4"> <i class="bi bi-search me-2"></i> No se encontraron coincidencias</td>`;
+                tabla.appendChild(filaVacia);
+            }
+        } else if (filaVacia) {
+            filaVacia.remove();
+        }
+    }
+
+    function limpiarFiltros() {
+        document.getElementById('tipoFiltro').value = "";
+        document.getElementById('valorFiltro').value = "";
+        document.getElementById('valorFiltro').disabled = false;
+        const filas = document.querySelectorAll('#contenidoTabla tr');
+        filas.forEach(f => f.style.display = "");
+        const msg = document.getElementById('sin-resultados-msg');
+        if (msg) msg.remove();
+    }
+
+    function imprimirFiltrado() {
+        const tipo = document.getElementById('tipoFiltro').value;
+        const valor = document.getElementById('valorFiltro').value;
+        // Ajusta esta ruta a tu nuevo archivo de impresión de notas
+        window.open(`../php/imprimir_notas_estudiantes.php?tipo=${tipo}&valor=${encodeURIComponent(valor)}`, '_blank');
+    }
+</script>
+
 <!-- Buscador en tiempo real -->
 <script>
     $(document).ready(function() {
         $("#busqueda").on("keyup", function() {
             let valor = $(this).val().toLowerCase();
-            $("#contenidoTabla tr").filter(function() {
+            let filas = $("#contenidoTabla tr:not(#sin-resultados-busqueda)");
+            
+            // 1. Filtrar las filas
+            filas.filter(function() {
                 $(this).toggle($(this).text().toLowerCase().includes(valor));
             });
+
+            // 2. Verificar si hay filas visibles
+            let visibles = filas.filter(":visible").length;
+            
+            // 3. Manejar el mensaje de "No se encontraron resultados"
+            if (visibles === 0) {
+                if ($("#sin-resultados-busqueda").length === 0) {
+                    $("#contenidoTabla").append(
+                        `<tr id="sin-resultados-busqueda">
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="bi bi-search me-2"></i> No se encontraron coincidencias para "${$(this).val()}"
+                            </td>
+                        </tr>`
+                    );
+                }
+            } else {
+                $("#sin-resultados-busqueda").remove();
+            }
         });
     });
 </script>
