@@ -1,5 +1,5 @@
-<?php
-include '../config/conexion.php'; // Archivo de conexión
+<?php 
+include '../config/conexion.php';
 session_start();
 
 $email = trim($_POST['email'] ?? '');
@@ -11,11 +11,10 @@ $accion = "LOGIN";
 $modulo = "Usuarios";
 $registro_id = null;
 $descripcion = "";
-$resultado = "ERROR"; // Por defecto
+$resultado = "ERROR";
 
 if (!empty($email) && !empty($contrasena)) {
     try {
-        // Consulta con JOIN para obtener el nombre del rol
         $stmt = $pdo->prepare("
             SELECT u.*, r.nombre AS rol_nombre 
             FROM usuarios u 
@@ -27,7 +26,8 @@ if (!empty($email) && !empty($contrasena)) {
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
-            // Login exitoso
+
+            // ✅ LOGIN EXITOSO
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nombre'] = $usuario['nombre'];
             $_SESSION['usuario_email'] = $usuario['email'];
@@ -37,13 +37,16 @@ if (!empty($email) && !empty($contrasena)) {
             $descripcion = "Inicio de sesión exitoso.";
             $resultado = "EXITO";
 
-            // Guardar log
+            // Guardar log SOLO si existe usuario
             $stmt_log = $pdo->prepare("
                 INSERT INTO log_actividades 
                 (usuario_id, accion, modulo, registro_id, descripcion, ip_address, navegador, resultado)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ");
-            $stmt_log->execute([$usuario['id'], $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, $resultado]);
+            $stmt_log->execute([
+                $usuario['id'], $accion, $modulo, $registro_id,
+                $descripcion, $ip, $navegador, $resultado
+            ]);
 
             // Redirección según rol
             $rol = strtolower($usuario['rol_nombre']);
@@ -53,14 +56,23 @@ if (!empty($email) && !empty($contrasena)) {
             }
 
         } else {
-            $descripcion = "Intento de login fallido para el email: $email";
-            $stmt_log = $pdo->prepare("
-                INSERT INTO log_actividades 
-                (usuario_id, accion, modulo, registro_id, descripcion, ip_address, navegador, resultado)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ");
-            // Si no existe usuario, ponemos null en usuario_id
-            $stmt_log->execute([ $usuario['id'] ?? null, $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, $resultado ]);
+
+            // ❌ LOGIN FALLIDO
+
+            // SOLO guardar log si el usuario existe
+            if ($usuario) {
+                $descripcion = "Contraseña incorrecta.";
+                
+                $stmt_log = $pdo->prepare("
+                    INSERT INTO log_actividades 
+                    (usuario_id, accion, modulo, registro_id, descripcion, ip_address, navegador, resultado)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ");
+                $stmt_log->execute([
+                    $usuario['id'], $accion, $modulo, $usuario['id'],
+                    $descripcion, $ip, $navegador, $resultado
+                ]);
+            }
 
             $_SESSION['error'] = 'Correo o contraseña incorrectos.';
             header('Location: ../index.php');

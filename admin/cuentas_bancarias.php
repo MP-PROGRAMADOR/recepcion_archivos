@@ -79,26 +79,28 @@ $rol = $_SESSION['usuario_rol'];
 
 <main class="content" id="mainContent">
 
-    <?php if (isset($_SESSION['mensaje'])): ?>
-    <div id="alerta-sesion" class="alert alert-<?= $_SESSION['tipo_mensaje'] ?> alert-dismissible fade show mt-3"
-        role="alert">
-        <?= $_SESSION['mensaje'] ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-
-    <script>
-    // Espera 6 segundos y luego cierra la alerta automáticamente
-    setTimeout(function() {
-        var alerta = document.getElementById('alerta-sesion');
-        if (alerta) {
-            alerta.classList.remove('show');
-            alerta.classList.add('fade');
-            setTimeout(function() {
-                alerta.remove();
-            }, 500); // Dar tiempo a la animación de Bootstrap
-        }
-    }, 6000);
-    </script>
+    <!-- INICIO DE LA ALERTA -->
+        <?php if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])): ?>
+        <div id="alerta-exito"
+            class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
+            role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+            <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
+            <div>
+                <strong>¡Éxito!</strong>
+                <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
+            </div>
+            <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        <script>
+        setTimeout(() => {
+            const alerta = document.getElementById('alerta-exito');
+            if (alerta) {
+                alerta.classList.remove('show');
+                alerta.classList.add('fade');
+                setTimeout(() => alerta.remove(), 500);
+            }
+        }, 6000);
+        </script>
 
     <?php
         unset($_SESSION['mensaje']);

@@ -231,9 +231,7 @@ include_once("../componentes/sidebar.php");
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3><i class="bi bi-mortarboard-fill me-2"></i>Listado de idiomas</h3>
-            <a href="registrar_idioma.php" class="btn btn-primary rounded-3">
-                <i class="bi bi-person-plus-fill me-1"></i> Nuevo Idioma
-            </a>
+          
         </div>
 
         <div class="card shadow rounded-4">
