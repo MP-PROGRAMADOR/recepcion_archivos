@@ -21,225 +21,277 @@ if (session_status() === PHP_SESSION_DISABLED) {
 
 
     <style>
-        :root {
-            --color-principal: #00558c; /* Azul Institucional */
-            --color-acento: #00b894;    /* Verde (para el foco) */
-            --color-secundario: #f8f9fa;
-            --borde-suave: 12px;
-            --sombra-input: 0 1px 4px rgba(0, 0, 0, 0.08);
-            --glass-blur: 8px; /* Intensidad del desenfoque para glassmorphism */
+    :root {
+        --color-principal: #00558c;
+        /* Azul Institucional */
+        --color-acento: #00b894;
+        /* Verde (para el foco) */
+        --color-secundario: #f8f9fa;
+        --borde-suave: 12px;
+        --sombra-input: 0 1px 4px rgba(0, 0, 0, 0.08);
+        --glass-blur: 8px;
+        /* Intensidad del desenfoque para glassmorphism */
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--color-secundario);
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    .fade-in {
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--color-secundario);
-            margin: 0;
-            overflow-x: hidden;
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ---------------------------------------------------- */
+    /* ESTILOS DE FORMULARIO MEJORADOS (Panel Derecho) */
+    /* ---------------------------------------------------- */
+    .form-control,
+    .input-group-text {
+        border-radius: var(--borde-suave);
+        box-shadow: none;
+        border: 1px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+
+    .input-group-text {
+        border-right: none !important;
+        background-color: white !important;
+        color: var(--color-principal);
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.1rem var(--color-acento), 0 0 0 0.4rem rgba(0, 184, 148, 0.2);
+        border-color: var(--color-acento);
+    }
+
+    .btn-principal {
+        background-color: var(--color-principal);
+        border-color: var(--color-principal);
+        color: white;
+        padding: 12px 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        border-radius: var(--borde-suave);
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 85, 140, 0.2);
+    }
+
+    .btn-principal:hover {
+        background-color: #003f66;
+        border-color: #003f66;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 85, 140, 0.3);
+    }
+
+    .panel-derecho {
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .link-volver {
+        color: var(--color-principal);
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .link-volver:hover {
+        color: var(--color-acento);
+        text-decoration: underline;
+    }
+
+    .login-header {
+        color: var(--color-principal);
+        font-weight: 700;
+    }
+
+    /* ---------------------------------------------------- */
+    /* MEJORAS DEL PANEL IZQUIERDO */
+    /* ---------------------------------------------------- */
+    .panel-izquierdo {
+        position: relative;
+        min-height: 100vh;
+        color: white;
+        overflow: hidden;
+        /* Para que el pseudo-elemento no se desborde */
+        border-top-right-radius: 40px;
+        border-bottom-right-radius: 40px;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+        display: flex;
+        /* Usamos flexbox para centrar el contenido */
+        align-items: center;
+        /* Centrado vertical */
+        justify-content: center;
+        /* Centrado horizontal */
+        padding: 3rem;
+        /* Padding general */
+        background-color: #003050;
+        /* Color de fondo base si no carga el pseudo-elemento */
+    }
+
+    /* Pseudo-elemento para el fondo abstracto y animado */
+    .panel-izquierdo::before {
+        content: "";
+        position: absolute;
+        top: -20%;
+        /* Inicia un poco fuera para la animación */
+        left: -20%;
+        /* Inicia un poco fuera para la animación */
+        width: 140%;
+        height: 140%;
+        background:
+            radial-gradient(circle at 20% 80%, rgba(0, 84, 140, 0.8) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(0, 184, 148, 0.6) 0%, transparent 50%),
+            linear-gradient(to bottom right, #003f66, #001a33);
+        /* Degradado base más oscuro */
+        background-size: 200% 200%;
+        /* Tamaño para que el gradiente se mueva */
+        animation: backgroundPan 20s ease infinite alternate;
+        /* Animación lenta */
+        z-index: -1;
+        filter: blur(50px);
+        /* Desenfoque para un efecto abstracto */
+        opacity: 0.9;
+    }
+
+    @keyframes backgroundPan {
+        0% {
+            background-position: 0% 0%;
         }
 
-        .fade-in {
-            animation: fadeIn 1s ease-in-out;
+        100% {
+            background-position: 100% 100%;
+        }
+    }
+
+    .left-panel-content {
+        position: relative;
+        /* Para que esté por encima del pseudo-elemento */
+        z-index: 2;
+        /* Aseguramos que el contenido esté al frente */
+        text-align: center;
+        /* Centramos el texto dentro del panel */
+        max-width: 400px;
+        /* Ancho máximo para el contenido */
+        padding: 2.5rem;
+        border-radius: var(--borde-suave);
+        /* Glassmorphism */
+        background: rgba(255, 255, 255, 0.1);
+        /* Fondo blanco semitransparente */
+        backdrop-filter: blur(var(--glass-blur));
+        /* Desenfoque de fondo */
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        /* Compatibilidad Safari */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        /* Borde sutil */
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        /* Sombra para el efecto de profundidad */
+        animation: slideUp 0.8s ease-out forwards;
+        /* Animación de entrada */
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        /* ---------------------------------------------------- */
-        /* ESTILOS DE FORMULARIO MEJORADOS (Panel Derecho) */
-        /* ---------------------------------------------------- */
-        .form-control,
-        .input-group-text {
-            border-radius: var(--borde-suave);
-            box-shadow: none;
-            border: 1px solid #e0e0e0;
-            transition: all 0.3s ease;
-        }
+    .logo-container {
+        margin-bottom: 1.5rem;
+        display: inline-block;
+        /* Para que el padding y border-radius funcionen bien */
+        padding: 15px 25px;
+        /* Más padding para el logo */
+        background-color: rgba(255, 255, 255, 0.08);
+        /* Fondo aún más sutil */
+        border-radius: var(--borde-suave);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
 
-        .input-group-text {
-            border-right: none !important;
-            background-color: white !important;
-            color: var(--color-principal);
-        }
+    .logo-container:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
 
-        .form-control:focus {
-            box-shadow: 0 0 0 0.1rem var(--color-acento), 0 0 0 0.4rem rgba(0, 184, 148, 0.2);
-            border-color: var(--color-acento);
-        }
-        
-        .btn-principal {
-            background-color: var(--color-principal);
-            border-color: var(--color-principal);
-            color: white;
-            padding: 12px 20px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            border-radius: var(--borde-suave);
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 85, 140, 0.2);
-        }
+    .logo-img {
+        max-width: 120px;
+        /* Logo un poco más pequeño para una estética más "card" */
+        height: auto;
+        filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.6));
+        /* Sombra más pronunciada para el logo */
+    }
 
-        .btn-principal:hover {
-            background-color: #003f66;
-            border-color: #003f66;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 85, 140, 0.3);
-        }
-        
-        .panel-derecho {
-            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
-        }
+    .panel-izquierdo h1 {
+        font-size: 2.5rem;
+        /* Título más grande */
+        font-weight: 700;
+        line-height: 1.2;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+        /* Sombra para el texto */
+        margin-bottom: 1rem;
+    }
 
-        .link-volver {
-            color: var(--color-principal);
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
+    .panel-izquierdo .lead {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    }
 
-        .link-volver:hover {
-            color: var(--color-acento);
-            text-decoration: underline;
-        }
+    .panel-izquierdo .small {
+        margin-top: 2rem;
+        color: rgba(255, 255, 255, 0.7);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding-top: 1rem;
+    }
 
-        .login-header {
-            color: var(--color-principal);
-            font-weight: 700;
-        }
-        
-        /* ---------------------------------------------------- */
-        /* MEJORAS DEL PANEL IZQUIERDO */
-        /* ---------------------------------------------------- */
+
+    /* Ajuste responsivo para el borde del panel */
+    @media (max-width: 767.98px) {
         .panel-izquierdo {
-            position: relative;
-            min-height: 100vh;
-            color: white;
-            overflow: hidden; /* Para que el pseudo-elemento no se desborde */
-            border-top-right-radius: 40px; 
-            border-bottom-right-radius: 40px;
-            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
-            display: flex; /* Usamos flexbox para centrar el contenido */
-            align-items: center; /* Centrado vertical */
-            justify-content: center; /* Centrado horizontal */
-            padding: 3rem; /* Padding general */
-            background-color: #003050; /* Color de fondo base si no carga el pseudo-elemento */
-        }
-        
-        /* Pseudo-elemento para el fondo abstracto y animado */
-        .panel-izquierdo::before {
-            content: "";
-            position: absolute;
-            top: -20%; /* Inicia un poco fuera para la animación */
-            left: -20%; /* Inicia un poco fuera para la animación */
-            width: 140%;
-            height: 140%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(0, 84, 140, 0.8) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0, 184, 148, 0.6) 0%, transparent 50%),
-                linear-gradient(to bottom right, #003f66, #001a33); /* Degradado base más oscuro */
-            background-size: 200% 200%; /* Tamaño para que el gradiente se mueva */
-            animation: backgroundPan 20s ease infinite alternate; /* Animación lenta */
-            z-index: -1;
-            filter: blur(50px); /* Desenfoque para un efecto abstracto */
-            opacity: 0.9;
+            min-height: 50vh;
+            /* Un poco más alto en móvil */
+            border-radius: 0;
         }
 
-        @keyframes backgroundPan {
-            0% { background-position: 0% 0%; }
-            100% { background-position: 100% 100%; }
+        .panel-izquierdo::before {
+            border-radius: 0;
         }
 
         .left-panel-content {
-            position: relative; /* Para que esté por encima del pseudo-elemento */
-            z-index: 2; /* Aseguramos que el contenido esté al frente */
-            text-align: center; /* Centramos el texto dentro del panel */
-            max-width: 400px; /* Ancho máximo para el contenido */
-            padding: 2.5rem;
-            border-radius: var(--borde-suave);
-            /* Glassmorphism */
-            background: rgba(255, 255, 255, 0.1); /* Fondo blanco semitransparente */
-            backdrop-filter: blur(var(--glass-blur)); /* Desenfoque de fondo */
-            -webkit-backdrop-filter: blur(var(--glass-blur)); /* Compatibilidad Safari */
-            border: 1px solid rgba(255, 255, 255, 0.2); /* Borde sutil */
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Sombra para el efecto de profundidad */
-            animation: slideUp 0.8s ease-out forwards; /* Animación de entrada */
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .logo-container {
-            margin-bottom: 1.5rem;
-            display: inline-block; /* Para que el padding y border-radius funcionen bien */
-            padding: 15px 25px; /* Más padding para el logo */
-            background-color: rgba(255, 255, 255, 0.08); /* Fondo aún más sutil */
-            border-radius: var(--borde-suave);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .logo-container:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .logo-img {
-            max-width: 120px; /* Logo un poco más pequeño para una estética más "card" */
-            height: auto;
-            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.6)); /* Sombra más pronunciada para el logo */
+            padding: 1.5rem;
+            /* Menos padding en móvil */
+            margin: 1rem;
+            /* Margen para no pegar a los bordes */
         }
 
         .panel-izquierdo h1 {
-            font-size: 2.5rem; /* Título más grande */
-            font-weight: 700;
-            line-height: 1.2;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); /* Sombra para el texto */
-            margin-bottom: 1rem;
+            font-size: 2rem;
         }
 
         .panel-izquierdo .lead {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+            font-size: 1rem;
         }
-        
-        .panel-izquierdo .small {
-            margin-top: 2rem;
-            color: rgba(255, 255, 255, 0.7);
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 1rem;
-        }
-
-
-        /* Ajuste responsivo para el borde del panel */
-        @media (max-width: 767.98px) {
-             .panel-izquierdo {
-                min-height: 50vh; /* Un poco más alto en móvil */
-                border-radius: 0;
-             }
-             .panel-izquierdo::before {
-                 border-radius: 0;
-             }
-             .left-panel-content {
-                 padding: 1.5rem; /* Menos padding en móvil */
-                 margin: 1rem; /* Margen para no pegar a los bordes */
-             }
-             .panel-izquierdo h1 {
-                 font-size: 2rem;
-             }
-             .panel-izquierdo .lead {
-                 font-size: 1rem;
-             }
-        }
+    }
     </style>
 
 </head>
@@ -250,7 +302,7 @@ if (session_status() === PHP_SESSION_DISABLED) {
         <div class="row g-0 min-vh-100">
 
             <div class="col-md-5 d-flex panel-izquierdo">
-                
+
                 <div class="left-panel-content">
                     <div class="logo-container">
                         <img src="config/img/logo_pais.svg" class="logo-img" alt="Logo Institucional">
@@ -258,7 +310,8 @@ if (session_status() === PHP_SESSION_DISABLED) {
 
                     <h1 class="h3 fw-bold mt-3">Bienvenido/a</h1>
                     <p class="lead">
-                        Plataforma oficial para la gestión y recepción de archivos académicos. **Accede con tus credenciales institucionales.**
+                        Plataforma oficial para la gestión y recepción de archivos académicos. **Accede con tus
+                        credenciales institucionales.**
                     </p>
                     <p class="small">
                         Sistema de Gestión Académica © 2025.
@@ -268,11 +321,11 @@ if (session_status() === PHP_SESSION_DISABLED) {
 
             <div class="col-md-7 d-flex align-items-center justify-content-center bg-white px-4 py-5 panel-derecho">
                 <div class="w-100" style="max-width: 420px;">
-                    
+
                     <h2 class="mb-5 text-center login-header">
                         <i class="bi bi-shield-lock-fill me-2"></i>Acceso al Sistema
                     </h2>
-                    
+
                     <form action="php/login.php" method="POST" class="fade-in" autocomplete="off">
 
                         <div class="mb-4">
@@ -292,6 +345,28 @@ if (session_status() === PHP_SESSION_DISABLED) {
                                     placeholder="Ingresa tu contraseña institucional" required>
                             </div>
                         </div>
+
+
+                        <?php
+
+
+// Capturar el mensaje de cierre por inactividad
+$mensaje = '';
+$tipo_mensaje = 'info'; // clase de bootstrap por ejemplo
+
+if (isset($_GET['mensaje']) && $_GET['mensaje'] === 'sesion_expirada') {
+    $mensaje = "Se cerró la sesión por inactividad.";
+    $tipo_mensaje = 'warning'; // puedes usar 'danger' si quieres rojo
+}
+
+// También puedes mostrar mensajes de sesión normales
+if (isset($_SESSION['mensaje'])) {
+    $mensaje = $_SESSION['mensaje'];
+    $tipo_mensaje = $_SESSION['tipo_mensaje'] ?? 'info';
+    unset($_SESSION['mensaje'], $_SESSION['tipo_mensaje']);
+}
+?>
+
 
                         <button type="submit" class="btn btn-principal w-100">
                             <i class="bi bi-box-arrow-in-right me-1"></i> **Entrar**

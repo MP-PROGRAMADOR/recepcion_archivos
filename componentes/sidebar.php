@@ -92,6 +92,12 @@ $rol =   $_SESSION['usuario_rol'];
       </a>
     </li>
 
+     <li class="nav-item mb-2">
+      <a href="../admin/auditoria.php" class="nav-link text-white">
+        <i class="bi bi-journal-text me-2"></i> Auditoria
+      </a>
+    </li>
+
     <!-- Sección Configuración -->
     <li class="text-uppercase text-secondary small fw-bold mt-2 mb-2">Configuración</li>
 

@@ -624,6 +624,39 @@ INSERT INTO `paises` (`id`, `nombre`) VALUES
 (190, 'Zambia'),
 (191, 'Zimbabwe');
 
+
+
+
+CREATE TABLE log_actividades (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    usuario_id INT NOT NULL,
+    
+    accion VARCHAR(100) NOT NULL, 
+    -- Ejemplo: "CREAR", "EDITAR", "ELIMINAR", "LOGIN", "LOGOUT", "PAGAR", etc.
+    
+    modulo VARCHAR(100) NOT NULL, 
+    -- Ejemplo: "Pacientes", "Usuarios", "Pagos", "Funcionarios"
+    
+    registro_id INT NULL, 
+    -- ID del registro afectado (ej: id del paciente, id del pago, etc.)
+    
+    descripcion TEXT NULL,
+    -- Descripción más detallada de lo que ocurrió
+    
+    ip_address VARCHAR(45) NULL,
+    
+    navegador VARCHAR(255) NULL,
+    
+    resultado ENUM('EXITO', 'ERROR') DEFAULT 'EXITO',
+    
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+        ON DELETE CASCADE
+);
+
+
 -- --------------------------------------------------------
 
 --

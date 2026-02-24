@@ -443,29 +443,30 @@ const resultados = document.getElementById('resultadosBusqueda');
 const seleccionadoBox = document.getElementById('seleccionadoBox');
 const estudianteInput = document.getElementById('estudiante_id');
 const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
+const form = document.querySelector('#modalCuenta form');
 
-// 🔎 Buscar
+// 🔎 Buscar estudiantes en tiempo real
 buscador.addEventListener('keyup', () => {
-    let texto = buscador.value;
+    let texto = buscador.value.trim();
 
     if (texto.length < 2) {
         resultados.innerHTML = "";
         return;
     }
 
-    fetch("../php/buscar_estudiantes.php?q=" + texto)
+    fetch("../php/buscar_estudiantes.php?q=" + encodeURIComponent(texto))
         .then(res => res.text())
         .then(data => resultados.innerHTML = data);
 });
 
-// seleccionar estudiante
+// Seleccionar estudiante
 document.addEventListener('click', e => {
     if (e.target.classList.contains('estudiante-item')) {
         e.preventDefault();
 
-        let id = e.target.dataset.id;
-        let nombre = e.target.dataset.nombre;
-        let fecha = e.target.dataset.fecha;
+        const id = e.target.dataset.id;
+        const nombre = e.target.dataset.nombre;
+        const fecha = e.target.dataset.fecha;
 
         estudianteInput.value = id;
         fechaNacimientoInput.value = fecha;
@@ -479,18 +480,29 @@ document.addEventListener('click', e => {
                 <button type="button" class="btn btn-sm btn-danger" id="quitarSeleccion">Quitar</button>
             </div>
         `;
+        seleccionadoBox.classList.remove('d-none');
 
         resultados.innerHTML = "";
         buscador.value = "";
     }
 });
 
-// quitar selección
+// Quitar selección
 document.addEventListener('click', e => {
     if (e.target.id === 'quitarSeleccion') {
         estudianteInput.value = "";
         fechaNacimientoInput.value = "";
         seleccionadoBox.innerHTML = "";
+        seleccionadoBox.classList.add('d-none');
+    }
+});
+
+// Validar antes de enviar el formulario
+form.addEventListener('submit', e => {
+    if (!estudianteInput.value) {
+        e.preventDefault();
+        alert("Por favor seleccione un estudiante antes de guardar.");
+        buscador.focus();
     }
 });
 </script>

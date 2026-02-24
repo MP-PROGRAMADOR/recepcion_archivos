@@ -12,6 +12,24 @@ function sanitize_input($data) {
     return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
 }
 
+// Datos para log
+$usuario_id = $_SESSION['usuario_id'] ?? null;
+$ip = $_SERVER['REMOTE_ADDR'] ?? 'Desconocida';
+$navegador = $_SERVER['HTTP_USER_AGENT'] ?? 'Desconocido';
+$accion = "CREAR";
+$modulo = "Usuarios";
+$registro_id = null;
+$resultado = "EXITO";
+$descripcion = "";
+
+// Función para registrar logs
+function registrar_log($pdo, $usuario_id, $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, $resultado) {
+    $stmt_log = $pdo->prepare("INSERT INTO log_actividades 
+        (usuario_id, accion, modulo, registro_id, descripcion, ip_address, navegador, resultado)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt_log->execute([$usuario_id, $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, $resultado]);
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nombre = sanitize_input($_POST['nombre']);
     $email = strtolower(sanitize_input($_POST['email']));
@@ -52,6 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!empty($errores)) {
         $_SESSION['errores'] = $errores;
+        $resultado = "ERROR";
+        $descripcion = "Errores al validar formulario: " . implode('; ', $errores);
+        registrar_log($pdo, $usuario_id, $accion, $modulo, null, $descripcion, $ip, $navegador, $resultado);
         header('Location: ../admin/registrar_usuario.php');
         exit;
     }
@@ -64,6 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($stmt->rowCount() > 0) {
             $_SESSION['errores'] = ['El correo electrónico ya está registrado.'];
+            $resultado = "ERROR";
+            $descripcion = "Intento de registrar usuario con email duplicado: $email";
+            registrar_log($pdo, $usuario_id, $accion, $modulo, null, $descripcion, $ip, $navegador, $resultado);
             header('Location: ../admin/registrar_usuario.php');
             exit;
         }
@@ -79,12 +103,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':rol_id', $rol_id, PDO::PARAM_INT);
         $stmt->execute();
 
+        $registro_id = $pdo->lastInsertId();
         $_SESSION['exito'] = 'Usuario registrado exitosamente.';
+
+        // Registrar log de éxito
+        $descripcion = "Usuario registrado: ID $registro_id, Nombre: $nombre, Email: $email, Rol ID: $rol_id";
+        registrar_log($pdo, $usuario_id, $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, $resultado);
+
         header('Location: ../admin/usuario.php');
         exit;
 
     } catch (PDOException $e) {
         $_SESSION['errores'] = ['Error al registrar el usuario: ' . $e->getMessage()];
+        $resultado = "ERROR";
+        $descripcion = "Excepción al registrar usuario: " . $e->getMessage();
+        registrar_log($pdo, $usuario_id, $accion, $modulo, null, $descripcion, $ip, $navegador, $resultado);
         header('Location: ../admin/registrar_usuario.php');
         exit;
     }
