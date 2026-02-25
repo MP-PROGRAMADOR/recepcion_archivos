@@ -194,6 +194,16 @@ try {
                                                 class="btn btn-warning btn-sm" title="Editar ciudad">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
+                                            <!-- Botón Eliminar -->
+                                            <button type="button"
+                                                class="btn btn-danger btn-sm bi bi-trash"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEliminarCiudad"
+                                                data-id="<?= $ciudad['id']; ?>"
+                                                data-nombre="<?= htmlspecialchars($ciudad['nombre']); ?>">
+                                            </button>
+
+
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -238,6 +248,51 @@ try {
         </div>
     </div>
 </main>
+
+<div class="modal fade" id="modalEliminarCiudad" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-danger border-3 shadow-lg">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-exclamation-triangle-fill"></i> ¡Atención!
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <p class="fs-5">¿Estás seguro de que deseas eliminar la ciudad de:</p>
+                <h4 id="nombreCiudadEliminar" class="text-primary fw-bold"></h4>
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-info-circle"></i> <strong>Aviso:</strong> También se eliminarán todas las <strong>universidades</strong> registradas en esta ciudad.
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <i class="bi bi-x-circle me-1"></i> Cancelar</button>
+                <a id="btnConfirmarEliminar" href="#" class="btn btn-danger shadow">
+                    <i class="bi bi-trash"></i> Sí, Eliminar todo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalEliminar = document.getElementById('modalEliminarCiudad');
+        if (modalEliminar) {
+            modalEliminar.addEventListener('show.bs.modal', function(event) {
+                const boton = event.relatedTarget; // Botón que hizo clic
+                const id = boton.getAttribute('data-id');
+                const nombre = boton.getAttribute('data-nombre');
+
+                // Llenamos el modal con los datos
+                modalEliminar.querySelector('#nombreCiudadEliminar').textContent = nombre;
+                modalEliminar.querySelector('#btnConfirmarEliminar').href = `eliminar_ciudad.php?id=${id}`;
+            });
+        }
+    });
+</script>
+
+
 
 <!-- Bootstrap Icons y jQuery -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -318,5 +373,8 @@ try {
         window.open(url, "_blank");
     }
 </script>
+
+
+
 
 <?php include_once("../componentes/footer.php"); ?>
