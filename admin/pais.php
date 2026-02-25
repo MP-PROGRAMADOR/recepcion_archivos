@@ -87,7 +87,7 @@ try {
 
                     <!-- BOTÓN IMPRIMIR -->
                     <div class="col-md-1 d-grid">
-                        <button class="btn btn-success d-flex btn-sm" onclick="imprimirFiltrado()">
+                        <button class="btn btn-success d-flex btn-sm px-3" onclick="imprimirFiltrado()">
                             <i class="bi bi-printer-fill me-2"></i> Imprimir
                         </button>
                     </div>
@@ -120,7 +120,7 @@ try {
                                 <?php foreach ($paises as $pais): ?>
                                     <tr class="fila-datos">
                                         <td><?= htmlspecialchars($pais['id']) ?></td>
-                                        <td><?= htmlspecialchars($pais['nombre']) ?></td>
+                                        <td ><?= htmlspecialchars($pais['nombre']) ?></td>
                                         <td><?= htmlspecialchars($pais['estudiantes']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>

@@ -112,42 +112,7 @@ $total_paginas = ceil($total_filas / $por_pagina);
     <div class="container mt-4">
 
         <!-- INICIO DE LA ALERTA -->
-        <?php if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])): ?>
-        <div id="alerta-exito"
-            class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
-            role="alert" style="animation: fadeIn 0.5s ease-in-out;">
-            <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
-            <div>
-                <strong>¡Éxito!</strong>
-                <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
-            </div>
-            <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-        </div>
-        <script>
-        setTimeout(() => {
-            const alerta = document.getElementById('alerta-exito');
-            if (alerta) {
-                alerta.classList.remove('show');
-                alerta.classList.add('fade');
-                setTimeout(() => alerta.remove(), 500);
-            }
-        }, 6000);
-        </script>
-        <style>
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        </style>
-        <?php unset($_SESSION['exito']); ?>
-        <?php endif; ?>
         <!-- FIN DE LA ALERTA -->
 
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -224,29 +189,29 @@ $total_paginas = ceil($total_filas / $por_pagina);
                         </thead>
                         <tbody id="contenidoTabla">
                             <?php if (!empty($logs)): ?>
-                            <?php foreach ($logs as $log): ?>
-                            <tr>
-                                <td><?= $log['id'] ?></td>
-                                <td><?= htmlspecialchars($log['nombre_usuario']) ?></td>
-                                <td><?= htmlspecialchars($log['accion']) ?></td>
-                                <td><?= htmlspecialchars($log['modulo']) ?></td>
-                                <td><?= htmlspecialchars($log['descripcion']) ?></td>
-                                <td>
-                                    <?php if ($log['resultado'] === 'EXITO'): ?>
-                                    <span class="badge bg-success">Éxito</span>
-                                    <?php else: ?>
-                                    <span class="badge bg-danger">Error</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td><?= date("d/m/Y H:i", strtotime($log['fecha'])) ?></td>
-                            </tr>
-                            <?php endforeach; ?>
+                                <?php foreach ($logs as $log): ?>
+                                    <tr>
+                                        <td><?= $log['id'] ?></td>
+                                        <td><?= htmlspecialchars($log['nombre_usuario']) ?></td>
+                                        <td><?= htmlspecialchars($log['accion']) ?></td>
+                                        <td><?= htmlspecialchars($log['modulo']) ?></td>
+                                        <td><?= htmlspecialchars($log['descripcion']) ?></td>
+                                        <td>
+                                            <?php if ($log['resultado'] === 'EXITO'): ?>
+                                                <span class="badge bg-success">Éxito</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-danger">Error</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td><?= date("d/m/Y H:i", strtotime($log['fecha'])) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
                             <?php else: ?>
-                            <tr>
-                                <td colspan="7" class="text-center text-muted">
-                                    No hay registros encontrados
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">
+                                        No hay registros encontrados
+                                    </td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
 
@@ -255,28 +220,63 @@ $total_paginas = ceil($total_filas / $por_pagina);
 
                 <!-- Paginación -->
                 <?php if ($total_paginas > 1): ?>
-                <nav>
-                    <ul class="pagination justify-content-center">
-                        <?php if ($pagina_actual > 1): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
-                        </li>
-                        <?php endif; ?>
+                    <nav aria-label="Navegación de logs" class="mt-4">
+                        <ul class="pagination pagination-sm justify-content-center flex-wrap">
 
-                        <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                        <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                            <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                        <?php endfor; ?>
+                            <li class="page-item <?= ($pagina_actual <= 1) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?pagina=1&tipo=<?= $tipo ?>&valor=<?= $valor ?>"><i class="bi bi-chevron-double-left"></i></a>
+                            </li>
+                            <li class="page-item <?= ($pagina_actual <= 1) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>&tipo=<?= $tipo ?>&valor=<?= $valor ?>">&laquo;</a>
+                            </li>
 
-                        <?php if ($pagina_actual < $total_paginas): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
-                        </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
+                            <?php
+                            // Lógica para mostrar solo un rango de páginas
+                            $rango = 2; // Número de páginas a la izquierda y derecha de la actual
+                            $inicio_rango = max(1, $pagina_actual - $rango);
+                            $fin_rango = min($total_paginas, $pagina_actual + $rango);
+
+                            for ($i = $inicio_rango; $i <= $fin_rango; $i++): ?>
+                                <li class="page-item <?= ($i == $pagina_actual) ? 'active' : '' ?>">
+                                    <a class="page-link" href="?pagina=<?= $i ?>&tipo=<?= $tipo ?>&valor=<?= $valor ?>"><?= $i ?></a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <li class="page-item <?= ($pagina_actual >= $total_paginas) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>&tipo=<?= $tipo ?>&valor=<?= $valor ?>">&raquo;</a>
+                            </li>
+                            <li class="page-item <?= ($pagina_actual >= $total_paginas) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?pagina=<?= $total_paginas ?>&tipo=<?= $tipo ?>&valor=<?= $valor ?>"><i class="bi bi-chevron-double-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="text-center small text-muted">
+                        Página <?= $pagina_actual ?> de <?= $total_paginas ?> (Total: <?= $total_filas ?> registros)
+                    </div>
                 <?php endif; ?>
+                <style>
+                    .pagination {
+                        margin-bottom: 10px;
+                    }
+
+                    .page-link {
+                        color: #333;
+                        border-radius: 5px !important;
+                        margin: 0 2px;
+                    }
+
+                    .page-item.active .page-link {
+                        background-color: #0d6efd;
+                        border-color: #0d6efd;
+                    }
+
+                    /* Permite que la paginación baje de línea si no cabe */
+                    .pagination {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                    }
+                </style>
 
             </div>
         </div>
@@ -289,134 +289,134 @@ $total_paginas = ceil($total_filas / $por_pagina);
 
 <!-- Buscador funcional -->
 <script>
-$(document).ready(function() {
-    $('#busqueda').on('keyup', function() {
-        let valor = $(this).val().toLowerCase();
-        $('#contenidoTabla tr').filter(function() {
-            $(this).toggle($(this).text().toLowerCase().includes(valor));
+    $(document).ready(function() {
+        $('#busqueda').on('keyup', function() {
+            let valor = $(this).val().toLowerCase();
+            $('#contenidoTabla tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().includes(valor));
+            });
         });
     });
-});
 </script>
 
 
 <script>
-// ===============================
-// Aplicar Filtro
-// ===============================
-function aplicarFiltro() {
+    // ===============================
+    // Aplicar Filtro
+    // ===============================
+    function aplicarFiltro() {
 
-    const tipo = document.getElementById("tipoFiltro").value;
-    const valor = document.getElementById("valorFiltro").value.trim();
+        const tipo = document.getElementById("tipoFiltro").value;
+        const valor = document.getElementById("valorFiltro").value.trim();
 
-    const url = new URL(window.location);
+        const url = new URL(window.location);
 
-    // Guardamos tipo
-    if (tipo) {
-        url.searchParams.set("tipo", tipo);
+        // Guardamos tipo
+        if (tipo) {
+            url.searchParams.set("tipo", tipo);
+        }
+
+        // Si es ordenamiento no necesita valor
+        if (tipo === "fecha_desc" || tipo === "fecha_asc") {
+            url.searchParams.delete("valor");
+        } else {
+            if (valor !== "") {
+                url.searchParams.set("valor", valor);
+            } else {
+                url.searchParams.delete("valor");
+            }
+        }
+
+        // Reiniciar paginación
+        url.searchParams.set("pagina", 1);
+
+        window.location.href = url.toString();
     }
 
-    // Si es ordenamiento no necesita valor
-    if (tipo === "fecha_desc" || tipo === "fecha_asc") {
-        url.searchParams.delete("valor");
-    } else {
-        if (valor !== "") {
-            url.searchParams.set("valor", valor);
+    // ===============================
+    // Control dinámico del input
+    // ===============================
+    function controlFiltroUI() {
+
+        const tipo = document.getElementById("tipoFiltro").value;
+        const input = document.getElementById("valorFiltro");
+
+        if (tipo === "fecha") {
+            input.type = "date";
+            input.style.display = "block";
+            input.value = "";
+            input.focus();
+
+        } else if (tipo === "resultado") {
+
+            // Convertimos input en select dinámicamente
+            input.type = "text";
+            input.placeholder = "EXITO o ERROR";
+            input.style.display = "block";
+            input.value = "";
+            input.focus();
+
+        } else if (tipo === "fecha_desc" || tipo === "fecha_asc") {
+
+            input.style.display = "none";
+            input.value = "";
+
         } else {
-            url.searchParams.delete("valor");
+
+            input.type = "text";
+            input.placeholder = "Escribe el valor a filtrar";
+            input.style.display = "block";
+            input.value = "";
+            input.focus();
         }
     }
 
-    // Reiniciar paginación
-    url.searchParams.set("pagina", 1);
+    // ===============================
+    // Cargar filtros al iniciar
+    // ===============================
+    window.addEventListener("DOMContentLoaded", () => {
 
-    window.location.href = url.toString();
-}
+        const params = new URLSearchParams(window.location.search);
+        const tipo = params.get("tipo");
+        const valor = params.get("valor");
 
-// ===============================
-// Control dinámico del input
-// ===============================
-function controlFiltroUI() {
+        if (tipo) {
+            document.getElementById("tipoFiltro").value = tipo;
+        }
 
-    const tipo = document.getElementById("tipoFiltro").value;
-    const input = document.getElementById("valorFiltro");
+        controlFiltroUI();
 
-    if (tipo === "fecha") {
-        input.type = "date";
-        input.style.display = "block";
-        input.value = "";
-        input.focus();
+        if (valor) {
+            document.getElementById("valorFiltro").value = valor;
+        }
+    });
 
-    } else if (tipo === "resultado") {
+    // ===============================
+    // Limpiar Filtros
+    // ===============================
+    function limpiarFiltros() {
 
-        // Convertimos input en select dinámicamente
-        input.type = "text";
-        input.placeholder = "EXITO o ERROR";
-        input.style.display = "block";
-        input.value = "";
-        input.focus();
+        const url = new URL(window.location);
 
-    } else if (tipo === "fecha_desc" || tipo === "fecha_asc") {
+        url.searchParams.delete("tipo");
+        url.searchParams.delete("valor");
+        url.searchParams.set("pagina", 1);
 
-        input.style.display = "none";
-        input.value = "";
-
-    } else {
-
-        input.type = "text";
-        input.placeholder = "Escribe el valor a filtrar";
-        input.style.display = "block";
-        input.value = "";
-        input.focus();
-    }
-}
-
-// ===============================
-// Cargar filtros al iniciar
-// ===============================
-window.addEventListener("DOMContentLoaded", () => {
-
-    const params = new URLSearchParams(window.location.search);
-    const tipo = params.get("tipo");
-    const valor = params.get("valor");
-
-    if (tipo) {
-        document.getElementById("tipoFiltro").value = tipo;
+        window.location.href = url.toString();
     }
 
-    controlFiltroUI();
+    // ===============================
+    // Imprimir filtrado
+    // ===============================
+    function imprimirFiltrado() {
 
-    if (valor) {
-        document.getElementById("valorFiltro").value = valor;
+        const tipo = document.getElementById("tipoFiltro").value;
+        const valor = document.getElementById("valorFiltro").value.trim();
+
+        const url = `../php/imprimir_logs.php?tipo=${encodeURIComponent(tipo)}&valor=${encodeURIComponent(valor)}`;
+
+        window.open(url, "_blank");
     }
-});
-
-// ===============================
-// Limpiar Filtros
-// ===============================
-function limpiarFiltros() {
-
-    const url = new URL(window.location);
-
-    url.searchParams.delete("tipo");
-    url.searchParams.delete("valor");
-    url.searchParams.set("pagina", 1);
-
-    window.location.href = url.toString();
-}
-
-// ===============================
-// Imprimir filtrado
-// ===============================
-function imprimirFiltrado() {
-
-    const tipo = document.getElementById("tipoFiltro").value;
-    const valor = document.getElementById("valorFiltro").value.trim();
-
-    const url = `../php/imprimir_logs.php?tipo=${encodeURIComponent(tipo)}&valor=${encodeURIComponent(valor)}`;
-
-    window.open(url, "_blank");
-}
 </script>
 
 <?php include_once("../componentes/footer.php"); ?>

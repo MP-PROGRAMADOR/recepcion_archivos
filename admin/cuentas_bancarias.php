@@ -18,7 +18,7 @@ $columnas = [
     'tipo_cuenta'    => 'cb.tipo_cuenta',
     'numero_cuenta'  => 'cb.numero_cuenta',
     'tarjeta_visa'   => 'cb.tarjeta_visa',
-    'fecha_caducidad'=> 'cb.fecha_caducidad_tarjeta'
+    'fecha_caducidad' => 'cb.fecha_caducidad_tarjeta'
 ];
 
 /* ===== CONSULTA BASE ===== */
@@ -79,41 +79,49 @@ $rol = $_SESSION['usuario_rol'];
 
 <main class="content" id="mainContent">
 
-    <!-- INICIO DE LA ALERTA -->
-        <?php if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])): ?>
-        <div id="alerta-exito"
-            class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
-            role="alert" style="animation: fadeIn 0.5s ease-in-out;">
-            <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
-            <div>
-                <strong>¡Éxito!</strong>
-                <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
-            </div>
-            <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-        </div>
-        <script>
-        setTimeout(() => {
-            const alerta = document.getElementById('alerta-exito');
-            if (alerta) {
-                alerta.classList.remove('show');
-                alerta.classList.add('fade');
-                setTimeout(() => alerta.remove(), 500);
-            }
-        }, 6000);
-        </script>
-
-    <?php
-        unset($_SESSION['mensaje']);
-        unset($_SESSION['tipo_mensaje']);
-        ?>
-    <?php endif; ?>
 
 
     <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container mt-4">
 
         <!-- INICIO DE LA ALERTA -->
-        <?php include_once("../componentes/alerta.php"); ?>
+        <?php if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])): ?>
+            <div id="alerta-exito"
+                class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
+                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+                <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
+                <div>
+                    <strong>¡Éxito!</strong>
+                    <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
+                </div>
+                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+            <script>
+                setTimeout(() => {
+                    const alerta = document.getElementById('alerta-exito');
+                    if (alerta) {
+                        alerta.classList.remove('show');
+                        alerta.classList.add('fade');
+                        setTimeout(() => alerta.remove(), 500);
+                    }
+                }, 5000);
+            </script>
+            <style>
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+            <?php unset($_SESSION['exito']); ?>
+        <?php endif; ?>
+
         <!-- FIN DE LA ALERTA -->
 
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -190,52 +198,52 @@ $rol = $_SESSION['usuario_rol'];
                             <tr>
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
                                 <th class="text-start"><i class="bi bi-bank me-1"></i>Nombre Completo</th>
-                                <th><i class="bi bi-bank me-1"></i>Banco</th>
-                                <th><i class="bi bi-credit-card-2-front me-1"></i>N° Cuenta</th>
-                                <th><i class="bi bi-wallet2 me-1"></i>Tipo Cuenta</th>
+                                <th class="text-start"><i class="bi bi-bank me-1"></i>Banco</th>
+                                <th class="text-start"><i class="bi bi-credit-card-2-front me-1"></i>N° Cuenta</th>
+                                <th class="text-start"><i class="bi bi-wallet2 me-1"></i>Tipo Cuenta</th>
                                 <th><i class="bi bi-credit-card me-1"></i>Tarjeta Visa</th>
                                 <th><i class="bi bi-calendar-check me-1"></i>Caducidad de Visa</th>
-                                <?php if(strtolower($rol) === 'administrador'): ?>
-                                <th><i class="bi bi-gear me-1"></i>Acciones</th>
+                                <?php if (strtolower($rol) === 'administrador'): ?>
+                                    <th><i class="bi bi-gear me-1"></i>Acciones</th>
 
                                 <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
                             <?php if (!empty($cuentas)): ?>
-                            <?php foreach ($cuentas as $cuenta): ?>
-                            <tr>
-                                <td><i class="bi bi-hash me-1"></i><?= htmlspecialchars($cuenta['id']) ?></td>
-                                <td class="text-start"><i
-                                        class="bi bi-person-vcard me-1"></i><?= htmlspecialchars($cuenta['titular']) ?>
-                                <td><i class="bi bi-bank me-1"></i><?= htmlspecialchars($cuenta['banco']) ?></td>
-                                <td><i
-                                        class="bi bi-credit-card-2-front me-1"></i><?= htmlspecialchars($cuenta['numero_cuenta']) ?>
-                                </td>
+                                <?php foreach ($cuentas as $cuenta): ?>
+                                    <tr>
+                                        <td><i class="bi bi-hash me-1"></i><?= htmlspecialchars($cuenta['id']) ?></td>
+                                        <td class="text-start"><i
+                                                class="bi bi-person-vcard me-1"></i><?= htmlspecialchars($cuenta['titular']) ?>
+                                        <td class="text-start"><i class="bi bi-bank me-1"></i><?= htmlspecialchars($cuenta['banco']) ?></td>
+                                        <td class="text-start"><i
+                                                class="bi bi-credit-card-2-front me-1"></i><?= htmlspecialchars($cuenta['numero_cuenta']) ?>
+                                        </td>
 
-                                </td>
-                                <td><i class="bi bi-wallet2 me-1"></i><?= htmlspecialchars($cuenta['tipo_cuenta']) ?>
-                                </td>
-                                <td><i
-                                        class="bi bi-credit-card me-1"></i><?= !empty($cuenta['tarjeta_visa']) ? htmlspecialchars($cuenta['tarjeta_visa']) : 'No dispone' ?>
-                                </td>
-                                <td><i
-                                        class="bi bi-calendar-check me-1"></i><?= !empty($cuenta['fecha_caducidad_tarjeta']) ? date('d/m/Y', strtotime($cuenta['fecha_caducidad_tarjeta'])) : 'No definida' ?>
-                                </td>
-                                <?php if(strtolower($rol) === 'administrador'): ?>
-                                <td>
-                                    <a href="editar_cuenta.php?id=<?= $cuenta['id'] ?>" class="btn btn-sm btn-warning">
-                                        <i class="bi bi-pencil-square"></i> Editar
-                                    </a>
-                                </td>
-                                <?php endif; ?>
+                                        </td>
+                                        <td class="text-start"><i class="bi bi-wallet2 me-1"></i><?= htmlspecialchars($cuenta['tipo_cuenta']) ?>
+                                        </td>
+                                        <td ><i
+                                                class="bi bi-credit-card me-1"></i><?= !empty($cuenta['tarjeta_visa']) ? htmlspecialchars($cuenta['tarjeta_visa']) : 'No dispone' ?>
+                                        </td>
+                                        <td><i
+                                                class="bi bi-calendar-check me-1"></i><?= !empty($cuenta['fecha_caducidad_tarjeta']) ? date('d/m/Y', strtotime($cuenta['fecha_caducidad_tarjeta'])) : 'No definida' ?>
+                                        </td>
+                                        <?php if (strtolower($rol) === 'administrador'): ?>
+                                            <td>
+                                                <a href="editar_cuenta.php?id=<?= $cuenta['id'] ?>" class="btn btn-sm btn-warning">
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                </a>
+                                            </td>
+                                        <?php endif; ?>
 
-                            </tr>
-                            <?php endforeach; ?>
+                                    </tr>
+                                <?php endforeach; ?>
                             <?php else: ?>
-                            <tr>
-                                <td colspan="7" class="text-center text-muted">No hay cuentas bancarias registradas</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">No hay cuentas bancarias registradas</td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -243,23 +251,23 @@ $rol = $_SESSION['usuario_rol'];
 
                 <!-- Paginación -->
                 <?php if ($total_paginas > 1): ?>
-                <nav>
-                    <ul class="pagination justify-content-center">
-                        <?php if ($pagina_actual > 1): ?>
-                        <li class="page-item"><a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
-                        </li>
-                        <?php endif; ?>
-                        <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                        <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                            <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                        <?php endfor; ?>
-                        <?php if ($pagina_actual < $total_paginas): ?>
-                        <li class="page-item"><a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
-                        </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            <?php if ($pagina_actual > 1): ?>
+                                <li class="page-item"><a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
+                                </li>
+                            <?php endif; ?>
+                            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
+                                <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
+                                    <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
+                                </li>
+                            <?php endfor; ?>
+                            <?php if ($pagina_actual < $total_paginas): ?>
+                                <li class="page-item"><a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
                 <?php endif; ?>
             </div>
         </div>
@@ -383,97 +391,97 @@ $rol = $_SESSION['usuario_rol'];
 
 
 <script>
-//script para controlar la visibilidad
-document.addEventListener("DOMContentLoaded", function() {
+    //script para controlar la visibilidad
+    document.addEventListener("DOMContentLoaded", function() {
 
-    const tipoCuenta = document.getElementById("tipo_cuenta");
-    const banco = document.getElementById("banco");
-    const tarjeta = document.getElementById("tarjeta_visa");
+        const tipoCuenta = document.getElementById("tipo_cuenta");
+        const banco = document.getElementById("banco");
+        const tarjeta = document.getElementById("tarjeta_visa");
 
-    const grupoBanco = document.getElementById("grupoBanco");
-    const grupoCuenta = document.getElementById("grupoCuenta");
-    const grupoFecha = document.getElementById("grupoFecha");
+        const grupoBanco = document.getElementById("grupoBanco");
+        const grupoCuenta = document.getElementById("grupoCuenta");
+        const grupoFecha = document.getElementById("grupoFecha");
 
-    const modal = document.getElementById("modalCuenta");
+        const modal = document.getElementById("modalCuenta");
 
-    // 🔄 Resetear al abrir modal
-    modal.addEventListener('show.bs.modal', () => {
-        grupoBanco.classList.add("d-none");
-        grupoCuenta.classList.add("d-none");
-        grupoFecha.classList.add("d-none");
-
-        tipoCuenta.value = "";
-        if (banco) banco.value = "";
-        if (tarjeta) tarjeta.value = "";
-    });
-
-    // Mostrar banco
-    tipoCuenta.addEventListener("change", function() {
-        if (this.value !== "") {
-            grupoBanco.classList.remove("d-none");
-        } else {
+        //  Resetear al abrir modal
+        modal.addEventListener('show.bs.modal', () => {
             grupoBanco.classList.add("d-none");
-        }
-
-        grupoCuenta.classList.add("d-none");
-        grupoFecha.classList.add("d-none");
-    });
-
-    // Mostrar cuenta y tarjeta
-    banco.addEventListener("change", function() {
-        grupoCuenta.classList.remove("d-none");
-        grupoFecha.classList.add("d-none");
-    });
-
-    // Mostrar fecha si tiene tarjeta
-    tarjeta.addEventListener("change", function() {
-        if (this.value === "si") {
-            grupoFecha.classList.remove("d-none");
-        } else {
+            grupoCuenta.classList.add("d-none");
             grupoFecha.classList.add("d-none");
-        }
-    });
 
-});
+            tipoCuenta.value = "";
+            if (banco) banco.value = "";
+            if (tarjeta) tarjeta.value = "";
+        });
+
+        // Mostrar banco
+        tipoCuenta.addEventListener("change", function() {
+            if (this.value !== "") {
+                grupoBanco.classList.remove("d-none");
+            } else {
+                grupoBanco.classList.add("d-none");
+            }
+
+            grupoCuenta.classList.add("d-none");
+            grupoFecha.classList.add("d-none");
+        });
+
+        // Mostrar cuenta y tarjeta
+        banco.addEventListener("change", function() {
+            grupoCuenta.classList.remove("d-none");
+            grupoFecha.classList.add("d-none");
+        });
+
+        // Mostrar fecha si tiene tarjeta
+        tarjeta.addEventListener("change", function() {
+            if (this.value === "si") {
+                grupoFecha.classList.remove("d-none");
+            } else {
+                grupoFecha.classList.add("d-none");
+            }
+        });
+
+    });
 </script>
 
 
 
 <script>
-const buscador = document.getElementById('buscarEstudiante');
-const resultados = document.getElementById('resultadosBusqueda');
-const seleccionadoBox = document.getElementById('seleccionadoBox');
-const estudianteInput = document.getElementById('estudiante_id');
-const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
-const form = document.querySelector('#modalCuenta form');
+    const buscador = document.getElementById('buscarEstudiante');
+    const resultados = document.getElementById('resultadosBusqueda');
+    const seleccionadoBox = document.getElementById('seleccionadoBox');
+    const estudianteInput = document.getElementById('estudiante_id');
+    const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
+    const form = document.querySelector('#modalCuenta form');
 
-// 🔎 Buscar estudiantes en tiempo real
-buscador.addEventListener('keyup', () => {
-    let texto = buscador.value.trim();
+    //  Buscar estudiantes en tiempo real
+    buscador.addEventListener('keyup', () => {
+        let texto = buscador.value.trim();
 
-    if (texto.length < 2) {
-        resultados.innerHTML = "";
-        return;
-    }
+        if (texto.length < 2) {
+            resultados.innerHTML = "";
+            return;
+        }
 
-    fetch("../php/buscar_estudiantes.php?q=" + encodeURIComponent(texto))
-        .then(res => res.text())
-        .then(data => resultados.innerHTML = data);
-});
+        fetch("../php/buscar_estudiantes.php?q=" + encodeURIComponent(texto))
+            .then(res => res.text())
+            .then(data => resultados.innerHTML = data);
+    });
 
-// Seleccionar estudiante
-document.addEventListener('click', e => {
-    if (e.target.classList.contains('estudiante-item')) {
-        e.preventDefault();
+    // Seleccionar estudiante
+    document.addEventListener('click', e => {
+        if (e.target.classList.contains('estudiante-item')) {
+            e.preventDefault();
 
-        const id = e.target.dataset.id;
-        const nombre = e.target.dataset.nombre;
-        const fecha = e.target.dataset.fecha;
+            const id = e.target.dataset.id;
+            const nombre = e.target.dataset.nombre;
+            const fecha = e.target.dataset.fecha;
 
-        estudianteInput.value = id;
-        fechaNacimientoInput.value = fecha;
+            estudianteInput.value = id;
+            fechaNacimientoInput.value = fecha;
 
-        seleccionadoBox.innerHTML = `
+            seleccionadoBox.innerHTML = `
             <div class="alert alert-success d-flex justify-content-between align-items-center">
                 <div>
                     <strong>${nombre}</strong><br>
@@ -482,180 +490,180 @@ document.addEventListener('click', e => {
                 <button type="button" class="btn btn-sm btn-danger" id="quitarSeleccion">Quitar</button>
             </div>
         `;
-        seleccionadoBox.classList.remove('d-none');
+            seleccionadoBox.classList.remove('d-none');
 
-        resultados.innerHTML = "";
-        buscador.value = "";
-    }
-});
+            resultados.innerHTML = "";
+            buscador.value = "";
+        }
+    });
 
-// Quitar selección
-document.addEventListener('click', e => {
-    if (e.target.id === 'quitarSeleccion') {
-        estudianteInput.value = "";
-        fechaNacimientoInput.value = "";
-        seleccionadoBox.innerHTML = "";
-        seleccionadoBox.classList.add('d-none');
-    }
-});
+    // Quitar selección
+    document.addEventListener('click', e => {
+        if (e.target.id === 'quitarSeleccion') {
+            estudianteInput.value = "";
+            fechaNacimientoInput.value = "";
+            seleccionadoBox.innerHTML = "";
+            seleccionadoBox.classList.add('d-none');
+        }
+    });
 
-// Validar antes de enviar el formulario
-form.addEventListener('submit', e => {
-    if (!estudianteInput.value) {
-        e.preventDefault();
-        alert("Por favor seleccione un estudiante antes de guardar.");
-        buscador.focus();
-    }
-});
+    // Validar antes de enviar el formulario
+    form.addEventListener('submit', e => {
+        if (!estudianteInput.value) {
+            e.preventDefault();
+            alert("Por favor seleccione un estudiante antes de guardar.");
+            buscador.focus();
+        }
+    });
 </script>
 
 
 
 
 <script>
-$(document).ready(function() {
-    $('#busqueda').on('keyup', function() {
-        let valor = $(this).val().toLowerCase();
-        $('#contenidoTabla tr').filter(function() {
-            $(this).toggle($(this).text().toLowerCase().includes(valor));
+    $(document).ready(function() {
+        $('#busqueda').on('keyup', function() {
+            let valor = $(this).val().toLowerCase();
+            $('#contenidoTabla tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().includes(valor));
+            });
         });
     });
-});
 </script>
 
 
 
 
 <script>
-// =============================
-// APLICAR FILTRO
-// =============================
-function aplicarFiltro() {
+    // =============================
+    // APLICAR FILTRO
+    // =============================
+    function aplicarFiltro() {
 
-    const tipo = document.getElementById("tipoFiltro").value;
-    const input = document.getElementById("valorFiltro");
-    const valor = input.value.trim();
+        const tipo = document.getElementById("tipoFiltro").value;
+        const input = document.getElementById("valorFiltro");
+        const valor = input.value.trim();
 
-    const url = new URL(window.location);
+        const url = new URL(window.location);
 
-    // Siempre establecer tipo
-    url.searchParams.set("tipo", tipo);
+        // Siempre establecer tipo
+        url.searchParams.set("tipo", tipo);
 
-    // Si es ordenamiento → no necesita valor
-    if (tipo === "orden_az" || tipo === "orden_za") {
-        url.searchParams.delete("valor");
-    } else {
-        if (valor !== "") {
-            url.searchParams.set("valor", valor);
-        } else {
+        // Si es ordenamiento → no necesita valor
+        if (tipo === "orden_az" || tipo === "orden_za") {
             url.searchParams.delete("valor");
+        } else {
+            if (valor !== "") {
+                url.searchParams.set("valor", valor);
+            } else {
+                url.searchParams.delete("valor");
+            }
         }
+
+        // Reiniciar paginación
+        url.searchParams.set("pagina", 1);
+
+        window.location.href = url.toString();
     }
 
-    // Reiniciar paginación
-    url.searchParams.set("pagina", 1);
 
-    window.location.href = url.toString();
-}
+    // =============================
+    // CONTROL VISUAL DEL INPUT
+    // =============================
+    function controlFiltroUI() {
 
+        const tipo = document.getElementById("tipoFiltro").value;
+        const input = document.getElementById("valorFiltro");
 
-// =============================
-// CONTROL VISUAL DEL INPUT
-// =============================
-function controlFiltroUI() {
+        // Ordenamiento → ocultar input
+        if (tipo === "orden_az" || tipo === "orden_za") {
+            input.style.display = "none";
+            input.value = "";
+            return;
+        }
 
-    const tipo = document.getElementById("tipoFiltro").value;
-    const input = document.getElementById("valorFiltro");
+        // Fecha → cambiar a type date
+        if (tipo === "fecha_caducidad") {
+            input.type = "date";
+        } else {
+            input.type = "text";
+        }
 
-    // Ordenamiento → ocultar input
-    if (tipo === "orden_az" || tipo === "orden_za") {
-        input.style.display = "none";
-        input.value = "";
-        return;
+        input.style.display = "block";
+        input.focus();
     }
 
-    // Fecha → cambiar a type date
-    if (tipo === "fecha_caducidad") {
-        input.type = "date";
-    } else {
-        input.type = "text";
-    }
 
-    input.style.display = "block";
-    input.focus();
-}
+    // =============================
+    // RESTAURAR FILTROS AL CARGAR
+    // =============================
+    window.addEventListener("DOMContentLoaded", () => {
 
+        const params = new URLSearchParams(window.location.search);
 
-// =============================
-// RESTAURAR FILTROS AL CARGAR
-// =============================
-window.addEventListener("DOMContentLoaded", () => {
+        const tipo = params.get("tipo");
+        const valor = params.get("valor");
 
-    const params = new URLSearchParams(window.location.search);
+        if (tipo) {
+            document.getElementById("tipoFiltro").value = tipo;
+        }
 
-    const tipo = params.get("tipo");
-    const valor = params.get("valor");
+        if (valor) {
+            document.getElementById("valorFiltro").value = valor;
+        }
 
-    if (tipo) {
-        document.getElementById("tipoFiltro").value = tipo;
-    }
-
-    if (valor) {
-        document.getElementById("valorFiltro").value = valor;
-    }
-
-    controlFiltroUI();
-});
-
-
-// =============================
-// LIMPIAR FILTROS
-// =============================
-function limpiarFiltros() {
-
-    const url = new URL(window.location);
-
-    url.searchParams.delete("tipo");
-    url.searchParams.delete("valor");
-    url.searchParams.set("pagina", 1);
-
-    window.location.href = url.toString();
-}
-
-
-// =============================
-// IMPRIMIR FILTRADO
-// =============================
-function imprimirFiltrado() {
-
-    const tipo = document.getElementById("tipoFiltro").value;
-    const valor = document.getElementById("valorFiltro").value.trim();
-
-    let url = `../php/imprimir_cuentas.php?tipo=${encodeURIComponent(tipo)}`;
-
-    if (valor !== "" && tipo !== "orden_az" && tipo !== "orden_za") {
-        url += `&valor=${encodeURIComponent(valor)}`;
-    }
-
-    window.open(url, "_blank");
-}
-
-
-// =============================
-// BÚSQUEDA RÁPIDA LOCAL
-// =============================
-document.getElementById("busqueda")?.addEventListener("keyup", function() {
-
-    const valor = this.value.toLowerCase();
-    const filas = document.querySelectorAll("#contenidoTabla tr");
-
-    filas.forEach(fila => {
-        fila.style.display = fila.textContent.toLowerCase().includes(valor) ?
-            "" :
-            "none";
+        controlFiltroUI();
     });
 
-});
+
+    // =============================
+    // LIMPIAR FILTROS
+    // =============================
+    function limpiarFiltros() {
+
+        const url = new URL(window.location);
+
+        url.searchParams.delete("tipo");
+        url.searchParams.delete("valor");
+        url.searchParams.set("pagina", 1);
+
+        window.location.href = url.toString();
+    }
+
+
+    // =============================
+    // IMPRIMIR FILTRADO
+    // =============================
+    function imprimirFiltrado() {
+
+        const tipo = document.getElementById("tipoFiltro").value;
+        const valor = document.getElementById("valorFiltro").value.trim();
+
+        let url = `../php/imprimir_cuentas.php?tipo=${encodeURIComponent(tipo)}`;
+
+        if (valor !== "" && tipo !== "orden_az" && tipo !== "orden_za") {
+            url += `&valor=${encodeURIComponent(valor)}`;
+        }
+
+        window.open(url, "_blank");
+    }
+
+
+    // =============================
+    // BÚSQUEDA RÁPIDA LOCAL
+    // =============================
+    document.getElementById("busqueda")?.addEventListener("keyup", function() {
+
+        const valor = this.value.toLowerCase();
+        const filas = document.querySelectorAll("#contenidoTabla tr");
+
+        filas.forEach(fila => {
+            fila.style.display = fila.textContent.toLowerCase().includes(valor) ?
+                "" :
+                "none";
+        });
+
+    });
 </script>
 
 

@@ -68,7 +68,7 @@ try {
                         alerta.classList.add('fade');
                         setTimeout(() => alerta.remove(), 500); // Lo remueve del DOM
                     }
-                }, 6000);
+                }, 5000);
             </script>
             <style>
                 @keyframes fadeIn {

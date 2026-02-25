@@ -65,7 +65,6 @@ try {
     $total_stmt->execute();
     $total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
     $total_paginas = ceil($total_filas / $por_pagina);
-
 } catch (PDOException $e) {
     die("Error al obtener las ciudades: " . $e->getMessage());
 }
@@ -77,40 +76,40 @@ try {
 
         <!-- INICIO DE LA ALERTA -->
         <?php if (isset($_SESSION['exito']) && !empty($_SESSION['exito'])): ?>
-        <div id="alerta-exito"
-            class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
-            role="alert" style="animation: fadeIn 0.5s ease-in-out;">
-            <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
-            <div>
-                <strong>¡Éxito!</strong>
-                <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
+            <div id="alerta-exito"
+                class="alert alert-success alert-dismissible shadow-sm fade show d-flex align-items-start gap-2 p-3 mt-3 border border-success-subtle rounded-3"
+                role="alert" style="animation: fadeIn 0.5s ease-in-out;">
+                <i class="bi bi-check-circle-fill fs-4 flex-shrink-0 mt-1"></i>
+                <div>
+                    <strong>¡Éxito!</strong>
+                    <p class="mb-0 mt-1"><?= htmlspecialchars($_SESSION['exito']) ?></p>
+                </div>
+                <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
-            <button type="button" class="btn-close ms-auto mt-1" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-        </div>
-        <script>
-        setTimeout(() => {
-            const alerta = document.getElementById('alerta-exito');
-            if (alerta) {
-                alerta.classList.remove('show');
-                alerta.classList.add('fade');
-                setTimeout(() => alerta.remove(), 500);
-            }
-        }, 6000);
-        </script>
-        <style>
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
+            <script>
+                setTimeout(() => {
+                    const alerta = document.getElementById('alerta-exito');
+                    if (alerta) {
+                        alerta.classList.remove('show');
+                        alerta.classList.add('fade');
+                        setTimeout(() => alerta.remove(), 500);
+                    }
+                }, 5000);
+            </script>
+            <style>
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px);
+                    }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        </style>
-        <?php unset($_SESSION['exito']); ?>
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+            <?php unset($_SESSION['exito']); ?>
         <?php endif; ?>
         <!-- FIN DE LA ALERTA -->
 
@@ -153,9 +152,9 @@ try {
                         </button>
                     </div>
 
-                    <div class="col-md-2 d-grid">
-                        <button class="btn btn-success btn-sm" onclick="imprimirFiltrado()">
-                            <i class="bi bi-printer-fill"></i> Imprimir
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-success d-flex btn-sm px-3" onclick="imprimirFiltrado()">
+                            <i class="bi bi-printer-fill me-2"></i> Imprimir
                         </button>
                     </div>
 
@@ -184,26 +183,26 @@ try {
                         </thead>
                         <tbody id="contenidoTabla">
                             <?php if (!empty($ciudades)): ?>
-                            <?php foreach ($ciudades as $ciudad): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($ciudad['id']) ?></td>
-                                <td><?= htmlspecialchars($ciudad['nombre']) ?></td>
-                                <td><?= htmlspecialchars($ciudad['estudiantes']) ?></td>
-                                <td>
-                                    <!-- Botón Editar -->
-                                    <a href="editar_ciudad.php?id=<?= htmlspecialchars($ciudad['id']) ?>"
-                                        class="btn btn-warning btn-sm" title="Editar ciudad">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                                <?php foreach ($ciudades as $ciudad): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($ciudad['id']) ?></td>
+                                        <td><?= htmlspecialchars($ciudad['nombre']) ?></td>
+                                        <td><?= htmlspecialchars($ciudad['estudiantes']) ?></td>
+                                        <td>
+                                            <!-- Botón Editar -->
+                                            <a href="editar_ciudad.php?id=<?= htmlspecialchars($ciudad['id']) ?>"
+                                                class="btn btn-warning btn-sm" title="Editar ciudad">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
                             <?php else: ?>
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">
-                                    No hay ciudades con estudiantes registrados
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        No hay ciudades con estudiantes registrados
+                                    </td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
 
@@ -212,27 +211,27 @@ try {
 
                 <!-- Paginación -->
                 <?php if ($total_paginas > 1): ?>
-                <nav>
-                    <ul class="pagination justify-content-center">
-                        <?php if ($pagina_actual > 1): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
-                        </li>
-                        <?php endif; ?>
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            <?php if ($pagina_actual > 1): ?>
+                                <li class="page-item">
+                                    <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
+                                </li>
+                            <?php endif; ?>
 
-                        <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                        <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                            <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                        <?php endfor; ?>
+                            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
+                                <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
+                                    <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
+                                </li>
+                            <?php endfor; ?>
 
-                        <?php if ($pagina_actual < $total_paginas): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
-                        </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
+                            <?php if ($pagina_actual < $total_paginas): ?>
+                                <li class="page-item">
+                                    <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
                 <?php endif; ?>
 
             </div>
@@ -246,78 +245,78 @@ try {
 
 <!-- Buscador funcional -->
 <script>
-$(document).ready(function() {
-    $('#busqueda').on('keyup', function() {
-        let valor = $(this).val().toLowerCase();
-        $('#contenidoTabla tr').filter(function() {
-            $(this).toggle($(this).text().toLowerCase().includes(valor));
+    $(document).ready(function() {
+        $('#busqueda').on('keyup', function() {
+            let valor = $(this).val().toLowerCase();
+            $('#contenidoTabla tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().includes(valor));
+            });
         });
     });
-});
 </script>
 
 <script>
-// Aplica el filtro y recarga la página con parámetros GET
-function aplicarFiltro() {
-    const tipo = document.getElementById("tipoFiltro").value;
-    const valor = document.getElementById("valorFiltro").value.trim();
+    // Aplica el filtro y recarga la página con parámetros GET
+    function aplicarFiltro() {
+        const tipo = document.getElementById("tipoFiltro").value;
+        const valor = document.getElementById("valorFiltro").value.trim();
 
-    const url = new URL(window.location);
+        const url = new URL(window.location);
 
-    if (tipo) url.searchParams.set("tipo", tipo);
+        if (tipo) url.searchParams.set("tipo", tipo);
 
-    if (valor && tipo !== "orden_az" && tipo !== "orden_za") {
-        url.searchParams.set("valor", valor);
-    } else {
+        if (valor && tipo !== "orden_az" && tipo !== "orden_za") {
+            url.searchParams.set("valor", valor);
+        } else {
+            url.searchParams.delete("valor");
+        }
+
+        url.searchParams.set("pagina", 1);
+        window.location.href = url.toString();
+    }
+
+    // Mostrar/ocultar input según tipo de filtro
+    function controlFiltroUI() {
+        const tipo = document.getElementById("tipoFiltro").value;
+        const input = document.getElementById("valorFiltro");
+
+        if (tipo === "orden_az" || tipo === "orden_za") {
+            input.style.display = "none";
+            input.value = "";
+        } else {
+            input.style.display = "block";
+            input.focus();
+        }
+    }
+
+    // Cargar valores del filtro al cargar la página
+    window.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        const tipo = params.get("tipo");
+        const valor = params.get("valor");
+
+        if (tipo) document.getElementById("tipoFiltro").value = tipo;
+        if (valor) document.getElementById("valorFiltro").value = valor;
+
+        controlFiltroUI();
+    });
+
+    // Limpiar filtros
+    function limpiarFiltros() {
+        const url = new URL(window.location);
+        url.searchParams.delete("tipo");
         url.searchParams.delete("valor");
+        url.searchParams.set("pagina", 1);
+        window.location.href = url.toString();
     }
 
-    url.searchParams.set("pagina", 1);
-    window.location.href = url.toString();
-}
-
-// Mostrar/ocultar input según tipo de filtro
-function controlFiltroUI() {
-    const tipo = document.getElementById("tipoFiltro").value;
-    const input = document.getElementById("valorFiltro");
-
-    if (tipo === "orden_az" || tipo === "orden_za") {
-        input.style.display = "none";
-        input.value = "";
-    } else {
-        input.style.display = "block";
-        input.focus();
+    // Imprimir filtrado
+    function imprimirFiltrado() {
+        const tipo = document.getElementById("tipoFiltro").value;
+        const valor = document.getElementById("valorFiltro").value.trim();
+        const url = `../php/imprimir_ciudades.php?tipo=${encodeURIComponent(tipo)}&valor=${encodeURIComponent(valor)}`;
+        window.open(url, "_blank");
     }
-}
-
-// Cargar valores del filtro al cargar la página
-window.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    const tipo = params.get("tipo");
-    const valor = params.get("valor");
-
-    if (tipo) document.getElementById("tipoFiltro").value = tipo;
-    if (valor) document.getElementById("valorFiltro").value = valor;
-
-    controlFiltroUI();
-});
-
-// Limpiar filtros
-function limpiarFiltros() {
-    const url = new URL(window.location);
-    url.searchParams.delete("tipo");
-    url.searchParams.delete("valor");
-    url.searchParams.set("pagina", 1);
-    window.location.href = url.toString();
-}
-
-// Imprimir filtrado
-function imprimirFiltrado() {
-    const tipo = document.getElementById("tipoFiltro").value;
-    const valor = document.getElementById("valorFiltro").value.trim();
-    const url = `../php/imprimir_ciudades.php?tipo=${encodeURIComponent(tipo)}&valor=${encodeURIComponent(valor)}`;
-    window.open(url, "_blank");
-}
 </script>
 
 <?php include_once("../componentes/footer.php"); ?>
