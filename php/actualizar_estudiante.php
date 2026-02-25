@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: ../index.php');
     exit;
@@ -8,7 +9,7 @@ if (!isset($_SESSION['usuario_id'])) {
 require_once '../config/conexion.php';
 
 $errores = [];
-$usuario_id = $_SESSION['usuario_id'] ?? null;
+$usuario_id = $_SESSION['usuario_id'];
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'Desconocida';
 $navegador = $_SERVER['HTTP_USER_AGENT'] ?? 'Desconocido';
 
@@ -27,8 +28,17 @@ $registro_id = $id;
 $resultado = "EXITO";
 $descripcion = "";
 
-### 🔹 VALIDACIONES
-if ($nombre === '') $errores[] = "El nombre completo es obligatorio.";
+##################################################
+# VALIDACIONES
+##################################################
+
+if ($id <= 0) {
+    $errores[] = "ID inválido.";
+}
+
+if ($nombre === '') {
+    $errores[] = "El nombre completo es obligatorio.";
+}
 
 if ($fecha === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
     $errores[] = "La fecha de nacimiento no es válida.";
@@ -48,37 +58,46 @@ if ($anio_fin < $anio_inicio || $anio_fin > date('Y') + 10) {
     $errores[] = "El año de finalización no es válido.";
 }
 
-### 🔹 EVITAR DUPLICADOS
-$nombre_normalizado = strtolower(preg_replace('/\s+/', ' ', $nombre));
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM estudiantes 
-    WHERE LOWER(TRIM(REPLACE(nombre_completo,'  ',' '))) = ? 
-    AND id != ?");
-$stmt->execute([$nombre_normalizado, $id]);
+##################################################
+# OBTENER CÓDIGO DEL ESTUDIANTE
+##################################################
 
-if ($stmt->fetchColumn() > 0) {
-    $errores[] = "Ya existe otro estudiante registrado con ese nombre.";
-}
-
-### 🔹 OBTENER CÓDIGO
 $stmt = $pdo->prepare("SELECT codigo_acceso FROM estudiantes WHERE id = ?");
 $stmt->execute([$id]);
 $codigo = $stmt->fetchColumn();
 
+if (!$codigo) {
+    $errores[] = "El estudiante no existe.";
+}
+
 $ruta_foto = null;
 $ruta_beca = null;
 
-### 🔹 SUBIDA FOTO PERFIL
+##################################################
+# SUBIDA FOTO PERFIL
+##################################################
+
 if (!empty($_FILES['foto']['name'])) {
+
     $permitidos = ['image/jpeg','image/png','image/webp'];
     $foto = $_FILES['foto'];
 
-    if (!in_array($foto['type'], $permitidos)) $errores[] = "La foto debe ser JPG, PNG o WEBP.";
-    if ($foto['size'] > 2 * 1024 * 1024) $errores[] = "La foto no debe superar 2MB.";
+    if (!in_array($foto['type'], $permitidos)) {
+        $errores[] = "La foto debe ser JPG, PNG o WEBP.";
+    }
+
+    if ($foto['size'] > 2 * 1024 * 1024) {
+        $errores[] = "La foto no debe superar 2MB.";
+    }
 
     if (empty($errores) && is_uploaded_file($foto['tmp_name'])) {
-        $extension = pathinfo($foto['name'], PATHINFO_EXTENSION);
+
+        $extension = strtolower(pathinfo($foto['name'], PATHINFO_EXTENSION));
         $directorio = __DIR__ . '/upload/perfil/';
-        if (!is_dir($directorio)) mkdir($directorio, 0777, true);
+
+        if (!is_dir($directorio)) {
+            mkdir($directorio, 0755, true);
+        }
 
         $nombre_archivo = "perfil-$codigo.$extension";
         $ruta_relativa = "upload/perfil/$nombre_archivo";
@@ -92,8 +111,12 @@ if (!empty($_FILES['foto']['name'])) {
     }
 }
 
-### 🔹 SUBIDA ARCHIVO BECA
+##################################################
+# SUBIDA ARCHIVO BECA
+##################################################
+
 if (!empty($_FILES['archivo_beca']['name'])) {
+
     $permitidos_beca = [
         'application/pdf',
         'application/msword',
@@ -103,13 +126,22 @@ if (!empty($_FILES['archivo_beca']['name'])) {
 
     $beca = $_FILES['archivo_beca'];
 
-    if (!in_array($beca['type'], $permitidos_beca)) $errores[] = "El archivo de beca no es válido.";
-    if ($beca['size'] > 3 * 1024 * 1024) $errores[] = "El archivo de beca no debe superar 3MB.";
+    if (!in_array($beca['type'], $permitidos_beca)) {
+        $errores[] = "El archivo de beca no es válido.";
+    }
+
+    if ($beca['size'] > 3 * 1024 * 1024) {
+        $errores[] = "El archivo de beca no debe superar 3MB.";
+    }
 
     if (empty($errores) && is_uploaded_file($beca['tmp_name'])) {
-        $extension = pathinfo($beca['name'], PATHINFO_EXTENSION);
+
+        $extension = strtolower(pathinfo($beca['name'], PATHINFO_EXTENSION));
         $directorio = __DIR__ . '/upload/becas/';
-        if (!is_dir($directorio)) mkdir($directorio, 0777, true);
+
+        if (!is_dir($directorio)) {
+            mkdir($directorio, 0755, true);
+        }
 
         $nombre_beca = "beca-$codigo.$extension";
         $ruta_relativa = "upload/becas/$nombre_beca";
@@ -123,24 +155,33 @@ if (!empty($_FILES['archivo_beca']['name'])) {
     }
 }
 
-### 🔹 SI HAY ERRORES
+##################################################
+# SI HAY ERRORES
+##################################################
+
 if (!empty($errores)) {
+
     $resultado = "ERROR";
     $descripcion = implode(" | ", $errores);
 
-    // Guardar en log_actividades
     $log = $pdo->prepare("INSERT INTO log_actividades 
         (usuario_id, accion, modulo, registro_id, descripcion, ip_address, navegador, resultado) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+
     $log->execute([$usuario_id, $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, $resultado]);
 
     $_SESSION['errores'] = $errores;
+
     header("Location: ../admin/editar_estudiante.php?id=$id");
     exit;
 }
 
-### 🔹 ACTUALIZAR BD
+##################################################
+# ACTUALIZAR BD
+##################################################
+
 try {
+
     $query = "UPDATE estudiantes SET 
         nombre_completo = ?, 
         fecha_nacimiento = ?, 
@@ -150,7 +191,15 @@ try {
         anio_inicio_carrera = ?, 
         anio_fin_carrera = ?";
 
-    $params = [$nombre,$fecha,$pais_id,$ciudad_id,$universidad_id,$anio_inicio,$anio_fin];
+    $params = [
+        $nombre,
+        $fecha,
+        $pais_id,
+        $ciudad_id,
+        $universidad_id,
+        $anio_inicio,
+        $anio_fin
+    ];
 
     if ($ruta_foto !== null) {
         $query .= ", ruta_foto = ?";
@@ -168,30 +217,31 @@ try {
     $stmt = $pdo->prepare($query);
     $stmt->execute($params);
 
-    $resultado = "EXITO";
     $descripcion = "Estudiante actualizado correctamente. ID=$id, Nombre=$nombre";
 
-    // Guardar en log_actividades
     $log = $pdo->prepare("INSERT INTO log_actividades 
         (usuario_id, accion, modulo, registro_id, descripcion, ip_address, navegador, resultado) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $log->execute([$usuario_id, $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, $resultado]);
+
+    $log->execute([$usuario_id, $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, "EXITO"]);
 
     $_SESSION['exito'] = "El estudiante fue actualizado correctamente.";
+
     header("Location: ../admin/estudiantes.php");
     exit;
 
 } catch (PDOException $e) {
-    $resultado = "ERROR";
+
     $descripcion = "Error al actualizar estudiante: " . $e->getMessage();
 
-    // Guardar en log_actividades
     $log = $pdo->prepare("INSERT INTO log_actividades 
         (usuario_id, accion, modulo, registro_id, descripcion, ip_address, navegador, resultado) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $log->execute([$usuario_id, $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, $resultado]);
+
+    $log->execute([$usuario_id, $accion, $modulo, $registro_id, $descripcion, $ip, $navegador, "ERROR"]);
 
     $_SESSION['errores'] = ["Ocurrió un error al actualizar el estudiante."];
+
     header("Location: ../admin/editar_estudiante.php?id=$id");
     exit;
 }

@@ -1,5 +1,6 @@
 <?php
 include_once("../componentes/header.php");
+include_once("../componentes/sidebar.php");
 
 // =========================
 // PAGINACIÓN
@@ -128,64 +129,56 @@ $rol = $_SESSION['usuario_rol'];
 
 
 <main class="content" id="mainContent">
-    <?php if (isset($_SESSION['mensaje'])): ?>
-    <div id="alerta-sesion" class="alert alert-<?= $_SESSION['tipo_mensaje'] ?> alert-dismissible fade show mt-3"
-        role="alert">
-        <?= $_SESSION['mensaje'] ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-    </div>
-
-    <script>
-    // Espera 6 segundos y luego cierra la alerta automáticamente
-    setTimeout(function() {
-        var alerta = document.getElementById('alerta-sesion');
-        if (alerta) {
-            alerta.classList.remove('show');
-            alerta.classList.add('fade');
-            setTimeout(function() {
-                alerta.remove();
-            }, 500); // Dar tiempo a la animación de Bootstrap
-        }
-    }, 6000);
-    </script>
-
-    <?php
-        unset($_SESSION['mensaje']);
-        unset($_SESSION['tipo_mensaje']);
-        ?>
-    <?php endif; ?>
+   
 
     <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container-fluid">
 
 
-        <?php if (isset($_SESSION['mensaje'])): ?>
-        <div id="alerta-sesion" class="alert alert-<?= $_SESSION['tipo_mensaje'] ?> alert-dismissible fade show mt-3"
+        <?php if (!empty($_SESSION['mensaje'])): 
+
+    $tipo = $_SESSION['tipo_mensaje'] ?? 'info';
+
+    // Íconos según tipo
+    $iconos = [
+        'success' => 'bi-check-circle-fill',
+        'danger'  => 'bi-x-circle-fill',
+        'warning' => 'bi-exclamation-triangle-fill',
+        'info'    => 'bi-info-circle-fill'
+    ];
+
+    $icono = $iconos[$tipo] ?? 'bi-info-circle-fill';
+?>
+
+        <div id="alerta-sesion"
+            class="alert alert-<?= htmlspecialchars($tipo) ?> alert-dismissible fade show mt-3 d-flex align-items-center gap-2"
             role="alert">
-            <?= $_SESSION['mensaje'] ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+
+            <i class="bi <?= $icono ?> fs-5"></i>
+
+            <div>
+                <?= htmlspecialchars($_SESSION['mensaje']) ?>
+            </div>
+
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Cerrar"></button>
         </div>
 
         <script>
-        // Espera 6 segundos y luego cierra la alerta automáticamente
         setTimeout(function() {
-            var alerta = document.getElementById('alerta-sesion');
+            const alerta = document.getElementById('alerta-sesion');
             if (alerta) {
                 alerta.classList.remove('show');
                 alerta.classList.add('fade');
-                setTimeout(function() {
-                    alerta.remove();
-                }, 500); // Dar tiempo a la animación de Bootstrap
+                setTimeout(() => alerta.remove(), 500);
             }
         }, 6000);
         </script>
 
         <?php
-            unset($_SESSION['mensaje']);
-            unset($_SESSION['tipo_mensaje']);
-            ?>
-        <?php endif; ?>
-
+unset($_SESSION['mensaje']);
+unset($_SESSION['tipo_mensaje']);
+endif;
+?>
 
 
 
@@ -280,7 +273,7 @@ $rol = $_SESSION['usuario_rol'];
                             <?php foreach ($estudiantes as $est): ?>
                             <tr>
                                 <td><?= htmlspecialchars($est['id']) ?></td>
-                              <td class="text-start"><?= htmlspecialchars($est['nombre_completo']) ?></td>
+                                <td class="text-start"><?= htmlspecialchars($est['nombre_completo']) ?></td>
                                 <td class="text-start"><?= htmlspecialchars($est['codigo_acceso']) ?></td>
                                 <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
                                 <td><?= htmlspecialchars($est['pais']) ?></td>
