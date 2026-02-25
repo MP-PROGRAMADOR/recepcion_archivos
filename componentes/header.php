@@ -1,18 +1,15 @@
 <?php
-// No debe haber NADA antes de <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 require_once '../config/conexion.php';
 
 // Tiempo de inactividad en segundos (5 minutos)
-$tiempo_inactividad = 7 * 60; // 300 segundos
+$tiempo_inactividad = 2 * 60; // 300 segundos
 
-// Comprobar si ya existe la última actividad
+// Comprobar última actividad
 if (isset($_SESSION['ultima_actividad'])) {
     $tiempo_transcurrido = time() - $_SESSION['ultima_actividad'];
     if ($tiempo_transcurrido > $tiempo_inactividad) {
-        // Registrar log de cierre por inactividad antes de destruir sesión
+        // Registrar log antes de destruir sesión
         if (isset($_SESSION['usuario_id'])) {
             $stmt_log = $pdo->prepare("
                 INSERT INTO log_actividades 
@@ -30,62 +27,21 @@ if (isset($_SESSION['ultima_actividad'])) {
             ]);
         }
 
-        // Destruir sesión y redirigir
+        // Asignar mensaje de alerta con el mismo formato que tu front-end
+        $_SESSION['exito'] = "Se cerró la sesión por inactividad.";
+
+        // Destruir sesión
         session_unset();
         session_destroy();
-        header("Location: ../index.php?mensaje=sesion_expirada");
+
+        // Redirigir
+        header("Location: ../index.php");
         exit;
     }
 }
 
 // Actualizar última actividad
 $_SESSION['ultima_actividad'] = time();
-
-// Comprobar que el usuario sigue logueado
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: ../index.php");
-    exit;
-}
-
-
-
-// ----------------- Registrar log de visualización de estadísticas -----------------
-try {
-    $stmt_log = $pdo->prepare("
-        INSERT INTO log_actividades 
-        (usuario_id, accion, modulo, descripcion, ip_address, navegador, resultado)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ");
-    $stmt_log->execute([
-        $_SESSION['usuario_id'],
-        'VISUALIZAR',
-        'Estadísticas',
-        'Visualización de estadísticas de estudiantes por país',
-        $_SERVER['REMOTE_ADDR'] ?? 'Desconocida',
-        $_SERVER['HTTP_USER_AGENT'] ?? 'Desconocido',
-        'EXITO'
-    ]);
-} catch (PDOException $e) {
-    // No interrumpir la página si falla el log
-}
-
-// ----------------- Consulta de datos -----------------
-$query = "
-  SELECT p.nombre AS pais, COUNT(e.id) AS estudiantes
-  FROM paises p
-  LEFT JOIN estudiantes e ON e.pais_id = p.id
-  GROUP BY p.id
-  ORDER BY estudiantes DESC
-";
-$stmt = $pdo->prepare($query);
-$stmt->execute();
-$paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Convertir los datos para pasarlos a JavaScript
-$datos_geochart = [['Ciudad', 'Alumnos']];
-foreach ($paises as $pais) {
-  $datos_geochart[] = [$pais['pais'], (int)$pais['estudiantes']];
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
