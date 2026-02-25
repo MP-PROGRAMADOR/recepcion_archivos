@@ -148,6 +148,8 @@ CREATE TABLE `estudiantes` (
   `archivo_beca` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+
 --
 -- Volcado de datos para la tabla `estudiantes`
 --
@@ -189,6 +191,11 @@ INSERT INTO `estudiantes` (`id`, `nombre_completo`, `codigo_acceso`, `fecha_naci
 (34, 'Julian Nchama Nsue', 'JNN-290597-34J', '1997-05-29', 160, 1, 1, NULL, 2018, 2024, NULL, NULL, NULL, NULL, '2026-02-19 11:15:28', NULL, NULL, NULL, 'upload/becas/beca-JNN.pdf'),
 (35, 'Silvia Obama Eyene', 'SOE-020402-35S', '2002-04-02', 160, 1, 1, NULL, 2023, 2027, NULL, NULL, NULL, NULL, '2026-02-19 11:15:29', NULL, NULL, NULL, 'upload/becas/beca-SOE.pdf'),
 (36, 'Hector Ndong Mba', 'HNM-080699-36H', '1999-06-08', 160, 1, 1, NULL, 2020, 2026, NULL, NULL, NULL, NULL, '2026-02-19 11:15:30', NULL, NULL, NULL, 'upload/becas/beca-HNM.pdf');
+
+
+ALTER TABLE estudiantes
+ADD COLUMN carrera_actual VARCHAR(150) NULL AFTER telefono,
+ADD COLUMN ciudad_actual VARCHAR(100) NULL AFTER carrera_actual;
 
 -- --------------------------------------------------------
 

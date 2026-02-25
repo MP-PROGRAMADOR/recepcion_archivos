@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once '../config/conexion.php';
 
 // Tiempo de inactividad en segundos (5 minutos)
-$tiempo_inactividad = 2 * 60; // 300 segundos
+$tiempo_inactividad = 7 * 60; // 300 segundos
 
 // Comprobar si ya existe la última actividad
 if (isset($_SESSION['ultima_actividad'])) {

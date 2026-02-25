@@ -1,14 +1,14 @@
 <?php
-// Iniciar sesión de forma segura
- 
- if (session_status() === PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-$rol =   $_SESSION['usuario_rol'];
-    ?>
+$rol = $_SESSION['usuario_rol'];
+?>
+
 <!-- Sidebar -->
 <aside class="sidebar d-md-block" id="sidebar">
-  <!-- Botón cerrar en móvil -->
+
+  <!-- BotÃ³n cerrar en mÃ³vil -->
   <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom d-md-none">
     <span class="fw-bold">Menú</span>
     <button class="btn btn-sm btn-light" onclick="toggleSidebar()">
@@ -29,31 +29,32 @@ $rol =   $_SESSION['usuario_rol'];
       </a>
     </li>
 
-    <!-- Sección Administración -->
-    <li class="text-uppercase text-secondary small fw-bold mt-2 mb-2">Administración</li>
-<?php if(strtolower($rol) === 'administrador'): ?>
-<li class="nav-item mb-2">
-  <a href="../admin/usuario.php" class="nav-link text-white">
-    <i class="bi bi-person-lines-fill me-2"></i> Usuarios
-  </a>
-</li>
-<?php endif;?>
+    <!-- Administración -->
+    <li class="text-uppercase text-secondary small fw-bold mt-3 mb-2">Administración</li>
+
+    <?php if(strtolower($rol) === 'administrador'): ?>
+    <li class="nav-item mb-2">
+      <a href="../admin/usuario.php" class="nav-link text-white">
+        <i class="bi bi-people me-2"></i> Usuarios
+      </a>
+    </li>
+    <?php endif; ?>
 
     <li class="nav-item mb-2">
       <a href="../admin/pais.php" class="nav-link text-white">
-        <i class="bi bi-globe2 me-2"></i> Países
+        <i class="bi bi-globe-americas me-2"></i> Países
       </a>
     </li>
 
     <li class="nav-item mb-2">
       <a href="../admin/ciudades.php" class="nav-link text-white">
-        <i class="bi bi-buildings-fill me-2"></i> Ciudades
+        <i class="bi bi-buildings me-2"></i> Ciudades
       </a>
     </li>
 
     <li class="nav-item mb-2">
       <a href="../admin/universidades.php" class="nav-link text-white">
-        <i class="bi bi-bank2 me-2"></i> Universidades
+        <i class="bi bi-bank me-2"></i> Universidades
       </a>
     </li>
 
@@ -62,9 +63,10 @@ $rol =   $_SESSION['usuario_rol'];
         <i class="bi bi-translate me-2"></i> Idiomas
       </a>
     </li>
+
     <li class="nav-item mb-2">
       <a href="../admin/cuentas_bancarias.php" class="nav-link text-white">
-        <i class="bi bi-bank me-2"></i> Cuentas Bancarias
+        <i class="bi bi-credit-card-2-front me-2"></i> Cuentas Bancarias
       </a>
     </li>
 
@@ -75,76 +77,69 @@ $rol =   $_SESSION['usuario_rol'];
     </li>
 
     <li class="nav-item mb-2">
-      <a href="academico.php" class="nav-link text-white">
-        <i class="bi bi-calendar3-event-fill me-2"></i> Año Académico
+      <a href="../admin/academico.php" class="nav-link text-white">
+        <i class="bi bi-calendar-check me-2"></i> Año Académico
       </a>
     </li>
 
     <li class="nav-item mb-2">
       <a href="../admin/pasaportes.php" class="nav-link text-white">
-      <i class="fas fa-passport"></i> Pasaporte
+        <i class="bi bi-person-badge me-2"></i> Pasaporte
       </a>
     </li>
 
     <li class="nav-item mb-2">
       <a href="../admin/notas.php" class="nav-link text-white">
-        <i class="bi bi-journal-text me-2"></i> Notas
+        <i class="bi bi-journal-check me-2"></i> Notas
       </a>
     </li>
 
-     <li class="nav-item mb-2">
+    <li class="nav-item mb-2">
       <a href="../admin/auditoria.php" class="nav-link text-white">
-        <i class="bi bi-journal-text me-2"></i> Auditoria
+        <i class="bi bi-shield-check me-2"></i> Auditoría
       </a>
     </li>
 
-    <!-- Sección Configuración -->
-    <li class="text-uppercase text-secondary small fw-bold mt-2 mb-2">Configuración</li>
+    <!-- Configuración -->
+    <li class="text-uppercase text-secondary small fw-bold mt-3 mb-2">Configuración</li>
 
-    <!-- Cierre de sesión -->
     <li class="nav-item">
       <a href="../php/logout.php" class="nav-link text-danger">
         <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
       </a>
     </li>
+
   </ul>
 </aside>
 
-<!-- Navbar superior -->
-<!-- <div class="navbar-top">
-  <button class="menu-toggle d-md-none" onclick="toggleSidebar()">☰</button>
-  <span class="fw-semibold">Bienvenido al panel</span>
-</div> -->
 
-
-<!-- Navbar superior -->
+<!-- NAVBAR SUPERIOR -->
 <div class="navbar-top d-flex justify-content-between align-items-center px-4 py-2 bg-light shadow-sm">
-  <!-- Menú de navegación (para móviles) -->
+
+  <!-- Botón menú móvil -->
   <button class="menu-toggle d-md-none btn btn-outline-secondary" onclick="toggleSidebar()">
     <i class="bi bi-list"></i>
   </button>
 
-  <!-- Título y saludo -->
+  <!-- Saludo -->
   <div class="d-flex align-items-center">
     <span class="fw-semibold text-dark fs-5 me-3">Bienvenido al Panel</span>
 
-    <!-- Nombre de usuario logueado con avatar -->
     <div class="d-flex align-items-center">
       <i class="bi bi-person-circle me-2 fs-4 text-primary"></i>
-      <span class="fw-bold text-dark fs-5"><?= htmlspecialchars( $_SESSION['usuario_nombre']) ?></span>
+      <span class="fw-bold text-dark fs-5">
+        <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+      </span>
     </div>
   </div>
 
-  <!-- Barra de opciones de usuario (icono de configuración y cerrar sesión) -->
+  <!-- Cerrar sesión -->
   <div class="d-flex align-items-center">
-    
-    
     <a href="../php/logout.php" class="btn btn-outline-danger btn-sm" title="Cerrar sesión">
-        <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-      </a>
-     
-    
+      <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+    </a>
   </div>
+
 </div>
 
 <!-- Script para inicializar los tooltips de Bootstrap -->
