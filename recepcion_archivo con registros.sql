@@ -21,6 +21,12 @@ SET time_zone = "+00:00";
 -- Base de datos: `recepcion_archivo`
 --
 
+
+drop database if exists recepcion_archivo;
+create database recepcion_archivo;
+use recepcion_archivo;
+
+
 -- --------------------------------------------------------
 
 --

@@ -57,7 +57,7 @@ if ($tipo === 'fecha_desc') {
     $sql .= " ORDER BY l.id DESC";
 }
 
-$sql .= " LIMIT :inicio, :por_pagina";
+
 
 $stmt = $pdo->prepare($sql);
 
@@ -65,8 +65,7 @@ foreach ($params as $key => $val) {
     $stmt->bindValue($key, $val);
 }
 
-$stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
-$stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
+
 
 $stmt->execute();
 $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -103,8 +102,7 @@ if (!empty($params)) {
 }
 
 $total_stmt->execute();
-$total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
-$total_paginas = ceil($total_filas / $por_pagina);
+
 ?>
 
 <main class="content" id="mainContent">
@@ -165,17 +163,9 @@ $total_paginas = ceil($total_filas / $por_pagina);
 
 
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="busqueda" class="form-label fw-bold">
-                            <i class="bi bi-search me-1"></i>Buscar Ciudad
-                        </label>
-                        <input type="text" class="form-control" id="busqueda" placeholder="Buscar por ID o nombre...">
-                    </div>
-                </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle text-center" id="tablaCiudad">
+                    <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
                         <thead class="table-dark">
                             <tr>
                                 <th>ID</th>
@@ -188,7 +178,7 @@ $total_paginas = ceil($total_filas / $por_pagina);
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
-                            <?php if (!empty($logs)): ?>
+                       
                                 <?php foreach ($logs as $log): ?>
                                     <tr>
                                         <td><?= $log['id'] ?></td>
@@ -206,98 +196,19 @@ $total_paginas = ceil($total_filas / $por_pagina);
                                         <td><?= date("d/m/Y H:i", strtotime($log['fecha'])) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted">
-                                        No hay registros encontrados
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
+                            
                         </tbody>
 
                     </table>
                 </div>
 
-                <!-- Paginación -->
-                <?php if ($total_paginas > 1): ?>
-                    <nav aria-label="Navegación de logs" class="mt-4">
-                        <ul class="pagination pagination-sm justify-content-center flex-wrap">
-
-                            <li class="page-item <?= ($pagina_actual <= 1) ? 'disabled' : '' ?>">
-                                <a class="page-link" href="?pagina=1&tipo=<?= $tipo ?>&valor=<?= $valor ?>"><i class="bi bi-chevron-double-left"></i></a>
-                            </li>
-                            <li class="page-item <?= ($pagina_actual <= 1) ? 'disabled' : '' ?>">
-                                <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>&tipo=<?= $tipo ?>&valor=<?= $valor ?>">&laquo;</a>
-                            </li>
-
-                            <?php
-                            // Lógica para mostrar solo un rango de páginas
-                            $rango = 2; // Número de páginas a la izquierda y derecha de la actual
-                            $inicio_rango = max(1, $pagina_actual - $rango);
-                            $fin_rango = min($total_paginas, $pagina_actual + $rango);
-
-                            for ($i = $inicio_rango; $i <= $fin_rango; $i++): ?>
-                                <li class="page-item <?= ($i == $pagina_actual) ? 'active' : '' ?>">
-                                    <a class="page-link" href="?pagina=<?= $i ?>&tipo=<?= $tipo ?>&valor=<?= $valor ?>"><?= $i ?></a>
-                                </li>
-                            <?php endfor; ?>
-
-                            <li class="page-item <?= ($pagina_actual >= $total_paginas) ? 'disabled' : '' ?>">
-                                <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>&tipo=<?= $tipo ?>&valor=<?= $valor ?>">&raquo;</a>
-                            </li>
-                            <li class="page-item <?= ($pagina_actual >= $total_paginas) ? 'disabled' : '' ?>">
-                                <a class="page-link" href="?pagina=<?= $total_paginas ?>&tipo=<?= $tipo ?>&valor=<?= $valor ?>"><i class="bi bi-chevron-double-right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <div class="text-center small text-muted">
-                        Página <?= $pagina_actual ?> de <?= $total_paginas ?> (Total: <?= $total_filas ?> registros)
-                    </div>
-                <?php endif; ?>
-                <style>
-                    .pagination {
-                        margin-bottom: 10px;
-                    }
-
-                    .page-link {
-                        color: #333;
-                        border-radius: 5px !important;
-                        margin: 0 2px;
-                    }
-
-                    .page-item.active .page-link {
-                        background-color: #0d6efd;
-                        border-color: #0d6efd;
-                    }
-
-                    /* Permite que la paginación baje de línea si no cabe */
-                    .pagination {
-                        display: flex;
-                        flex-wrap: wrap;
-                        justify-content: center;
-                    }
-                </style>
+               
 
             </div>
         </div>
     </div>
 </main>
 
-<!-- Bootstrap Icons y jQuery -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Buscador funcional -->
-<script>
-    $(document).ready(function() {
-        $('#busqueda').on('keyup', function() {
-            let valor = $(this).val().toLowerCase();
-            $('#contenidoTabla tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().includes(valor));
-            });
-        });
-    });
-</script>
 
 
 <script>

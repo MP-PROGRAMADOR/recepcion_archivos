@@ -3,9 +3,7 @@ include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
 // Configuración de paginación
-$por_pagina = 10;
-$pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-$inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
+
 
 // Filtros
 $tipo  = $_GET['tipo'] ?? '';
@@ -41,16 +39,14 @@ if ($tipo === 'orden_az') {
     $sql .= " ORDER BY c.id DESC";
 }
 
-// Paginación
-$sql .= " LIMIT :inicio, :por_pagina";
+
 
 try {
     $stmt = $pdo->prepare($sql);
     foreach ($params as $key => $val) {
         $stmt->bindValue($key, $val);
     }
-    $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
-    $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
+
     $stmt->execute();
     $ciudades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -64,7 +60,7 @@ try {
     }
     $total_stmt->execute();
     $total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
-    $total_paginas = ceil($total_filas / $por_pagina);
+  
 } catch (PDOException $e) {
     die("Error al obtener las ciudades: " . $e->getMessage());
 }
@@ -162,17 +158,10 @@ try {
 
 
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="busqueda" class="form-label fw-bold">
-                            <i class="bi bi-search me-1"></i>Buscar Ciudad
-                        </label>
-                        <input type="text" class="form-control" id="busqueda" placeholder="Buscar por ID o nombre...">
-                    </div>
-                </div>
+              
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle text-center" id="tablaCiudad">
+                    <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
                         <thead class="table-dark">
                             <tr>
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
@@ -182,7 +171,7 @@ try {
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
-                            <?php if (!empty($ciudades)): ?>
+                          
                                 <?php foreach ($ciudades as $ciudad): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($ciudad['id']) ?></td>
@@ -207,43 +196,13 @@ try {
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">
-                                        No hay ciudades con estudiantes registrados
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
+                          
                         </tbody>
 
                     </table>
                 </div>
 
-                <!-- Paginación -->
-                <?php if ($total_paginas > 1): ?>
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <?php if ($pagina_actual > 1): ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
-                                </li>
-                            <?php endif; ?>
-
-                            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                                <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                                    <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
-                                </li>
-                            <?php endfor; ?>
-
-                            <?php if ($pagina_actual < $total_paginas): ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
-                                </li>
-                            <?php endif; ?>
-                        </ul>
-                    </nav>
-                <?php endif; ?>
-
+               
             </div>
         </div>
     </div>
@@ -294,21 +253,6 @@ try {
 
 
 
-<!-- Bootstrap Icons y jQuery -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Buscador funcional -->
-<script>
-    $(document).ready(function() {
-        $('#busqueda').on('keyup', function() {
-            let valor = $(this).val().toLowerCase();
-            $('#contenidoTabla tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().includes(valor));
-            });
-        });
-    });
-</script>
 
 <script>
     // Aplica el filtro y recarga la página con parámetros GET

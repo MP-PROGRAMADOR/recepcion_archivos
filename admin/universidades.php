@@ -3,9 +3,7 @@ include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
 
-$por_pagina = 10;
-$pagina_actual = isset($_GET['pagina']) && is_numeric($_GET['pagina']) && $_GET['pagina'] > 0 ? (int)$_GET['pagina'] : 1;
-$inicio = ($pagina_actual - 1) * $por_pagina;
+
 
 try {
     // Contar universidades que tienen al menos un estudiante
@@ -16,7 +14,7 @@ try {
     ");
     $conteo_stmt->execute();
     $total_filas = $conteo_stmt->fetch(PDO::FETCH_ASSOC)['total'];
-    $total_paginas = ceil($total_filas / $por_pagina);
+
 
     // Obtener datos paginados solo con universidades que tienen estudiantes
     $stmt = $pdo->prepare("
@@ -30,10 +28,9 @@ try {
         INNER JOIN estudiantes e ON u.id = e.universidad_id
         GROUP BY u.id
         ORDER BY u.id DESC
-        LIMIT :inicio, :por_pagina
+       
     ");
-    $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
-    $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
+
     $stmt->execute();
     $universidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -145,17 +142,9 @@ try {
 
 
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="busqueda" class="form-label fw-bold">
-                            <i class="bi bi-search me-1"></i>Buscar Universidad
-                        </label>
-                        <input type="text" class="form-control" id="busqueda" placeholder="Buscar por ID o nombre...">
-                    </div>
-                </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle text-center" id="tablaUniversidad">
+                  <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
                         <thead class="table-dark">
                             <tr>
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
@@ -166,7 +155,7 @@ try {
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
-                            <?php if (!empty($universidades)): ?>
+                           
                                 <?php foreach ($universidades as $universidad): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($universidad['id']) ?></td>
@@ -176,48 +165,18 @@ try {
                                         <td><?= htmlspecialchars($universidad['total_estudiantes']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">No hay universidades registradas</td>
-                                </tr>
-                            <?php endif; ?>
+                           
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Paginación -->
-                <?php if ($total_paginas > 1): ?>
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <?php if ($pagina_actual > 1): ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
-                                </li>
-                            <?php endif; ?>
-
-                            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                                <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                                    <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
-                                </li>
-                            <?php endfor; ?>
-
-                            <?php if ($pagina_actual < $total_paginas): ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
-                                </li>
-                            <?php endif; ?>
-                        </ul>
-                    </nav>
-                <?php endif; ?>
+             
 
             </div>
         </div>
     </div>
 </main>
 
-<!-- Bootstrap Icons y jQuery -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
 <script>
@@ -356,20 +315,6 @@ try {
     });
 </script>
 
-<!-- Buscador funcional -->
-<script>
-    $(document).ready(function() {
-        $('#busqueda').on('keyup', function() {
-            let valor = $(this).val().toLowerCase();
-            $('#contenidoTabla tr').not('#sin-resultados').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().includes(valor));
-            });
 
-            let filasVisibles = $('#contenidoTabla tr:visible').not('#sin-resultados').length;
-
-            manejarMensajeVacio(filasVisibles);
-        });
-    });
-</script>
 
 <?php include_once("../componentes/footer.php"); ?>

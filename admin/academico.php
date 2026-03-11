@@ -84,17 +84,10 @@ include_once("../componentes/sidebar.php");
 
         <div class="card shadow rounded-4">
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="busqueda" class="form-label fw-bold">
-                            <i class="bi bi-search me-1"></i>Buscar Año Académico
-                        </label>
-                        <input type="text" class="form-control" id="busqueda" placeholder="Buscar por ID o nombre...">
-                    </div>
-                </div>
+               
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle text-center" id="tablaAnio">
+                   <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
                         <thead class="table-dark">
                             <tr>
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
@@ -120,50 +113,12 @@ include_once("../componentes/sidebar.php");
                     </table>
                 </div>
 
-                <!-- Paginación -->
-                <?php if ($total_paginas > 1): ?>
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <?php if ($pagina_actual > 1): ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
-                                </li>
-                            <?php endif; ?>
-
-                            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                                <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                                    <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
-                                </li>
-                            <?php endfor; ?>
-
-                            <?php if ($pagina_actual < $total_paginas): ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
-                                </li>
-                            <?php endif; ?>
-                        </ul>
-                    </nav>
-                <?php endif; ?>
+               
             </div>
         </div>
     </div>
 </main>
 
-<!-- Bootstrap Icons y jQuery -->
-<script src="../config/js/canva.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="../config/js/canva.js"></script>
-<!-- Buscador dinámico -->
-<script>
-    $(document).ready(function() {
-        $('#busqueda').on('keyup', function() {
-            let valor = $(this).val().toLowerCase();
-            $('#contenidoTabla tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().includes(valor));
-            });
-        });
-    });
-</script>
+
 
 <?php include_once("../componentes/footer.php"); ?>

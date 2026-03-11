@@ -59,6 +59,20 @@ $_SESSION['ultima_actividad'] = time();
 
 
 
+  <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+
+<!-- jQuery -->
+<script src="../config/js/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+
+
+
   <!-- Google Charts -->
   <script type="text/javascript" src="../config/js/loader.js"></script>
   <script type="text/javascript">

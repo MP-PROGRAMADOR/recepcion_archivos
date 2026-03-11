@@ -102,7 +102,7 @@ try {
             LEFT JOIN ciudades c ON e.ciudad_id = c.id
             $whereSQL
             $orderSQL
-            LIMIT :inicio, :por_pagina";
+            ";
 
     $stmt = $pdo->prepare($sql);
 
@@ -110,8 +110,7 @@ try {
         $stmt->bindValue($key, $val);
     }
 
-    $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
-    $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
+   
 
     $stmt->execute();
     $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -242,15 +241,9 @@ endif;
 
 
 
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label for="busqueda" class="form-label fw-bold">Buscar estudiante</label>
-                        <input type="text" class="form-control" id="busqueda" placeholder="Buscar por nombre o país...">
-                    </div>
-                </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle text-center" id="tablaEstudiantes">
+            <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
                         <thead class="table-dark">
                             <tr>
                                 <th>ID</th>
@@ -269,7 +262,7 @@ endif;
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
-                            <?php if (!empty($estudiantes)): ?>
+                           
                             <?php foreach ($estudiantes as $est): ?>
                             <tr>
                                 <td><?= htmlspecialchars($est['id']) ?></td>
@@ -405,11 +398,7 @@ endif;
                                 </td>
                             </tr>
                             <?php endforeach; ?>
-                            <?php else: ?>
-                            <tr>
-                                <td colspan="10" class="text-center text-muted">No hay estudiantes registrados</td>
-                            </tr>
-                            <?php endif; ?>
+                            
                         </tbody>
                     </table>
 
@@ -419,93 +408,7 @@ endif;
 
 
 
-
-
-
-
-
-
-
-
-
-                <!-- PAGINACION -->
-                <!-- PAGINACIÓN -->
-                <?php if ($total_paginas > 1): ?>
-
-                <?php
-// construir query manteniendo filtros
-$queryParams = $_GET;
-?>
-
-                <nav aria-label="Paginación de estudiantes">
-                    <ul class="pagination justify-content-center flex-wrap">
-
-                        <!-- BOTÓN ANTERIOR -->
-                        <?php if ($pagina_actual > 1): 
-            $queryParams['pagina'] = $pagina_actual - 1;
-        ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?<?= http_build_query($queryParams) ?>">
-                                &laquo;
-                            </a>
-                        </li>
-                        <?php endif; ?>
-
-                        <?php
-        // limitar número de páginas visibles
-        $rango = 2;
-        $inicio = max(1, $pagina_actual - $rango);
-        $fin = min($total_paginas, $pagina_actual + $rango);
-
-        // primera página
-        if ($inicio > 1) {
-            $queryParams['pagina'] = 1;
-            echo '<li class="page-item"><a class="page-link" href="?' . http_build_query($queryParams) . '">1</a></li>';
-
-            if ($inicio > 2) {
-                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-            }
-        }
-
-        // páginas centrales
-        for ($i = $inicio; $i <= $fin; $i++):
-            $queryParams['pagina'] = $i;
-        ?>
-                        <li class="page-item <?= ($i == $pagina_actual) ? 'active' : '' ?>">
-                            <a class="page-link" href="?<?= http_build_query($queryParams) ?>">
-                                <?= $i ?>
-                            </a>
-                        </li>
-                        <?php endfor; ?>
-
-                        <?php
-        // última página
-        if ($fin < $total_paginas) {
-
-            if ($fin < $total_paginas - 1) {
-                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-            }
-
-            $queryParams['pagina'] = $total_paginas;
-            echo '<li class="page-item"><a class="page-link" href="?' . http_build_query($queryParams) . '">' . $total_paginas . '</a></li>';
-        }
-        ?>
-
-                        <!-- BOTÓN SIGUIENTE -->
-                        <?php if ($pagina_actual < $total_paginas): 
-            $queryParams['pagina'] = $pagina_actual + 1;
-        ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?<?= http_build_query($queryParams) ?>">
-                                &raquo;
-                            </a>
-                        </li>
-                        <?php endif; ?>
-
-                    </ul>
-                </nav>
-
-                <?php endif; ?>
+      
 
 
                 <!-- FIN DE LA PAGINACION -->
@@ -515,26 +418,7 @@ $queryParams = $_GET;
     </div>
 </main>
 
-<!-- Bootstrap Icons & jQuery -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<script src="../config/js/jquery-3.6.0.min.js"></script>
 
-
-
-
-<!-- Buscador en tiempo real -->
-
-<script>
-$(document).ready(function() {
-    $("#busqueda").on("keyup", function() {
-        let valor = $(this).val().toLowerCase();
-
-        $("#contenidoTabla tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().includes(valor));
-        });
-    });
-});
-</script>
 
 
 

@@ -3,14 +3,12 @@ include_once("../componentes/header.php");
 include_once("../componentes/sidebar.php");
 
 // --- LÓGICA DE PAGINACIÓN ---
-$por_pagina = 10;
-$pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-$inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
+
 
 // Contar total
 $total_stmt = $pdo->query("SELECT COUNT(DISTINCT pais_id) as total FROM estudiantes");
 $total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
-$total_paginas = ceil($total_filas / $por_pagina);
+
 
 // Obtener datos
 try {
@@ -20,9 +18,8 @@ try {
                            GROUP BY p.id
                            HAVING estudiantes > 0
                            ORDER BY p.id DESC
-                           LIMIT :inicio, :por_pagina");
-    $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
-    $stmt->bindValue(':por_pagina', $por_pagina, PDO::PARAM_INT);
+                           ");
+ 
     $stmt->execute();
     $paises = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -97,17 +94,8 @@ try {
 
 
 
-
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="busqueda" class="form-label fw-bold"><i class="bi bi-search me-1"></i>Buscar País</label>
-                        <input type="text" class="form-control" id="busqueda" placeholder="Escribe ID o nombre para filtrar...">
-                    </div>
-                </div>
-
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle text-center">
+                  <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
                         <thead class="table-dark">
                             <tr>
                                 <th>ID</th>
@@ -116,7 +104,7 @@ try {
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
-                            <?php if (!empty($paises)): ?>
+                           
                                 <?php foreach ($paises as $pais): ?>
                                     <tr class="fila-datos">
                                         <td><?= htmlspecialchars($pais['id']) ?></td>
@@ -124,36 +112,19 @@ try {
                                         <td><?= htmlspecialchars($pais['estudiantes']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
-                            <?php endif; ?>
+                            
 
-                            <tr id="filaNoResultados" style="display: none;">
-                                <td colspan="3" class="py-4 text-center">
-
-                                    <span class="text-muted">No se encontraron datos coincidentes</span>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <?php if ($total_paginas > 1): ?>
-                    <nav class="mt-3">
-                        <ul class="pagination justify-content-center">
-                            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                                <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                                    <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
-                                </li>
-                            <?php endfor; ?>
-                        </ul>
-                    </nav>
-                <?php endif; ?>
+               
             </div>
         </div>
     </div>
 </main>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 
 <script>
@@ -266,33 +237,5 @@ try {
     }
 </script>
 
-<script>
-    $(document).ready(function() {
-        $('#busqueda').on('keyup', function() {
-            const valor = $(this).val().toLowerCase();
-
-            // 1. Filtramos las filas de datos
-            let filasVisibles = 0;
-
-            $('#contenidoTabla tr.fila-datos').each(function() {
-                const texto = $(this).text().toLowerCase();
-                const coincide = texto.indexOf(valor) > -1;
-
-                $(this).toggle(coincide);
-
-                if (coincide) {
-                    filasVisibles++;
-                }
-            });
-
-            // 2. Controlamos la fila de "No resultados"
-            if (filasVisibles === 0) {
-                $('#filaNoResultados').show();
-            } else {
-                $('#filaNoResultados').hide();
-            }
-        });
-    });
-</script>
 
 <?php include_once("../componentes/footer.php"); ?>

@@ -294,7 +294,7 @@ include_once("../componentes/sidebar.php");
 
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle text-center">
+                   <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
                         <thead class="table-dark">
                             <tr>
                                 <th class="text-start">Estudiante</th>
@@ -305,7 +305,7 @@ include_once("../componentes/sidebar.php");
                                 <th>País</th>
                             </tr>
                         </thead>
-                        <tbody id="contenidoTabla"> <?php if (!empty($estudiantes)): ?>
+                        <tbody id="contenidoTabla"> 
                                 <?php foreach ($estudiantes as $est): ?>
                                     <tr>
                                         <td class="text-start"><?= htmlspecialchars($est['nombre_completo']) ?></td>
@@ -316,11 +316,7 @@ include_once("../componentes/sidebar.php");
                                         <td><?= htmlspecialchars($est['pais']) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr id="sin-resultados">
-                                    <td colspan="6" class="text-center text-muted">No hay estudiantes registrados</td>
-                                </tr>
-                            <?php endif; ?>
+                            
                         </tbody>
                     </table>
                 </div>

@@ -182,18 +182,10 @@ $rol = $_SESSION['usuario_rol'];
                 </div>
 
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="busqueda" class="form-label fw-bold">
-                            <i class="bi bi-search me-1"></i>Buscar Cuenta
-                        </label>
-                        <input type="text" class="form-control" id="busqueda"
-                            placeholder="Buscar por número o banco...">
-                    </div>
-                </div>
+             
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle text-center" id="tablaCuentas">
+                   <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
                         <thead class="table-dark">
                             <tr>
                                 <th><i class="bi bi-hash me-1"></i>ID</th>
@@ -210,7 +202,7 @@ $rol = $_SESSION['usuario_rol'];
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
-                            <?php if (!empty($cuentas)): ?>
+                          
                                 <?php foreach ($cuentas as $cuenta): ?>
                                     <tr>
                                         <td><i class="bi bi-hash me-1"></i><?= htmlspecialchars($cuenta['id']) ?></td>
@@ -240,35 +232,12 @@ $rol = $_SESSION['usuario_rol'];
 
                                     </tr>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted">No hay cuentas bancarias registradas</td>
-                                </tr>
-                            <?php endif; ?>
+                            
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Paginación -->
-                <?php if ($total_paginas > 1): ?>
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <?php if ($pagina_actual > 1): ?>
-                                <li class="page-item"><a class="page-link" href="?pagina=<?= $pagina_actual - 1 ?>">&laquo;</a>
-                                </li>
-                            <?php endif; ?>
-                            <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                                <li class="page-item <?= $i == $pagina_actual ? 'active' : '' ?>">
-                                    <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
-                                </li>
-                            <?php endfor; ?>
-                            <?php if ($pagina_actual < $total_paginas): ?>
-                                <li class="page-item"><a class="page-link" href="?pagina=<?= $pagina_actual + 1 ?>">&raquo;</a>
-                                </li>
-                            <?php endif; ?>
-                        </ul>
-                    </nav>
-                <?php endif; ?>
+               
             </div>
         </div>
     </div>
@@ -518,18 +487,6 @@ $rol = $_SESSION['usuario_rol'];
 </script>
 
 
-
-
-<script>
-    $(document).ready(function() {
-        $('#busqueda').on('keyup', function() {
-            let valor = $(this).val().toLowerCase();
-            $('#contenidoTabla tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().includes(valor));
-            });
-        });
-    });
-</script>
 
 
 
