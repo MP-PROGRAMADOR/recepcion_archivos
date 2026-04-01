@@ -150,11 +150,15 @@ function es_activo($archivo_enlace, $pagina_actual)
       </a>
     </li>
 
-    <li class="nav-item mb-1">
+   
+
+          <?php if (strtolower($rol) === 'administrador'): ?>
+                                     <li class="nav-item mb-1">
       <a href="../admin/auditoria.php" class="nav-link text-white <?= es_activo('auditoria.php', $pagina_actual) ?>">
         <i class="bi bi-shield-check me-2"></i> Auditoría
       </a>
     </li>
+                                    <?php endif; ?>
 
     <li class="text-uppercase text-secondary small fw-bold mt-4 mb-2 px-4">Configuración</li>
 

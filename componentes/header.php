@@ -3,7 +3,7 @@ session_start();
 require_once '../config/conexion.php';
 
 // Tiempo de inactividad en segundos (5 minutos)
-$tiempo_inactividad = 2 * 60; // 300 segundos
+$tiempo_inactividad = 60 * 60; // 300 segundos
 
 // Comprobar última actividad
 if (isset($_SESSION['ultima_actividad'])) {
@@ -60,15 +60,16 @@ $_SESSION['ultima_actividad'] = time();
 
 
   <!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+
+<link rel="stylesheet" href="../config/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="../config/css/buttons.bootstrap5.min.css">
 
 <!-- jQuery -->
 <script src="../config/js/jquery-3.6.0.min.js"></script>
 
 <!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+<script src="../config/css/jquery.dataTables.min.js"></script>
+<script src="../config/css/dataTables.bootstrap5.min.js"></script>
 
 
 

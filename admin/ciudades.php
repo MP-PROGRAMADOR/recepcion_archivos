@@ -183,7 +183,13 @@ try {
                                                 class="btn btn-warning btn-sm" title="Editar ciudad">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
-                                            <!-- Botón Eliminar -->
+                                           
+
+
+                                              <?php if (strtolower($rol) === 'administrador' || strtolower($rol) === 'tecnico-eliminar'): ?>
+
+                                         <!-- Botón de eliminación -->
+                                  <!-- Botón Eliminar -->
                                             <button type="button"
                                                 class="btn btn-danger btn-sm bi bi-trash"
                                                 data-bs-toggle="modal"
@@ -191,7 +197,7 @@ try {
                                                 data-id="<?= $ciudad['id']; ?>"
                                                 data-nombre="<?= htmlspecialchars($ciudad['nombre']); ?>">
                                             </button>
-
+                                    <?php endif; ?>
 
                                         </td>
                                     </tr>

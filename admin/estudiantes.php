@@ -311,12 +311,18 @@ endif;
                                     </a>
 
 
-                                    <!-- Botón de eliminación -->
+                                     <?php if (strtolower($rol) === 'administrador' || strtolower($rol) === 'tecnico-eliminar'): ?>
+
+                                         <!-- Botón de eliminación -->
                                     <button type="button" class="btn btn-danger btn-sm eliminar-btn bi bi-trash"
                                         data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal"
                                         data-id="<?= htmlspecialchars($est['id']); ?>"
                                         data-nombre="<?= htmlspecialchars($est['nombre_completo'] ?? ''); ?>">
                                     </button>
+                                    
+                                    <?php endif; ?>
+
+                                   
 
                                     <!-- Modal de eliminación -->
                                     <div class="modal fade" id="confirmarEliminarModal" tabindex="-1"
