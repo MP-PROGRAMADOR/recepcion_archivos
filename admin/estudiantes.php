@@ -73,7 +73,6 @@ try {
     $total_stmt->execute($params);
     $total_filas = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
     $total_paginas = ceil($total_filas / $por_pagina);
-
 } catch (PDOException $e) {
     die("Error al contar los estudiantes: " . $e->getMessage());
 }
@@ -110,11 +109,10 @@ try {
         $stmt->bindValue($key, $val);
     }
 
-   
+
 
     $stmt->execute();
     $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (PDOException $e) {
     die("Error al obtener los estudiantes: " . $e->getMessage());
 }
@@ -128,56 +126,56 @@ $rol = $_SESSION['usuario_rol'];
 
 
 <main class="content" id="mainContent">
-   
+
 
     <canvas id="bgCanvas" style="position: fixed; top: 0; left: 0; z-index: -1;"></canvas>
     <div class="container-fluid">
 
 
-        <?php if (!empty($_SESSION['mensaje'])): 
+        <?php if (!empty($_SESSION['mensaje'])):
 
-    $tipo = $_SESSION['tipo_mensaje'] ?? 'info';
+            $tipo = $_SESSION['tipo_mensaje'] ?? 'info';
 
-    // Íconos según tipo
-    $iconos = [
-        'success' => 'bi-check-circle-fill',
-        'danger'  => 'bi-x-circle-fill',
-        'warning' => 'bi-exclamation-triangle-fill',
-        'info'    => 'bi-info-circle-fill'
-    ];
+            // Íconos según tipo
+            $iconos = [
+                'success' => 'bi-check-circle-fill',
+                'danger'  => 'bi-x-circle-fill',
+                'warning' => 'bi-exclamation-triangle-fill',
+                'info'    => 'bi-info-circle-fill'
+            ];
 
-    $icono = $iconos[$tipo] ?? 'bi-info-circle-fill';
-?>
+            $icono = $iconos[$tipo] ?? 'bi-info-circle-fill';
+        ?>
 
-        <div id="alerta-sesion"
-            class="alert alert-<?= htmlspecialchars($tipo) ?> alert-dismissible fade show mt-3 d-flex align-items-center gap-2"
-            role="alert">
+            <div id="alerta-sesion"
+                class="alert alert-<?= htmlspecialchars($tipo) ?> alert-dismissible fade show mt-3 d-flex align-items-center gap-2"
+                role="alert">
 
-            <i class="bi <?= $icono ?> fs-5"></i>
+                <i class="bi <?= $icono ?> fs-5"></i>
 
-            <div>
-                <?= htmlspecialchars($_SESSION['mensaje']) ?>
+                <div>
+                    <?= htmlspecialchars($_SESSION['mensaje']) ?>
+                </div>
+
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Cerrar"></button>
             </div>
 
-            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-        </div>
-
-        <script>
-        setTimeout(function() {
-            const alerta = document.getElementById('alerta-sesion');
-            if (alerta) {
-                alerta.classList.remove('show');
-                alerta.classList.add('fade');
-                setTimeout(() => alerta.remove(), 500);
-            }
-        }, 6000);
-        </script>
+            <script>
+                setTimeout(function() {
+                    const alerta = document.getElementById('alerta-sesion');
+                    if (alerta) {
+                        alerta.classList.remove('show');
+                        alerta.classList.add('fade');
+                        setTimeout(() => alerta.remove(), 500);
+                    }
+                }, 6000);
+            </script>
 
         <?php
-unset($_SESSION['mensaje']);
-unset($_SESSION['tipo_mensaje']);
-endif;
-?>
+            unset($_SESSION['mensaje']);
+            unset($_SESSION['tipo_mensaje']);
+        endif;
+        ?>
 
 
 
@@ -234,16 +232,11 @@ endif;
                             <i class="bi bi-printer-fill"></i> Imprimir
                         </button>
                     </div>
-
-
                 </div>
 
 
-
-
-
                 <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
+                    <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
                         <thead class="table-dark">
                             <tr>
                                 <th>ID</th>
@@ -262,160 +255,72 @@ endif;
                             </tr>
                         </thead>
                         <tbody id="contenidoTabla">
-                           
+
                             <?php foreach ($estudiantes as $est): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($est['id']) ?></td>
-                                <td class="text-start"><?= htmlspecialchars($est['nombre_completo']) ?></td>
-                                <td class="text-start"><?= htmlspecialchars($est['codigo_acceso']) ?></td>
-                                <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
-                                <td><?= htmlspecialchars($est['pais']) ?></td>
-                                <td><?= htmlspecialchars($est['ciudad']) ?></td>
-                                <td><?= htmlspecialchars($est['anio_inicio_carrera']) ?></td>
-                                <td><?= htmlspecialchars($est['anio_fin_carrera']) ?></td>
-                                <td><?= htmlspecialchars($est['telefono']) ?></td>
+                                <tr>
+                                    <td><?= htmlspecialchars($est['id']) ?></td>
+                                    <td class="text-start"><?= htmlspecialchars($est['nombre_completo']) ?></td>
+                                    <td class="text-start"><?= htmlspecialchars($est['codigo_acceso']) ?></td>
+                                    <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
+                                    <td><?= htmlspecialchars($est['pais']) ?></td>
+                                    <td><?= htmlspecialchars($est['ciudad']) ?></td>
+                                    <td><?= htmlspecialchars($est['anio_inicio_carrera']) ?></td>
+                                    <td><?= htmlspecialchars($est['anio_fin_carrera']) ?></td>
+                                    <td><?= htmlspecialchars($est['telefono']) ?></td>
 
-                                <td>
-                                    <?php if (!empty($est['archivo_beca']) && file_exists('../php/' . $est['archivo_beca'])): ?>
-                                    <a href="../php/<?= htmlspecialchars($est['archivo_beca']) ?>" target="_blank"
-                                        class="btn btn-outline-info btn-sm">
-                                        <i class="bi bi-file-earmark-arrow-down"></i> Ver
-                                    </a>
-                                    <?php else: ?>
-                                    <span class="text-muted">No disponible</span>
-                                    <?php endif; ?>
-                                </td>
+                                    <td>
+                                        <?php if (!empty($est['archivo_beca']) && file_exists('../php/' . $est['archivo_beca'])): ?>
+                                            <a href="../php/<?= htmlspecialchars($est['archivo_beca']) ?>" target="_blank"
+                                                class="btn btn-outline-info btn-sm">
+                                                <i class="bi bi-file-earmark-arrow-down"></i> Ver
+                                            </a>
+                                        <?php else: ?>
+                                            <span class="text-muted">No disponible</span>
+                                        <?php endif; ?>
+                                    </td>
 
-                                <!-- Foto del perfil -->
-                                <td>
-                                    <?php if (!empty($est['foto_perfil']) && file_exists('../php/upload/perfil/' . $est['foto_perfil'])): ?>
-                                    <img src="../php/upload/perfil/<?= htmlspecialchars($est['foto_perfil']) ?>"
-                                        alt="Foto de Perfil"
-                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
-                                    <?php else: ?>
-                                    <span class="text-muted">NINGÚN PERFIL</span>
-                                    <?php endif; ?>
-                                </td>
+                                    <!-- Foto del perfil -->
+                                    <td>
+                                        <?php if (!empty($est['foto_perfil']) && file_exists('../php/upload/perfil/' . $est['foto_perfil'])): ?>
+                                            <img src="../php/upload/perfil/<?= htmlspecialchars($est['foto_perfil']) ?>"
+                                                alt="Foto de Perfil"
+                                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                                        <?php else: ?>
+                                            <span class="text-muted">NINGÚN PERFIL</span>
+                                        <?php endif; ?>
+                                    </td>
 
-                                <!-- Acciones -->
-                                <td>
-                                    <?php if (strtolower($rol) === 'administrador'): ?>
-                                    <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>"
-                                        class="btn btn-warning btn-sm" title="Editar">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-                                    <?php endif; ?>
-                                    <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>"
-                                        class="btn btn-success btn-sm" title="Detalles">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-
-
-                                     <?php if (strtolower($rol) === 'administrador' || strtolower($rol) === 'tecnico-eliminar'): ?>
-
-                                         <!-- Botón de eliminación -->
-                                    <button type="button" class="btn btn-danger btn-sm eliminar-btn bi bi-trash"
-                                        data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal"
-                                        data-id="<?= htmlspecialchars($est['id']); ?>"
-                                        data-nombre="<?= htmlspecialchars($est['nombre_completo'] ?? ''); ?>">
-                                    </button>
-                                    
-                                    <?php endif; ?>
-
-                                   
-
-                                    <!-- Modal de eliminación -->
-                                    <div class="modal fade" id="confirmarEliminarModal" tabindex="-1"
-                                        aria-labelledby="modalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content border-danger border-4 shadow-lg rounded-lg">
-
-                                                <!-- Header -->
-                                                <div
-                                                    class="modal-header bg-danger text-white border-bottom border-danger">
-                                                    <h5 class="modal-title fw-bold" id="modalLabel">
-                                                        ⚠️ Confirmar Eliminación Definitiva
-                                                    </h5>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                                </div>
-
-                                                <!-- Body -->
-                                                <div class="modal-body p-4">
-                                                    <p id="modal-mensaje" class="fs-5 text-dark"></p>
-                                                    <p class="text-danger mt-5">
-                                                        ¡Esta acción es irreversible y eliminará el registro de la base
-                                                        de datos!
-                                                    </p>
-                                                </div>
-
-                                                <!-- Footer -->
-                                                <div class="modal-footer p-3 bg-light d-flex justify-content-between">
-                                                    <button type="button"
-                                                        class="btn btn-secondary shadow-sm bi bi-x-circle text-white"
-                                                        data-bs-dismiss="modal">
-                                                        Cancelar
-                                                    </button>
-                                                    <a id="btn-eliminar-final" href="#"
-                                                        class="btn btn-danger shadow-md bi bi-trash">
-                                                        Sí, Eliminar
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <!-- Acciones -->
+                                    <td>
+                                        <?php if (strtolower($rol) === 'administrador'): ?>
+                                            <a href="editar_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>"
+                                                class="btn btn-warning btn-sm" title="Editar">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                        <a href="detalles_estudiantes.php?id=<?= htmlspecialchars($est['id']) ?>"
+                                            class="btn btn-success btn-sm" title="Detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
 
 
-                                    <script
-                                        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-                                    </script>
+                                        <?php if (strtolower($rol) === 'administrador' || strtolower($rol) === 'tecnico-eliminar'): ?>
 
+                                            <!-- Botón de eliminación -->
+                                            <button type="button" class="btn btn-danger btn-sm eliminar-btn bi bi-trash"
+                                                data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal"
+                                                data-id="<?= htmlspecialchars($est['id']); ?>"
+                                                data-nombre="<?= htmlspecialchars($est['nombre_completo'] ?? ''); ?>">
+                                            </button>
 
-                                    <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        const modal = document.getElementById('confirmarEliminarModal');
-
-                                        modal.addEventListener('show.bs.modal', function(event) {
-                                            const button = event.relatedTarget;
-                                            const estudianteId = button.getAttribute('data-id');
-                                            const estudianteNombre = button.getAttribute('data-nombre');
-
-                                            const modalMensaje = modal.querySelector('#modal-mensaje');
-                                            const btnEliminar = modal.querySelector(
-                                                '#btn-eliminar-final');
-
-                                            // Mostrar nombre si existe, sino solo el ID
-                                            const nombreDestacado = estudianteNombre ?
-                                                `<span class="text-primary fw-bold">${estudianteNombre}</span>` :
-                                                `ID: ${estudianteId}`;
-
-                                            modalMensaje.innerHTML =
-                                                `¿Está seguro que desea eliminar al estudiante ${nombreDestacado}?`;
-
-                                            // Actualizar href del botón eliminar
-                                            btnEliminar.href =
-                                                `eliminar_estudiante.php?id=${estudianteId}`;
-                                        });
-                                    });
-                                    </script>
-
-
-
-                                </td>
-                            </tr>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
                             <?php endforeach; ?>
-                            
+
                         </tbody>
                     </table>
-
-
                 </div>
-
-
-
-
-      
-
 
                 <!-- FIN DE LA PAGINACION -->
 
@@ -430,90 +335,143 @@ endif;
 
 
 <script>
-function aplicarFiltro() {
+    function aplicarFiltro() {
 
-    const tipo = document.getElementById("tipoFiltro").value;
-    const valor = document.getElementById("valorFiltro").value.trim();
+        const tipo = document.getElementById("tipoFiltro").value;
+        const valor = document.getElementById("valorFiltro").value.trim();
 
-    const url = new URL(window.location);
+        const url = new URL(window.location);
 
-    if (tipo) {
-        url.searchParams.set("tipo", tipo);
+        if (tipo) {
+            url.searchParams.set("tipo", tipo);
+        }
+
+        if (valor && tipo !== "orden_az" && tipo !== "orden_za") {
+            url.searchParams.set("valor", valor);
+        } else {
+            url.searchParams.delete("valor");
+        }
+
+        // reiniciar a página 1 al filtrar
+        url.searchParams.set("pagina", 1);
+
+        window.location.href = url.toString();
     }
+</script>
 
-    if (valor && tipo !== "orden_az" && tipo !== "orden_za") {
-        url.searchParams.set("valor", valor);
-    } else {
+<script>
+    function controlFiltroUI() {
+        const tipo = document.getElementById("tipoFiltro").value;
+        const input = document.getElementById("valorFiltro");
+
+        if (tipo === "orden_az" || tipo === "orden_za") {
+            input.style.display = "none";
+            input.value = "";
+        } else {
+            input.style.display = "block";
+            input.focus();
+        }
+    }
+</script>
+
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+
+        const params = new URLSearchParams(window.location.search);
+
+        const tipo = params.get("tipo");
+        const valor = params.get("valor");
+
+        if (tipo) {
+            document.getElementById("tipoFiltro").value = tipo;
+        }
+
+        if (valor) {
+            document.getElementById("valorFiltro").value = valor;
+        }
+
+        controlFiltroUI();
+    });
+</script>
+
+
+<script>
+    //limpiar filtros
+    function limpiarFiltros() {
+        const url = new URL(window.location);
+        url.searchParams.delete("tipo");
         url.searchParams.delete("valor");
+        url.searchParams.set("pagina", 1);
+        window.location.href = url.toString();
     }
-
-    // reiniciar a página 1 al filtrar
-    url.searchParams.set("pagina", 1);
-
-    window.location.href = url.toString();
-}
-</script>
-
-<script>
-function controlFiltroUI() {
-    const tipo = document.getElementById("tipoFiltro").value;
-    const input = document.getElementById("valorFiltro");
-
-    if (tipo === "orden_az" || tipo === "orden_za") {
-        input.style.display = "none";
-        input.value = "";
-    } else {
-        input.style.display = "block";
-        input.focus();
-    }
-}
-</script>
-
-<script>
-window.addEventListener("DOMContentLoaded", () => {
-
-    const params = new URLSearchParams(window.location.search);
-
-    const tipo = params.get("tipo");
-    const valor = params.get("valor");
-
-    if (tipo) {
-        document.getElementById("tipoFiltro").value = tipo;
-    }
-
-    if (valor) {
-        document.getElementById("valorFiltro").value = valor;
-    }
-
-    controlFiltroUI();
-});
 </script>
 
 
 <script>
-//limpiar filtros
-function limpiarFiltros() {
-    const url = new URL(window.location);
-    url.searchParams.delete("tipo");
-    url.searchParams.delete("valor");
-    url.searchParams.set("pagina", 1);
-    window.location.href = url.toString();
-}
+    // imprimir segun filtro
+    function imprimirFiltrado() {
+        const tipo = document.getElementById("tipoFiltro").value;
+        const valor = document.getElementById("valorFiltro").value.trim();
+
+        // Abrir nueva ventana con los filtros como parámetros GET
+        const url = `../php/imprimir_estudiantes.php?tipo=${encodeURIComponent(tipo)}&valor=${encodeURIComponent(valor)}`;
+        window.open(url, "_blank");
+    }
 </script>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<!-- Modal de eliminación -->
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar a <strong id="nombreEstudiante"></strong>?
+                <p class="text-danger"><small>Esta acción no se puede deshacer.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancelar</button>
+                <form id="formEliminar" method="POST" action="./eliminar_estudiante.php">
+                    <input type="hidden" name="id" id="idEstudiante">
+                    <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 
 <script>
-// imprimir segun filtro
-function imprimirFiltrado() {
-    const tipo = document.getElementById("tipoFiltro").value;
-    const valor = document.getElementById("valorFiltro").value.trim();
+    document.addEventListener('DOMContentLoaded', function() {
+        const eliminarModal = document.getElementById('confirmarEliminarModal');
 
-    // Abrir nueva ventana con los filtros como parámetros GET
-    const url = `../php/imprimir_estudiantes.php?tipo=${encodeURIComponent(tipo)}&valor=${encodeURIComponent(valor)}`;
-    window.open(url, "_blank");
-}
+        eliminarModal.addEventListener('show.bs.modal', function(event) {
+            // El botón que disparó el modal
+            const boton = event.relatedTarget;
+
+            // Extraer la información de los atributos data-*
+            const id = boton.getAttribute('data-id');
+            const nombre = boton.getAttribute('data-nombre');
+
+            // Actualizar el contenido del modal
+            const modalBodyNombre = eliminarModal.querySelector('#nombreEstudiante');
+            const modalInputId = eliminarModal.querySelector('#idEstudiante');
+
+            modalBodyNombre.textContent = nombre;
+            modalInputId.value = id;
+        });
+    });
 </script>
-
 
 
 
