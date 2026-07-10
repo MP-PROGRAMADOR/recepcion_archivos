@@ -47,39 +47,34 @@
 
 
 <script>
+let table;
+
 $(document).ready(function() {
-    $('#tablaRecepcion').DataTable({
-        
-        // -----------------------------
-        // Layout limpio (sin botones)
-        // -----------------------------
-        dom: "<'row mb-3'<'col-md-6 d-flex align-items-center'l><'col-md-6 d-flex justify-content-end'f>>" +
+    table = $('#tablaRecepcion').DataTable({
+        dom: "<'row mb-3'<'col-md-4 d-flex align-items-center'l><'col-md-4 d-flex justify-content-center'B><'col-md-4 d-flex justify-content-end'f>>" +
              "<'row'<'col-12'tr>>" +
              "<'row mt-2'<'col-md-5'i><'col-md-7 d-flex justify-content-end'p>>",
-
-        // -----------------------------
-        // Configuración general
-        // -----------------------------
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: '<i class="fas fa-file-excel me-2"></i> Exportar en Excel',
+                titleAttr: 'Exportar a Excel',
+                className: 'btn btn-sm px-3 fw-semibold rounded-2 shadow-sm',
+                attr: { style: 'background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;' },
+                exportOptions: { columns: ':visible' }
+            }
+        ],
         pageLength: 10,
         lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
         ordering: true,
         responsive: true,
-
-        // -----------------------------
-        // Idioma
-        // -----------------------------
         language: {
-            search: "Buscar:",
+            search: "Buscar en tabla:",
             lengthMenu: "Mostrar _MENU_ registros",
             info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
             infoEmpty: "No hay registros disponibles",
-            zeroRecords: "No se encontraron registros",
-            paginate: {
-                first: "Primero",
-                last: "Último",
-                next: "Siguiente",
-                previous: "Anterior"
-            }
+            zeroRecords: "No se encontraron registros coincidentes",
+            paginate: { first: "Primero", last: "Último", next: "Siguiente", previous: "Anterior" }
         }
     });
 });

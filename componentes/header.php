@@ -344,3 +344,21 @@ $_SESSION['ultima_actividad'] = time();
 </head>
 
 <body>
+
+
+
+
+
+
+ <?php if (strtolower($rol) === 'administrador' || strtolower($rol) === 'tecnico-eliminar'): ?>
+
+                                         <!-- Botón de eliminación -->
+                                  <!-- Botón Eliminar -->
+                                            <button type="button"
+                                                class="btn btn-danger btn-sm bi bi-trash"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEliminarCiudad"
+                                                data-id="<?= $ciudad['id']; ?>"
+                                                data-nombre="<?= htmlspecialchars($ciudad['nombre']); ?>">
+                                            </button>
+                                    <?php endif; ?>

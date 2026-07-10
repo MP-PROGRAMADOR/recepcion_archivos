@@ -64,6 +64,8 @@ try {
 } catch (PDOException $e) {
     die("Error al obtener las ciudades: " . $e->getMessage());
 }
+
+$rol = $_SESSION['usuario_rol'];
 ?>
 
 <main class="content" id="mainContent">

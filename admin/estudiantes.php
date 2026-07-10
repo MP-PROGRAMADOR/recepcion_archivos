@@ -6,13 +6,13 @@ include_once("../componentes/sidebar.php");
 // PAGINACIÓN
 // =========================
 $por_pagina = 20;
-$pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$pagina_actual = isset($_GET['pagina']) ? (int) $_GET['pagina'] : 1;
 $inicio = ($pagina_actual > 1) ? ($pagina_actual * $por_pagina) - $por_pagina : 0;
 
 // =========================
 // FILTROS
 // =========================
-$tipoFiltro  = $_GET['tipo'] ?? '';
+$tipoFiltro = $_GET['tipo'] ?? '';
 $valorFiltro = $_GET['valor'] ?? '';
 
 $where = [];
@@ -139,13 +139,13 @@ $rol = $_SESSION['usuario_rol'];
             // Íconos según tipo
             $iconos = [
                 'success' => 'bi-check-circle-fill',
-                'danger'  => 'bi-x-circle-fill',
+                'danger' => 'bi-x-circle-fill',
                 'warning' => 'bi-exclamation-triangle-fill',
-                'info'    => 'bi-info-circle-fill'
+                'info' => 'bi-info-circle-fill'
             ];
 
             $icono = $iconos[$tipo] ?? 'bi-info-circle-fill';
-        ?>
+            ?>
 
             <div id="alerta-sesion"
                 class="alert alert-<?= htmlspecialchars($tipo) ?> alert-dismissible fade show mt-3 d-flex align-items-center gap-2"
@@ -161,7 +161,7 @@ $rol = $_SESSION['usuario_rol'];
             </div>
 
             <script>
-                setTimeout(function() {
+                setTimeout(function () {
                     const alerta = document.getElementById('alerta-sesion');
                     if (alerta) {
                         alerta.classList.remove('show');
@@ -171,7 +171,7 @@ $rol = $_SESSION['usuario_rol'];
                 }, 6000);
             </script>
 
-        <?php
+            <?php
             unset($_SESSION['mensaje']);
             unset($_SESSION['tipo_mensaje']);
         endif;
@@ -191,16 +191,14 @@ $rol = $_SESSION['usuario_rol'];
         <div class="card shadow rounded-4">
             <div class="card-body">
 
-
-                <div class="row mb-3 align-items-end">
-
+                <div class="row mb-2 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label fw-bold">Filtrar por</label>
-                        <select id="tipoFiltro" class="form-select" onchange="controlFiltroUI()">
+                        <select id="tipoFiltro" class="form-select form-select-sm" onchange="controlFiltroUI()">
                             <option value="nombre">Nombre</option>
                             <option value="pais">País</option>
                             <option value="ciudad">Ciudad</option>
-                            <option value="fecha_fin">Fecha Finalización</option>
+                            <option value="fecha_fin">Año Finalización</option>
                             <option value="orden_az">Orden Alfabético (A-Z)</option>
                             <option value="orden_za">Orden Alfabético (Z-A)</option>
                         </select>
@@ -208,32 +206,33 @@ $rol = $_SESSION['usuario_rol'];
 
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Valor</label>
-                        <input type="text" id="valorFiltro" class="form-control"
-                            placeholder="Escribe el valor a filtrar">
+                        <input type="text" id="valorFiltro" class="form-control form-control-sm"
+                            placeholder="Escribe el valor y añade el filtro">
                     </div>
 
-                    <!-- BOTÓN FILTRAR -->
-                    <div class="col-md-1 d-grid">
-                        <button class="btn btn-primary btn-sm" onclick="aplicarFiltro()">
-                            <i class="bi bi-funnel-fill"></i> Filtrar
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-primary btn-sm" onclick="agregarFiltroAcumulado()">
+                            <i class="bi bi-plus-circle"></i> Añadir Filtro
                         </button>
                     </div>
 
-                    <!-- BOTÓN LIMPIAR -->
                     <div class="col-md-1 d-grid">
-                        <button class="btn btn-danger btn-sm" onclick="limpiarFiltros()">
-                            <i class="bi bi-x-circle"></i>
+                        <button class="btn btn-danger btn-sm" onclick="limpiarTodosLosFiltros()" title="Limpiar Todo">
+                            <i class="bi bi-trash-fill"></i>
                         </button>
                     </div>
 
-                    <!-- BOTÓN IMPRIMIR -->
-                    <div class="col-md-1 d-grid">
+                    <div class="col-md-2 d-grid">
                         <button class="btn btn-success btn-sm" onclick="imprimirFiltrado()">
-                            <i class="bi bi-printer-fill"></i> Imprimir
+                            <i class="bi bi-printer-fill"></i> Imprimir Reporte
                         </button>
                     </div>
                 </div>
 
+                <div class="row mb-3">
+                    <div class="col-12 d-flex flex-wrap gap-2" id="contenedorEtiquetas">
+                    </div>
+                </div>
 
                 <div class="table-responsive">
                     <table class="table table-striped table-hover align-middle text-center" id="tablaRecepcion">
@@ -258,15 +257,33 @@ $rol = $_SESSION['usuario_rol'];
 
                             <?php foreach ($estudiantes as $est): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($est['id']) ?></td>
-                                    <td class="text-start"><?= htmlspecialchars($est['nombre_completo']) ?></td>
-                                    <td class="text-start"><?= htmlspecialchars($est['codigo_acceso']) ?></td>
-                                    <td><?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?></td>
-                                    <td><?= htmlspecialchars($est['pais']) ?></td>
-                                    <td><?= htmlspecialchars($est['ciudad']) ?></td>
-                                    <td><?= htmlspecialchars($est['anio_inicio_carrera']) ?></td>
-                                    <td><?= htmlspecialchars($est['anio_fin_carrera']) ?></td>
-                                    <td><?= htmlspecialchars($est['telefono']) ?></td>
+                                    <td>
+                                        <?= htmlspecialchars($est['id']) ?>
+                                    </td>
+                                    <td class="text-start">
+                                        <?= htmlspecialchars($est['nombre_completo']) ?>
+                                    </td>
+                                    <td class="text-start">
+                                        <?= htmlspecialchars($est['codigo_acceso']) ?>
+                                    </td>
+                                    <td>
+                                        <?= date('d/m/Y', strtotime($est['fecha_nacimiento'])) ?>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars($est['pais']) ?>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars($est['ciudad']) ?>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars($est['anio_inicio_carrera']) ?>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars($est['anio_fin_carrera']) ?>
+                                    </td>
+                                    <td>
+                                        <?= htmlspecialchars($est['telefono']) ?>
+                                    </td>
 
                                     <td>
                                         <?php if (!empty($est['archivo_beca']) && file_exists('../php/' . $est['archivo_beca'])): ?>
@@ -322,10 +339,9 @@ $rol = $_SESSION['usuario_rol'];
                     </table>
                 </div>
 
-                <!-- FIN DE LA PAGINACION -->
-
             </div>
         </div>
+
     </div>
 </main>
 
@@ -335,31 +351,17 @@ $rol = $_SESSION['usuario_rol'];
 
 
 <script>
-    function aplicarFiltro() {
+    // Variables globales
+    let filtrosAplicados = [];
 
-        const tipo = document.getElementById("tipoFiltro").value;
-        const valor = document.getElementById("valorFiltro").value.trim();
+    const mapeoColumnas = {
+        'nombre': 1,
+        'pais': 4,
+        'ciudad': 5,
+        'fecha_fin': 7
+    };
 
-        const url = new URL(window.location);
-
-        if (tipo) {
-            url.searchParams.set("tipo", tipo);
-        }
-
-        if (valor && tipo !== "orden_az" && tipo !== "orden_za") {
-            url.searchParams.set("valor", valor);
-        } else {
-            url.searchParams.delete("valor");
-        }
-
-        // reiniciar a página 1 al filtrar
-        url.searchParams.set("pagina", 1);
-
-        window.location.href = url.toString();
-    }
-</script>
-
-<script>
+    // Control de interfaz: Oculta el input si es un ordenamiento, o le da foco si es un filtro
     function controlFiltroUI() {
         const tipo = document.getElementById("tipoFiltro").value;
         const input = document.getElementById("valorFiltro");
@@ -375,53 +377,113 @@ $rol = $_SESSION['usuario_rol'];
 </script>
 
 <script>
-    window.addEventListener("DOMContentLoaded", () => {
+    function agregarFiltroAcumulado() {
+        const selector = document.getElementById("tipoFiltro");
+        const tipo = selector.value;
+        const tipoTexto = selector.options[selector.selectedIndex].text;
+        const valor = document.getElementById("valorFiltro").value.trim();
 
-        const params = new URLSearchParams(window.location.search);
-
-        const tipo = params.get("tipo");
-        const valor = params.get("valor");
-
-        if (tipo) {
-            document.getElementById("tipoFiltro").value = tipo;
+        // ACCIÓN: Si es ordenamiento alfabético, ejecutamos el orden en DataTables de inmediato
+        if (tipo === "orden_az") {
+            table.column(1).order('asc').draw(); // Columna 1 es el Nombre
+            return;
+        }
+        if (tipo === "orden_za") {
+            table.column(1).order('desc').draw();
+            return;
         }
 
-        if (valor) {
-            document.getElementById("valorFiltro").value = valor;
+        // LÓGICA NORMAL: Para filtros que sí requieren texto
+        if (!valor) return;
+
+        const existe = filtrosAplicados.some(f => f.tipo === tipo && f.valor.toLowerCase() === valor.toLowerCase());
+        if (existe) {
+            alert("Este filtro ya ha sido añadido.");
+            return;
         }
 
-        controlFiltroUI();
-    });
+        filtrosAplicados.push({ tipo, tipoTexto, valor });
+        document.getElementById("valorFiltro").value = "";
+
+        dibujarEtiquetas();
+        procesarFiltrosEnDataTables();
+    }
+
+    function dibujarEtiquetas() {
+        const contenedor = document.getElementById("contenedorEtiquetas");
+        contenedor.innerHTML = "";
+
+        filtrosAplicados.forEach((filtro, index) => {
+            const badge = document.createElement("span");
+            badge.className = "badge bg-light text-dark border d-flex align-items-center gap-2 p-2 shadow-sm rounded-pill";
+            badge.innerHTML = `
+                <strong>${filtro.tipoTexto}:</strong> ${filtro.valor}
+                <button type="button" class="btn-close" style="font-size: 0.65rem;" onclick="eliminarFiltro(${index})"></button>
+            `;
+            contenedor.appendChild(badge);
+        });
+    }
+
+    function eliminarFiltro(index) {
+        filtrosAplicados.splice(index, 1);
+        dibujarEtiquetas();
+        procesarFiltrosEnDataTables();
+    }
 </script>
 
-
 <script>
-    //limpiar filtros
-    function limpiarFiltros() {
-        const url = new URL(window.location);
-        url.searchParams.delete("tipo");
-        url.searchParams.delete("valor");
-        url.searchParams.set("pagina", 1);
-        window.location.href = url.toString();
+    // Aplica las búsquedas cruzadas acumulativas en las columnas de DataTables
+    function procesarFiltrosEnDataTables() {
+        // 1. Limpiar búsquedas previas de la tabla
+        table.columns().search('');
+
+        // 2. Agrupar valores por columna (Por si eligen p. ej. Dos países distintos)
+        const filtrosPorColumna = {};
+        filtrosAplicados.forEach(filtro => {
+            const numColumna = mapeoColumnas[filtro.tipo];
+            if (!filtrosPorColumna[numColumna]) {
+                filtrosPorColumna[numColumna] = [];
+            }
+            filtrosPorColumna[numColumna].push(filtro.valor);
+        });
+
+        // 3. Mandar los datos agrupados a DataTables mediante expresiones regulares
+        Object.keys(filtrosPorColumna).forEach(colIdx => {
+            const valores = filtrosPorColumna[colIdx];
+            const busquedaRegex = `(${valores.join('|')})`; // Resulta en: (Valor1|Valor2)
+            table.column(colIdx).search(busquedaRegex, true, false);
+        });
+
+        // 4. Redibujar tabla
+        table.draw();
+    }
+
+    // Resetea por completo el estado de los filtros y la tabla
+    function limpiarTodosLosFiltros() {
+        filtrosAplicados = [];
+        document.getElementById("valorFiltro").value = "";
+        dibujarEtiquetas();
+        table.columns().search('').draw();
     }
 </script>
 
 
 <script>
-    // imprimir segun filtro
+    // Envía todos los filtros acumulados a la URL de FPDF en formato JSON
     function imprimirFiltrado() {
-        const tipo = document.getElementById("tipoFiltro").value;
-        const valor = document.getElementById("valorFiltro").value.trim();
-
-        // Abrir nueva ventana con los filtros como parámetros GET
-        const url = `../php/imprimir_estudiantes.php?tipo=${encodeURIComponent(tipo)}&valor=${encodeURIComponent(valor)}`;
+        // Convertimos el array de objetos a una cadena JSON limpia
+        const filtrosJSON = JSON.stringify(filtrosAplicados);
+        
+        // Creamos la URL codificando el JSON para que viaje de forma segura por GET
+        const url = `../php/imprimir_estudiantes.php?filtros=${encodeURIComponent(filtrosJSON)}`;
+        
+        // Abrimos el reporte oficial FPDF en una pestaña nueva
         window.open(url, "_blank");
     }
 </script>
 
 
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
 </script>
 
 
@@ -452,10 +514,10 @@ $rol = $_SESSION['usuario_rol'];
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const eliminarModal = document.getElementById('confirmarEliminarModal');
 
-        eliminarModal.addEventListener('show.bs.modal', function(event) {
+        eliminarModal.addEventListener('show.bs.modal', function (event) {
             // El botón que disparó el modal
             const boton = event.relatedTarget;
 

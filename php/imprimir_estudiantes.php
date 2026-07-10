@@ -2,12 +2,18 @@
 require_once '../config/conexion.php';
 require('../fpdf/fpdf.php');
 
-/* ===============================
-   FILTROS
-=================================*/
-$tipo = $_GET['tipo'] ?? '';
-$valor = trim($_GET['valor'] ?? '');
+/* ==========================================================================
+   PROCESAMIENTO DE FILTROS MÚLTIPLES (JSON DECODIFICADO)
+   ========================================================================== */
+// Leemos el parámetro 'filtros', si no existe inicializamos un array vacío
+$filtrosRaw = $_GET['filtros'] ?? '[]';
+$filtros = json_decode($filtrosRaw, true);
 
+if (!is_array($filtros)) {
+    $filtros = [];
+}
+
+// Base de la consulta SQL
 $sql = "SELECT 
         e.id,
         e.nombre_completo,
@@ -24,19 +30,34 @@ $sql = "SELECT
         WHERE 1=1";
 
 $params = [];
+$cadenasTextoFiltros = []; // Para la caja informativa del PDF
 
+// Diccionario de mapeo seguro para evitar Inyección SQL
 $columnas = [
-    'nombre' => 'e.nombre_completo',
-    'pais' => 'p.nombre',
-    'ciudad' => 'c.nombre',
+    'nombre'    => 'e.nombre_completo',
+    'pais'      => 'p.nombre',
+    'ciudad'    => 'c.nombre',
     'fecha_fin' => 'e.anio_fin_carrera'
 ];
 
-if ($valor !== '' && isset($columnas[$tipo])) {
-    $sql .= " AND {$columnas[$tipo]} LIKE :valor";
-    $params[':valor'] = "%$valor%";
+// Recorremos cada filtro acumulado enviado desde la interfaz
+foreach ($filtros as $index => $f) {
+    $tipo = $f['tipo'] ?? '';
+    $valor = trim($f['valor'] ?? '');
+
+    if ($valor !== '' && isset($columnas[$tipo])) {
+        // Creamos marcadores únicos para PDO (ej: :valor_0, :valor_1)
+        $placeholder = ":valor_" . $index;
+        
+        $sql .= " AND {$columnas[$tipo]} LIKE {$placeholder}";
+        $params[$placeholder] = "%$valor%";
+
+        // Guardamos texto legible para mostrar en el encabezado del PDF
+        $cadenasTextoFiltros[] = "{$tipo}: {$valor}";
+    }
 }
 
+// Mantenemos el orden por defecto
 $sql .= " ORDER BY e.nombre_completo ASC";
 
 $stmt = $pdo->prepare($sql);
@@ -44,13 +65,12 @@ $stmt->execute($params);
 $estudiantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-/* ===============================
+/* ==========================================================================
    CLASE PDF MINISTERIAL
-=================================*/
+   ========================================================================== */
 class PDF extends FPDF {
 
     function Header() {
-
         // LOGO
         $logo = '../config/img/logo1.png';
         if(file_exists($logo)){
@@ -107,9 +127,9 @@ class PDF extends FPDF {
 }
 
 
-/* ===============================
+/* ==========================================================================
    GENERAR PDF
-=================================*/
+   ========================================================================== */
 $pdf = new PDF('L','mm','A4');
 $pdf->AliasNbPages();
 $pdf->AddPage();
@@ -122,13 +142,14 @@ $pdf->SetFillColor(240,240,240);
 $pdf->SetDrawColor(200,200,200);
 $pdf->SetFont('Arial','',10);
 
-$filtroTexto = $valor ? "Filtro aplicado: $valor" : "Sin filtros";
+// Unimos los textos legibles por comas si hay filtros, de lo contrario indica "Sin Filtros"
+$filtroTexto = !empty($cadenasTextoFiltros) ? "Filtros: " . implode(', ', $cadenasTextoFiltros) : "Sin filtros aplicados";
 
-$pdf->Cell(140,8,mb_convert_encoding("Fecha de emisión: ".date('d/m/Y'),'ISO-8859-1','UTF-8'),1,0,'L',true);
+$pdf->Cell(140,8,mb_convert_encoding("Fecha de emision: ".date('d/m/Y'),'ISO-8859-1','UTF-8'),1,0,'L',true);
 $pdf->Cell(140,8,mb_convert_encoding($filtroTexto,'ISO-8859-1','UTF-8'),1,1,'L',true);
 
-$pdf->Cell(140,8,'Total de registros: '.count($estudiantes),1,0,'L',true);
-$pdf->Cell(140,8,mb_convert_encoding('Tipo de documento: Reporte Oficial','ISO-8859-1','UTF-8'),1,1,'L',true);
+$pdf->Cell(140,8,'Total de registros encontrados: '.count($estudiantes),1,0,'L',true);
+$pdf->Cell(140,8,mb_convert_encoding('Tipo de documento: Reporte Oficial Cruzado','ISO-8859-1','UTF-8'),1,1,'L',true);
 
 $pdf->Ln(6);
 
@@ -139,7 +160,7 @@ $pdf->SetTextColor(255);
 $pdf->SetFont('Arial','B',9);
 
 $w = [10, 65, 30, 30, 40, 35, 30, 20, 20];
-$headers = ['N°','Nombre','Código','Nacimiento','País','Ciudad','Teléfono','Inicio','Final'];
+$headers = ['N°','Nombre','Codigo','Nacimiento','Pais','Ciudad','Telefono','Inicio','Final'];
 
 foreach($headers as $i=>$col){
     $pdf->Cell($w[$i],9,mb_convert_encoding($col,'ISO-8859-1','UTF-8'),1,0,'C',true);
@@ -153,13 +174,10 @@ $pdf->SetTextColor(40);
 $pdf->SetFillColor(245,249,252);
 
 $fill = false;
-$contador = 1; // ← numeración consecutiva
+$contador = 1; 
 
 foreach($estudiantes as $e){
-
-    // número consecutivo
     $pdf->Cell($w[0],8,$contador++,1,0,'C',$fill);
-
     $pdf->Cell($w[1],8,mb_convert_encoding($e['nombre_completo'],'ISO-8859-1','UTF-8'),1,0,'L',$fill);
     $pdf->Cell($w[2],8,$e['codigo_acceso'],1,0,'C',$fill);
     $pdf->Cell($w[3],8,date('d/m/Y',strtotime($e['fecha_nacimiento'])),1,0,'C',$fill);
@@ -176,12 +194,10 @@ foreach($estudiantes as $e){
 
 /* ===== FIRMA INSTITUCIONAL ===== */
 $pdf->Ln(12);
-
 $pdf->SetFont('Arial','',10);
 $pdf->Cell(0,6,'____________________________________',0,1,'R');
 $pdf->Cell(0,6,mb_convert_encoding('Negociado de Misiones Diplomaticas','ISO-8859-1','UTF-8'),0,1,'R');
-$pdf->Cell(0,6,'Tesoreria General y Patrimonio del  Estado',0,1,'R');
-
+$pdf->Cell(0,6,mb_convert_encoding('Tesoreria General y Patrimonio del Estado','ISO-8859-1','UTF-8'),0,1,'R');
 
 $pdf->Output('I','Reporte_Estudiantes_Becados.pdf');
 ?>
