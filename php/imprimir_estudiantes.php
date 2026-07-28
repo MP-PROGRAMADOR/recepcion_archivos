@@ -157,9 +157,9 @@ $pdf->Ln(6);
 /* ===== CABECERA TABLA ===== */
 $pdf->SetFillColor(30,70,140);
 $pdf->SetTextColor(255);
-$pdf->SetFont('Arial','B',9);
+$pdf->SetFont('Arial','B',8);
 
-$w = [10, 65, 30, 30, 40, 35, 30, 20, 20];
+$w = [10, 83, 34, 27, 30, 32, 27, 18, 18];
 $headers = ['N°','Nombre','Codigo','Nacimiento','Pais','Ciudad','Telefono','Inicio','Final'];
 
 foreach($headers as $i=>$col){
@@ -169,7 +169,7 @@ $pdf->Ln();
 
 
 /* ===== FILAS ===== */
-$pdf->SetFont('Arial','',9);
+$pdf->SetFont('Arial','',8);
 $pdf->SetTextColor(40);
 $pdf->SetFillColor(245,249,252);
 
